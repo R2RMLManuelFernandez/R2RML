@@ -1,0 +1,138 @@
+/**
+ * 
+ */
+package control.database.load;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Set;
+
+import control.database.connection.DatabaseConnection;
+import model.database.Column;
+import model.database.Database;
+import model.database.Table;
+
+/**
+ * Querys the database to obtain the necesary metadata to constructs the model
+ * 
+ * @author Manuel Fernandez Perez
+ *
+ */
+public class DatabaseLoader {
+
+	private static DatabaseLoader instance;
+	
+	private DatabaseLoader() {
+		
+	}
+	
+	/**
+	 * singleton: compites for the loader
+	 * 
+	 * @return
+	 */
+	public static DatabaseLoader getInstace() {
+		
+		if (instance == null) {
+			
+			instance = new DatabaseLoader();
+			
+		}
+		
+		return instance;
+	}
+	
+	// TODO sacar los tipos de columna a una clase de constantes
+	
+	/**
+	 * Querys the database and construct the metadata lists
+	 * @param database
+	 * @throws Exception
+	 */
+	public void queryDatabase(Database database) throws Exception {
+		
+		Connection connection = null;
+		
+		try {
+			//Connects to the database
+			DatabaseConnection databaseConnection = DatabaseConnection.getConnection(database);
+			connection = databaseConnection.connect();
+			
+			//Obtains the database schema (lists of tables schema)
+			DatabaseSchemaExtractor databaseSchemaExtractor = new DatabaseSchemaExtractor(connection);
+			ArrayList<TableSchemaExtractor> databaseSchema = databaseSchemaExtractor.getDatabaseSchema();
+			
+			if (databaseSchema != null) {
+				
+				//Creates a schema for each table in the database
+				for (TableSchemaExtractor tableSchema : databaseSchema) {
+					
+					String tableName = tableSchema.getTableName();
+					Table table = new Table(database, tableName);
+					
+					Set<String> primaryKeyColumns = tableSchema.getPrimaryKeyColumns();
+					Set<String> foreignKeyColumns = tableSchema.getForeignKeyColumns();
+					Set<String> primaryForeignColumns = tableSchema.getPrimaryForeignColumns();
+					Set<String> simpleColumns = tableSchema.getSimpleColumns();
+					
+					if (primaryKeyColumns != null ) {
+						
+						for (String primaryKeyColumn : primaryKeyColumns) {
+							String type = "PRIMARY";
+							@SuppressWarnings("unused")
+							Column column = new Column(table, primaryKeyColumn, type);
+						}
+						
+					}
+					
+					if (foreignKeyColumns != null ) {
+						
+						for (String foreignKeyColumn : foreignKeyColumns) {
+							String type = "FOREIGN";
+							@SuppressWarnings("unused")
+							Column column = new Column(table, foreignKeyColumn, type);
+						}
+												
+					}
+					
+					if (primaryForeignColumns != null ) {
+						
+						for (String primaryForeignColumn : primaryForeignColumns) {
+							String type = "PRIMARYFOREIGN";
+							@SuppressWarnings("unused")
+							Column column = new Column(table, primaryForeignColumn, type);;
+						}
+												
+					}
+					
+					if (simpleColumns != null ) {
+						
+						for (String simpleColumn : simpleColumns) {
+							String type = "SIMPLE";
+							@SuppressWarnings("unused")
+							Column column = new Column(table, simpleColumn, type);;
+						}
+												
+					}
+					
+				}
+			}
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+			throw e; 
+			
+		} finally {
+			
+			if (connection != null) {
+				
+				connection.close();
+				
+			}
+			
+		}
+		
+	}
+
+}

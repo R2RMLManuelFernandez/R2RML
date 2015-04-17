@@ -11,6 +11,7 @@ public abstract class OntologyElement {
 	private String IRI = null;
 	private String nameSpace = null;
 	private String displayName = null;
+	private Boolean inMapping = false;
 
 	public OntologyElement() {
 		this.IRI = "";
@@ -60,6 +61,20 @@ public abstract class OntologyElement {
 	 */
 	public void setNameSpace(String nameSpace) {
 		this.nameSpace = nameSpace;
+	}
+
+	/**
+	 * @return the inMapping
+	 */
+	public Boolean getInMapping() {
+		return inMapping;
+	}
+
+	/**
+	 * @param inMapping the inMapping to set
+	 */
+	public void setInMapping(Boolean inMapping) {
+		this.inMapping = inMapping;
 	}
 
 	/* (non-Javadoc)

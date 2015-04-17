@@ -29,6 +29,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import control.ontology.OntologyModelConstructor;
 import control.ontology.OntologyTreeModelConstructor;
+import javax.swing.JTabbedPane;
 
 /**
  * Displays the ontology model in a tree
@@ -67,17 +68,17 @@ public class ViewOntologyTree extends JPanel {
 			
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				findOntologyNodes();
+				findOntologyNodes(treeOntology);
 			}
 			
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				findOntologyNodes();
+				findOntologyNodes(treeOntology);
 			}
 			
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				findOntologyNodes();
+				findOntologyNodes(treeOntology);
 			}
 		});
 		
@@ -86,7 +87,7 @@ public class ViewOntologyTree extends JPanel {
 		buttonOntologyFindPrevious.setMinimumSize(new Dimension(30, 15));
 		buttonOntologyFindPrevious.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				buttonOntologyFindPreviousActionPerformed();
+				buttonOntologyFindPreviousActionPerformed(treeOntology);
 			}
 		});
 		
@@ -95,7 +96,7 @@ public class ViewOntologyTree extends JPanel {
 		buttonOntologyFindNext.setMinimumSize(new Dimension(30, 15));
 		buttonOntologyFindNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				buttonOntologyFindNextActionPerformed();
+				buttonOntologyFindNextActionPerformed(treeOntology);
 			}
 		});
 		
@@ -130,16 +131,26 @@ public class ViewOntologyTree extends JPanel {
 		JLabel labelOntologyIRI = new JLabel("Ontology:");
 		add(labelOntologyIRI, "cell 0 4,alignx left,aligny top");
 		
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		add(tabbedPane, "cell 0 5,grow");
+		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		
 		JScrollPane scrollPaneOntologyTree = new JScrollPane();
-		add(scrollPaneOntologyTree, "cell 0 5,grow");
+		tabbedPane.addTab("All", null, scrollPaneOntologyTree, null);
+		
+		tabbedPane.addTab("Classes", null, new JTree(), null);
+		
+		tabbedPane.addTab("Data Properties", null, new JTree(), null);
+		
+		tabbedPane.addTab("Object Properties", null, new JTree(), null);
 		
 		treeOntology = new JTree(new DefaultTreeModel(null));
-        ontologyRender = new MyOntologyRender();
 		treeOntology.setCellRenderer(ontologyRender);
 		treeOntology.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);		
-        treeOntology.setDragEnabled(true);
-        treeOntology.setDropMode(DropMode.ON_OR_INSERT);
+		treeOntology.setDragEnabled(true);
+		treeOntology.setDropMode(DropMode.ON_OR_INSERT);
 		scrollPaneOntologyTree.setViewportView(treeOntology);
+        ontologyRender = new MyOntologyRender();
 
 		
 	}
@@ -179,47 +190,47 @@ public class ViewOntologyTree extends JPanel {
 	/**
 	 * Find the nodes in the ontology tree which label begins whith the pattern
 	 */
-	protected void findOntologyNodes() {
+	protected void findOntologyNodes(JTree paramTree) {
 		String textToFind = textFieldOntologySearch.getText();
 		ontologyRender.setStart(textToFind);
 		if (textToFind != null && !textToFind.isEmpty()) {
-			TreeUtil.searchOntologyTree(treeOntology, treeOntology.getPathForRow(0), textToFind.toLowerCase());
+			TreeUtil.searchOntologyTree(paramTree, paramTree.getPathForRow(0), textToFind.toLowerCase());
 		}
-		treeOntology.repaint();
+		paramTree.repaint();
 	}
 
 	/**
 	 * Finds the position of the next node in the ontology tree which label begins whith the pattern
 	 */
-	protected void buttonOntologyFindNextActionPerformed() {
+	protected void buttonOntologyFindNextActionPerformed(JTree paramTree) {
 		
 		String text = textFieldOntologySearch.getText();
 		
 		if (text != null && !text.isEmpty()) {
-			findOntologyNodes();
+			findOntologyNodes(paramTree);
 			
-			TreePath selPath = treeOntology.getSelectionPath();
+			TreePath selPath = paramTree.getSelectionPath();
 			
-			int row = treeOntology.getRowForPath(selPath) + 1;
+			int row = paramTree.getRowForPath(selPath) + 1;
 			
 			if (row < 0 ) {
 				row = 0;
 			}
-			if (row >= treeOntology.getRowCount()) {
+			if (row >= paramTree.getRowCount()) {
 				row = 0;
 			}
 
 			TreePath path = null;
 			try {
-				path = treeOntology.getNextMatch(text, row, Position.Bias.Forward);
+				path = paramTree.getNextMatch(text, row, Position.Bias.Forward);
 			} catch (IllegalArgumentException  ia) {
 				System.out.print(row);
 				ia.printStackTrace();
 			}
 			
 			if (path != null) {
-				treeOntology.setSelectionPath(path);
-				treeOntology.scrollPathToVisible(path);
+				paramTree.setSelectionPath(path);
+				paramTree.scrollPathToVisible(path);
 			}
 
 		}
@@ -228,17 +239,17 @@ public class ViewOntologyTree extends JPanel {
 	/**
 	 * Finds the position of the previous node in the ontology tree which label begins whith the pattern
 	 */
-	protected void buttonOntologyFindPreviousActionPerformed() {
+	protected void buttonOntologyFindPreviousActionPerformed(JTree paramTree) {
 		
 		String text = textFieldOntologySearch.getText();
 		
 		if (text != null && !text.isEmpty()) {
-			findOntologyNodes();
-			TreePath selPath = treeOntology.getSelectionPath();
-			int row = treeOntology.getRowForPath(selPath) - 1;
+			findOntologyNodes(paramTree);
+			TreePath selPath = paramTree.getSelectionPath();
+			int row = paramTree.getRowForPath(selPath) - 1;
 
 			if (row < 0 ) {
-				row = treeOntology.getRowCount() - 1;
+				row = paramTree.getRowCount() - 1;
 			}
 			if (row > treeOntology.getRowCount()) {
 				row = 0;

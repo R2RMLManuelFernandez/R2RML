@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 Manuel Fernández Pérez
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package view.ontology;
 
 import java.awt.datatransfer.DataFlavor;
@@ -57,13 +73,19 @@ public class OntologyTreeToTextTransferHandler extends TransferHandler {
         return new DefaultMutableTreeNode(node);
     }
   
+    /* (non-Javadoc)
+     * @see javax.swing.TransferHandler#getSourceActions(javax.swing.JComponent)
+     */
     public int getSourceActions(JComponent c) {
         return COPY_OR_MOVE;
     }
     
-/*    protected void exportDone(JComponent source, Transferable data, int action) {
-
-    }*/
+    /* (non-Javadoc)
+     * @see javax.swing.TransferHandler#exportDone(javax.swing.JComponent, java.awt.datatransfer.Transferable, int)
+     */
+    protected void exportDone(JComponent source, Transferable data, int action) {
+    	dirtOntologyElement(source, action == TransferHandler.COPY_OR_MOVE);
+    }
 
     /* (non-Javadoc)
      * @see javax.swing.TransferHandler#canImport(javax.swing.TransferHandler.TransferSupport)
@@ -112,6 +134,18 @@ public class OntologyTreeToTextTransferHandler extends TransferHandler {
         mappingElement.setOntologyElement(ontologyElement);
 //		System.out.println("Se notifica el elemento de la ontologia: " + ontologyElement.getDisplayName());
         return true;
+    }
+    
+    private void dirtOntologyElement(JComponent source, boolean inMapping) {
+    	
+    	JTree tree = (JTree) source;
+        TreePath path = tree.getSelectionPath();
+        if(path != null) {           
+        	DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
+            Object nodeObject = node.getUserObject();
+            ((OntologyElement) nodeObject).setInMapping(true);
+        }
+        tree.repaint();
     }
 
 }

@@ -82,7 +82,7 @@ public final class TreeUtil {
 	
 
 	@SuppressWarnings("rawtypes")
-	public static void searchOntologyTree(JTree tree, TreePath path, String word) {
+	public static void searchNameInOntologyTree(JTree tree, TreePath path, String word) {
 		
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
 		
@@ -96,7 +96,35 @@ public final class TreeUtil {
 				Enumeration nodeChildren = node.children();
 				
 				while (nodeChildren.hasMoreElements()) {
-					searchOntologyTree(tree, path.pathByAddingChild(nodeChildren.nextElement()), word);
+					searchNameInOntologyTree(tree, path.pathByAddingChild(nodeChildren.nextElement()), word);
+				}
+			}
+		}
+		else {
+			return;
+		}
+
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static void searchIriInOntologyTree(JTree tree, TreePath path, String paramIri, Boolean dirt) {
+		
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
+		
+		//System.out.println("searchIriInOntologyTree: " + paramIri);
+		
+		if (node != null ) {
+			OntologyElement element = (OntologyElement) node.getUserObject();
+			String iri = element.getIRI();
+			if(iri.equals(paramIri)) {
+				element.setInMapping(dirt);
+				//System.out.println("searchIriInOntologyTree: found " + paramIri);
+			}
+			if (!node.isLeaf()) {
+				Enumeration nodeChildren = node.children();
+				
+				while (nodeChildren.hasMoreElements()) {
+					searchIriInOntologyTree(tree, path.pathByAddingChild(nodeChildren.nextElement()), paramIri, dirt);
 				}
 			}
 		}

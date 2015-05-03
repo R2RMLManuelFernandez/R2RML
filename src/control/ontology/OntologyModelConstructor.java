@@ -32,12 +32,18 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.util.SimpleRootClassChecker;
 
+/**
+ * @author Manuel Fernandez Perez
+ *
+ */
 /**
  * @author Manuel Fernandez Perez
  *
@@ -51,18 +57,26 @@ public class OntologyModelConstructor {
 	//the set of OwlClass to allocate in the model
     private Set<OWLClass> owlClasses;
     
-	//the set of OWLDataProperty in the otology
+	//the set of OWLDataProperty in the ontology
     private Set<OWLDataProperty> owlDataProperties;
     
-	//the set of OwlObjectProperty in the otology
+	//the set of OwlObjectProperty in the ontology
     private Set<OWLObjectProperty> owlObjectProperties;
     
+    private HashMap<String, OntologyObjectProperty> mapEquivalentObjectProperties = new HashMap<>();
+    
+    private HashMap<String, OntologyDataProperty> mapEquivalentDataProperties = new HashMap<>();
+    
     private OntologyClass thing;
+    
+    private OntologyObjectProperty topObjectProperty;
+    
+    private OntologyDataProperty topDataProperty;
     
     public OntologyModelConstructor(String paramOntologySource) throws OWLOntologyCreationException {
     	
     	loadOntology(paramOntologySource);
-    	
+    	  	
     	createOntologyModel();
     	
 	}
@@ -100,6 +114,10 @@ public class OntologyModelConstructor {
     	this.owlObjectProperties = this.owlOntology.getObjectPropertiesInSignature();
     	this.owlDataProperties = this.owlOntology.getDataPropertiesInSignature();
 //    	System.out.println("createOntologyModel: Nº de clases: " + this.owlClasses.size());
+    	
+    	createObjectPropertiesHierarchy();
+    	
+    	createDataPropertiesHierarchy();
     	
     	Set<OWLClass> owlRootClasses = findRootClasses();
     	
@@ -223,14 +241,33 @@ public class OntologyModelConstructor {
 		String nameSpace = owlIRI.getNamespace();
 		OntologyClass newOntologyClazz = new OntologyClass(owlIRI.toString(), displayName, nameSpace);
 		paramSuperClass.addSubclass(newOntologyClazz);
-		Set<OntologyObjectProperty> classObjectProperties = createObjectProperties(getClassObjectProperties(paramOwlClass));
+		
+//		Set<OntologyObjectProperty> classObjectProperties = createObjectProperties(getOwlClassObjectProperties(paramOwlClass));
+		Set<OWLObjectProperty> classOwlObjectProperties = getOwlClassObjectProperties(paramOwlClass);
+/*		System.out.println("createClass --> " + displayName + " OOP: " + classOwlObjectProperties.size());
+		for (OWLObjectProperty oOP: classOwlObjectProperties) {
+			System.out.println("createClass --> " + oOP.getIRI().toString());
+		}*/
+		Set<OntologyObjectProperty> classObjectProperties = getOntologyObjectProperties(classOwlObjectProperties);
+//		System.out.println("createClass --> " + displayName + " OP: " + classObjectProperties.size());
+		
 		for (OntologyObjectProperty classObjectProperty: classObjectProperties) {
 			newOntologyClazz.addObjectProperty(classObjectProperty);
 		}
-		Set<OntologyDataProperty> classDataProperties = createClassDataProperties(getClassDataProperties(paramOwlClass));
+		
+//		Set<OntologyDataProperty> classDataProperties = createClassDataProperties(getOwlClassDataProperties(paramOwlClass));
+		Set<OWLDataProperty> classOwlDataProperties = getOwlClassDataProperties(paramOwlClass);
+/*		System.out.println("createClass --> " + displayName + " ODP: " + classOwlDataProperties.size());
+		for (OWLDataProperty oDP: classOwlDataProperties) {
+			System.out.println("createClass --> " + oDP.getIRI().toString());
+		}*/
+		Set<OntologyDataProperty> classDataProperties = getOntologyDataProperties(classOwlDataProperties);
+//		System.out.println("createClass --> " + displayName + " DP: " + classDataProperties.size());
+		
 		for (OntologyDataProperty classDataProperty: classDataProperties) {
 			newOntologyClazz.addDataProperty(classDataProperty);
 		}
+		
 		this.owlClasses.remove(paramOwlClass);
 //		System.out.println("createClass: " + paramOwlClass.getIRI() + " removed. " + "Nº de clases restantes: " + this.owlClasses.size());
 		Set<OWLClass> owlSubclasses = findOwlSubclasses(paramOwlClass);
@@ -392,7 +429,11 @@ public class OntologyModelConstructor {
 		
 	}
 	
-	private Set<OWLObjectProperty> getClassObjectProperties(OWLClass owlClazz) {
+	/**
+	 * @param owlClazz
+	 * @return
+	 */
+	private Set<OWLObjectProperty> getOwlClassObjectProperties(OWLClass owlClazz) {
 		 
 		Set<OWLObjectProperty> clazzObjectProperties = new HashSet<OWLObjectProperty>();
 		
@@ -411,22 +452,12 @@ public class OntologyModelConstructor {
 		
 		return clazzObjectProperties;
 	}
-	
-	private Set<OntologyObjectProperty> createObjectProperties(Set<OWLObjectProperty> owlClassObjectProperties) {
-	    
-		Set<OntologyObjectProperty> clazzObjectProperties = new HashSet<OntologyObjectProperty>();
-	    
-		for (OWLObjectProperty owlClazzObjectProperty : owlClassObjectProperties) {
-			IRI ObjectPropertyIRI = owlClazzObjectProperty.getIRI();
-			String displayName = ObjectPropertyIRI.getFragment();
-			String nameSpace = ObjectPropertyIRI.getNamespace();
-			OntologyObjectProperty newObjectProperty = new OntologyObjectProperty(ObjectPropertyIRI.toString(), displayName, nameSpace);
-			clazzObjectProperties.add(newObjectProperty);
-		}
-	    return clazzObjectProperties;
-	}
-	
-	private Set<OWLDataProperty> getClassDataProperties(OWLClass owlClazz) {
+
+	/**
+	 * @param owlClazz
+	 * @return
+	 */
+	private Set<OWLDataProperty> getOwlClassDataProperties(OWLClass owlClazz) {
 	    
 		Set<OWLDataProperty> clazzDataProperties = new HashSet<OWLDataProperty>();
 	    
@@ -445,55 +476,260 @@ public class OntologyModelConstructor {
 		
 	    return clazzDataProperties;
 	}
-	
-	private Set<OntologyDataProperty> createClassDataProperties(Set<OWLDataProperty> owlClassDataProperties) {
-	    
-		Set<OntologyDataProperty> clazzDataProperties = new HashSet<OntologyDataProperty>();
-	    
-		for (OWLDataProperty owlClazzDataProperty : owlClassDataProperties) {
-			IRI dataPropertyIRI = owlClazzDataProperty.getIRI();
-			String displayName = dataPropertyIRI.getFragment();
-			String nameSpace = dataPropertyIRI.getNamespace();
-			OntologyDataProperty newDataProperty = new OntologyDataProperty(dataPropertyIRI.toString(), displayName, nameSpace);
-			clazzDataProperties.add(newDataProperty);
+
+	/**
+	 * 
+	 */
+	private void createObjectPropertiesHierarchy() {
+		
+		//creates the topObjectProperty
+		this.topObjectProperty = new OntologyObjectProperty("http://www.w3.org/2002/07/owl#topObjectProperty",
+				"topObjectProperty", "http://www.w3.org/2002/07/owl#");
+		
+		//search for the rootobjectProperties
+		
+		for (OWLObjectProperty owlObjectProperty: this.owlObjectProperties) {
+			
+			if (owlObjectProperty.getSuperProperties(owlOntology).isEmpty()) {
+				
+				OntologyObjectProperty newObjectProperty = createObjectProperty(owlObjectProperty);
+				this.topObjectProperty.addSubObjectProperty(newObjectProperty);
+				
+			}
+			
 		}
-	    return clazzDataProperties;
+		
 	}
 	
-/*	public void printOwlProp() {
-		Set<OWLObjectProperty> objectProps = this.owlOntology.getObjectPropertiesInSignature();
-		System.out.println(objectProps.size());
-		for (OWLObjectProperty objProp:  objectProps) {
-			System.out.println("printOwlProp -> ObjProp: " + objProp.getIRI().getFragment() + " Domain: " + objProp.getDomains(owlOntology));
+	/**
+	 * @param owlObjectProperty
+	 * @return
+	 */
+	private OntologyObjectProperty createObjectProperty(OWLObjectProperty owlObjectProperty) {
+		
+		IRI iriObjectProperty = owlObjectProperty.getIRI();
+		String displayName = iriObjectProperty.getFragment();
+		String nameSpace = iriObjectProperty.getNamespace();
+		
+		OntologyObjectProperty ontologyObjectProperty = new OntologyObjectProperty(iriObjectProperty.toString(),
+																displayName, nameSpace);
+    	//System.out.println("createObjectProperty -> ontologyObjectProperty: " + ontologyObjectProperty.getIRI());
+		
+		this.mapEquivalentObjectProperties.put(iriObjectProperty.toString(), ontologyObjectProperty);
+		
+		Set<OWLObjectPropertyExpression> owlObjectSubProperties = owlObjectProperty.getSubProperties(owlOntology);
+		
+		for (OWLObjectPropertyExpression owlObjectSubProperty: owlObjectSubProperties) {
+			
+			if (owlObjectSubProperty instanceof OWLObjectProperty) {
+				
+				OntologyObjectProperty OntologyObjectSubProperty = createObjectProperty((OWLObjectProperty) owlObjectSubProperty);
+		    	//System.out.println("createObjectProperty -> ontologyObjectSubProperty: " + OntologyObjectSubProperty.getIRI());
+				ontologyObjectProperty.addSubObjectProperty(OntologyObjectSubProperty);
+				
+			}
+			
 		}
 		
-		Set<OWLClass> classesInS = this.owlOntology.getClassesInSignature();
-		
-		for (OWLClass classInS: classesInS) {
-			Set<OWLObjectProperty> classObjProp = getClassObjectProperties(classInS);
-			System.out.println("printOwlProp -> class: " + classInS.getIRI().getFragment() + " Object Properties: " + classObjProp);
-		}
-		
-	}*/
+		return ontologyObjectProperty;
+	}
 	
-/*	*//**
-	 * @param args
-	 *//*
-	@SuppressWarnings("unused")
+	/**
+	 * 
+	 */
+	private void createDataPropertiesHierarchy() {
+		
+		//creates the topDataProperty
+		this.topDataProperty = new OntologyDataProperty("http://www.w3.org/2002/07/owl#topDataProperty",
+				"topDataProperty", "http://www.w3.org/2002/07/owl#");
+		
+		//search for the rootDataProperties
+		
+		for (OWLDataProperty owlDataProperty: this.owlDataProperties) {
+			
+			if (owlDataProperty.getSuperProperties(owlOntology).isEmpty()) {
+				
+				OntologyDataProperty newDataProperty = createDataProperty(owlDataProperty);
+				this.topDataProperty.addSubDataProperty(newDataProperty);
+				
+			}
+			
+		}
+
+	}
+	
+	/**
+	 * @param owlDataProperty
+	 * @return
+	 */
+	private OntologyDataProperty createDataProperty(OWLDataProperty owlDataProperty) {
+		
+		IRI iriDataProperty = owlDataProperty.getIRI();
+		String displayName = iriDataProperty.getFragment();
+		String nameSpace = iriDataProperty.getNamespace();
+		
+		OntologyDataProperty ontologyDataProperty = new OntologyDataProperty(iriDataProperty.toString(),
+																displayName, nameSpace);
+		this.mapEquivalentDataProperties.put(iriDataProperty.toString(), ontologyDataProperty);
+		
+		Set<OWLDataPropertyExpression> owlDataSubProperties = owlDataProperty.getSubProperties(owlOntology);
+		
+		for (OWLDataPropertyExpression owlDataSubProperty: owlDataSubProperties) {
+			
+			if (owlDataSubProperty instanceof OWLDataProperty) {
+				
+				OntologyDataProperty ontologyDataSubProperty = createDataProperty((OWLDataProperty) owlDataSubProperty);
+				ontologyDataProperty.addSubDataProperty(ontologyDataSubProperty);
+			}
+			
+		}
+		
+		return ontologyDataProperty;
+	}
+	
+
+	private Set<OntologyObjectProperty> getOntologyObjectProperties(Set<OWLObjectProperty> owlObjectProperties) {
+		
+		Set<OntologyObjectProperty> classObjectProperties = new HashSet<OntologyObjectProperty>();
+		
+		for (OWLObjectProperty owlObjectProperty : owlObjectProperties) {
+			
+//			System.out.println("getOntologyObjectProperties --> Is owlOP: " + owlObjectProperty.getIRI().toString() + " in Hierarchy: " + mapEquivalentObjectProperties.containsKey(owlObjectProperty.getIRI().toString()));
+			if (mapEquivalentObjectProperties.containsKey(owlObjectProperty.getIRI().toString())) {
+				classObjectProperties.add(mapEquivalentObjectProperties.get(owlObjectProperty.getIRI().toString()));
+			}
+
+			
+		}
+		
+		return classObjectProperties;
+		
+	}
+	
+
+	private Set<OntologyDataProperty> getOntologyDataProperties(Set<OWLDataProperty> owlDataProperties) {
+		
+		Set<OntologyDataProperty> classDataProperties = new HashSet<OntologyDataProperty>();
+		
+		for (OWLDataProperty owlDataProperty : owlDataProperties) {
+			
+			if (mapEquivalentDataProperties.containsKey(owlDataProperty.getIRI().toString())) {
+				classDataProperties.add(mapEquivalentDataProperties.get(owlDataProperty.getIRI().toString()));
+			}
+			
+		}
+		
+		return classDataProperties;
+		
+	}
+	
+	/**
+	 * @return the topObjectProperty
+	 */
+	public OntologyObjectProperty getTopObjectProperty() {
+		return topObjectProperty;
+	}
+
+	/**
+	 * @return the topDataProperty
+	 */
+	public OntologyDataProperty getTopDataProperty() {
+		return topDataProperty;
+	}
+	
+	
+	
+//--------------------------------------------------------------------------------------------------------------------------------	
+
+
+	public void printProp() {
+		
+    	System.out.println("printProp -> ObjectProperties -> Printing Object Properties");
+    	
+    	printObjectProp(this.topObjectProperty);
+    	
+    	System.out.println("printProp -> DataProperties -> Printing Data Properties");
+    	
+    	printDataProp(this.topDataProperty);
+    	
+	}
+	
+	private void printObjectProp(OntologyObjectProperty top) {
+		
+    	System.out.println("printObjectProp -> ObjectProperties -> op: " + top.getIRI());
+    	
+    	ArrayList<OntologyObjectProperty> subOProps = top.getSubObjectProperties();
+    	
+    	for(OntologyObjectProperty subOP: subOProps) {
+    		printObjectProp(subOP);
+    	}
+		
+	}
+	
+	private void printDataProp(OntologyDataProperty tdp) {
+		
+    	System.out.println("printDataProp -> DataProperties -> dp: " + tdp.getIRI());
+    	
+    	ArrayList<OntologyDataProperty> subDProps = tdp.getSubDataProperties();
+    	
+    	for(OntologyDataProperty subDP: subDProps) {
+    		printDataProp(subDP);
+    	}
+		
+	}
+	
+	private void printClass (OntologyClass oClass) {
+		
+		System.out.println();
+		System.out.println("printClass --> Class Name: " + oClass.getDisplayName());
+
+		System.out.println("printClass --> Has Object Properties : " + oClass.hasObjectProperties());
+		if (oClass.hasObjectProperties()) {
+			System.out.println("printClass --> Printing Object Properties for : " + oClass.getDisplayName());
+			ArrayList<OntologyObjectProperty> objectProperties = oClass.getObjectProperties();
+			System.out.println("Number of object properties: " + objectProperties.size());
+			for (OntologyObjectProperty oProperty: objectProperties) {
+				System.out.println(oProperty.getDisplayName());
+			}
+		}
+		
+		System.out.println("printClass --> Has Data Properties : " + oClass.hasDataProperties());
+		if (oClass.hasDataProperties()) {
+			System.out.println("printClass --> Printing Data Properties for : " + oClass.getDisplayName());
+			ArrayList<OntologyDataProperty> dataProperties = oClass.getDataProperties();
+			System.out.println("Number of data properties: " + dataProperties.size());
+			for (OntologyDataProperty dProperty: dataProperties) {
+				System.out.println(dProperty.getDisplayName());
+			}
+		}
+		
+		if (oClass.hasSubclasses()) {
+			System.out.println("printClass --> Printing SubClasses for : " + oClass.getDisplayName());
+			ArrayList<OntologyClass> subClasses = oClass.getSubclasses();
+//			System.out.println("Number of subclasses: " + subClasses.size());
+			for (OntologyClass oSubClass: subClasses) {
+				printClass(oSubClass);				
+			}
+
+		}
+		
+	}
+	
+
 	public static void main(String[] args) {
 		
 		try {
-			OntMConstructor ontmConstructor = new OntMConstructor("C:/Users/Manuel/Desktop/Ontologias/pizza.owl");
-//			OntMConstructor ontmConstructor = new OntMConstructor("C:/Users/Manuel/Desktop/Ontologias/myOnto.owl");
+//			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/pizza.owl");
+			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/myOnto.owl");
 //			OntMConstructor ontmConstructor = new OntMConstructor("C:/Users/Manuel/Desktop/Ontologias/onto2.owl");
 //			OntMConstructor ontmConstructor = new OntMConstructor("C:/Users/Manuel/Desktop/Ontologias/onto.rdf");
 			
-			ontmConstructor.printOwlProp();
+			ontmConstructor.printClass(ontmConstructor.getThing());
 			
 		} catch (OWLOntologyCreationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}*/
+	}
 
 }

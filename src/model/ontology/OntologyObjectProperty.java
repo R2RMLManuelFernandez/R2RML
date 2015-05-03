@@ -16,6 +16,9 @@
 
 package model.ontology;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 /**
  * Class representing an ontology object proprety 
  *
@@ -23,9 +26,40 @@ package model.ontology;
  *
  */
 public class OntologyObjectProperty extends OntologyElement {
+	
+	private ArrayList<OntologyObjectProperty> subObjectProperties = null;
 
 	public OntologyObjectProperty(String IRI, String displayName, String nameSpace){
 		super(IRI, displayName, nameSpace);
+		this.subObjectProperties = new ArrayList<OntologyObjectProperty>();
+	}
+	
+	/**
+	 * @param subObjectProperty
+	 */
+	public void addSubObjectProperty (OntologyObjectProperty subObjectProperty) {
+		this.subObjectProperties.add(subObjectProperty);
+	}
+	
+	/**
+	 * @param subObjectProperties
+	 */
+	public void addSubObjectProperties (Set<OntologyObjectProperty> subObjectProperties) {
+		this.subObjectProperties.addAll(subObjectProperties);
+	}
+	
+	/**
+	 * @return
+	 */
+	public ArrayList<OntologyObjectProperty> getSubObjectProperties() {
+		return subObjectProperties;
+	}
+	
+	/**
+	 * @return
+	 */
+	public Boolean hasSubObjectProperties() {
+		return this.subObjectProperties.isEmpty()? false : true;
 	}
 	
 	/**

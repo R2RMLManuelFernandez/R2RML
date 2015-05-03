@@ -33,38 +33,98 @@ import model.ontology.OntologyObjectProperty;
  */
 public class OntologyTreeModelConstructor {
 	
-	//data model for the JTree
-	private DefaultTreeModel ontologyTreeModel;
+	//model for JTree with classes, object properties and data properties
+	private DefaultTreeModel ontologyTreeGeneralModel;
+	
+	//model for JTree only with classes
+	private DefaultTreeModel ontologyTreeClassModel;
+	
+	//model for JTree only with object properties
+	private DefaultTreeModel ontologyTreeObjectPropertyModel;
+	
+	//model for JTree only with data properties
+	private DefaultTreeModel ontologyTreeDataPropertyModel;
 	
 	//the Thing class of the ontology model
 	private OntologyClass Thing;
 	
+    private OntologyObjectProperty topObjectProperty;
+    
+    private OntologyDataProperty topDataProperty;
+	
 	/**
 	 * @param thing
 	 */
-	public OntologyTreeModelConstructor(OntologyClass thing) {
+	public OntologyTreeModelConstructor(OntologyClass thing, OntologyObjectProperty topOP, OntologyDataProperty topDP) {
+		
 		this.Thing = thing;
+		this.topObjectProperty = topOP;
+		this.topDataProperty = topDP;		
 		//sets the thing as the root of the tree model
-		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(thing);		
-		this.ontologyTreeModel = new DefaultTreeModel(rootNode);
-		//creates the tree model hanging from the root(thing)
-		this.createOntologyTreeModel(rootNode);
+		DefaultMutableTreeNode rootNodeGeneral = new DefaultMutableTreeNode(thing);		
+		this.ontologyTreeGeneralModel = new DefaultTreeModel(rootNodeGeneral);
+		//creates the tree general model hanging from the root(thing)
+		this.createOntologyTreeGeneralModel(rootNodeGeneral);
+		DefaultMutableTreeNode rootNodeClass = new DefaultMutableTreeNode(thing);
+		this.ontologyTreeClassModel = new DefaultTreeModel(rootNodeClass);
+		//creates the tree class model hanging from the root(thing)
+		this.createOntologyTreeClassModel(rootNodeClass);
+		
+		DefaultMutableTreeNode rootNodeObjectProperty= new DefaultMutableTreeNode(topOP);		
+		this.ontologyTreeObjectPropertyModel = new DefaultTreeModel(rootNodeObjectProperty);
+		this.createOntologyTreeObjectPropertyModel(rootNodeObjectProperty);
+		
+		DefaultMutableTreeNode rootNodeDataProperty= new DefaultMutableTreeNode(topDP);		
+		this.ontologyTreeDataPropertyModel = new DefaultTreeModel(rootNodeDataProperty);
+		this.createOntologyTreeDataPropertyModel(rootNodeDataProperty);
+		
 	}
 
 	/**
-	 * @return the ontologyTreeModel
+	 * @return the ontology model with classes, object properties and data properties
 	 */
-	public DefaultTreeModel getOntologyTreeModel() {
-		return ontologyTreeModel;
+	public DefaultTreeModel getOntologyTreeGeneralModel() {
+		return ontologyTreeGeneralModel;
+	}
+	
+	/**
+	 * @return the ontology model only with classes
+	 */
+	public DefaultTreeModel getOntologyTreeClassModel() {
+		return ontologyTreeClassModel;
+	}
+	
+	/**
+	 * @return the ontology model only with object properties
+	 */
+	public DefaultTreeModel getOntologyTreeObjectPropertiesModel() {
+		return ontologyTreeObjectPropertyModel;
+	}
+	
+	/**
+	 * @return the ontology model only with data properties
+	 */
+	public DefaultTreeModel getOntologyTreeDataPropertiesModel() {
+		return ontologyTreeDataPropertyModel;
+	}
+	
+	/**
+	 * @param rootNode
+	 */
+	private void createOntologyTreeGeneralModel(DefaultMutableTreeNode rootNode) {
+		if (Thing.hasSubclasses()) {
+			ArrayList<OntologyClass> subClasses = Thing.getSubclasses();
+			addClassesToTree(ontologyTreeGeneralModel, rootNode, subClasses, true);
+		}
 	}
 
 	/**
 	 * @param rootNode
 	 */
-	private void createOntologyTreeModel(DefaultMutableTreeNode rootNode) {
+	private void createOntologyTreeClassModel(DefaultMutableTreeNode rootNode) {
 		if (Thing.hasSubclasses()) {
 			ArrayList<OntologyClass> subClasses = Thing.getSubclasses();
-			addClassesToTree(subClasses, rootNode);
+			addClassesToTree(ontologyTreeClassModel, rootNode, subClasses, false);
 		}
 	}
 	
@@ -72,21 +132,24 @@ public class OntologyTreeModelConstructor {
 	 * @param classes
 	 * @param node
 	 */
-	private void addClassesToTree(ArrayList<OntologyClass> classes, DefaultMutableTreeNode node) {
-		//count the index of the last class added to the model
+	private void addClassesToTree(DefaultTreeModel treeModel, DefaultMutableTreeNode node, ArrayList<OntologyClass> classes, Boolean addProperties) {
+		//count the index of the last child added to the node
 		int treeIndex = 0;
 		//add the classes as node childs of the node 
 		for (OntologyClass clazz : classes) {
 			//creates and inserts the new node
 			DefaultMutableTreeNode classNode = new DefaultMutableTreeNode(clazz);
-			ontologyTreeModel.insertNodeInto(classNode , node, treeIndex++);
-			//inserts the data properties if the class as child nodes of the node starting at index 0.
-			//classIndex is the the position of the position of the last child added to the node
-			int classIndex = this.addDataPropertiesToTree(clazz.getDataProperties(), classNode, 0);
-			//inserts the data properties if the class as child nodes of the node
-			this.addObjectPropertiesToTree(clazz.getObjectProperties(), classNode, classIndex);
+			treeModel.insertNodeInto(classNode , node, treeIndex++);
+			
+			if (addProperties) {
+				//inserts the data properties in the class as child nodes of the node starting at index 0.
+				//classIndex is the the position of the last child added to the node
+				int classIndex = this.addObjectPropertiesToTree(treeModel, classNode, clazz.getObjectProperties(), 0);
+				//inserts the data properties in the class as child nodes of the node
+				this.addDataPropertiesToTree(treeModel, classNode, clazz.getDataProperties(), classIndex);
+			}
 			//recursively adds the childs of the classes just added to the tree
-			this.addClassesToTree(clazz.getSubclasses(), classNode);
+			this.addClassesToTree(treeModel, classNode, clazz.getSubclasses(), addProperties);
 		}
 	}
 	
@@ -96,12 +159,12 @@ public class OntologyTreeModelConstructor {
 	 * @param index
 	 * @return
 	 */
-	private int addDataPropertiesToTree(ArrayList<OntologyDataProperty> dataProperties, DefaultMutableTreeNode node, int index) {
+	private int addDataPropertiesToTree(DefaultTreeModel treeModel, DefaultMutableTreeNode node, ArrayList<OntologyDataProperty> dataProperties, int index) {
 		int classIndex = index;
 		if (!dataProperties.isEmpty()) {
 			for (OntologyDataProperty dataProperty : dataProperties) {
 				DefaultMutableTreeNode dataPropertyNode = new DefaultMutableTreeNode(dataProperty);
-				ontologyTreeModel.insertNodeInto(dataPropertyNode , node, classIndex++);
+				treeModel.insertNodeInto(dataPropertyNode , node, classIndex++);
 			}
 		}
 		return classIndex;
@@ -113,15 +176,72 @@ public class OntologyTreeModelConstructor {
 	 * @param index
 	 * @return
 	 */
-	private int addObjectPropertiesToTree(ArrayList<OntologyObjectProperty> objectProperties, DefaultMutableTreeNode node, int index) {
+	private int addObjectPropertiesToTree(DefaultTreeModel treeModel, DefaultMutableTreeNode node, ArrayList<OntologyObjectProperty> objectProperties, int index) {
 		int tableIndex = index;
 		if (!objectProperties.isEmpty()) {
 			for (OntologyObjectProperty objectProperty : objectProperties) {
 				DefaultMutableTreeNode objectPropertyNode = new DefaultMutableTreeNode(objectProperty);
-				ontologyTreeModel.insertNodeInto(objectPropertyNode , node, tableIndex++);
+				treeModel.insertNodeInto(objectPropertyNode , node, tableIndex++);
 			}
 		}
 
 		return tableIndex;
 	}
+	
+	/**
+	 * @param rootNode
+	 */
+	private void createOntologyTreeObjectPropertyModel(DefaultMutableTreeNode rootNode) {
+		if (topObjectProperty.hasSubObjectProperties()) {
+			ArrayList<OntologyObjectProperty> subObjectProperties = topObjectProperty.getSubObjectProperties();
+			addObjectPropertiesToOPTree(ontologyTreeObjectPropertyModel, rootNode, subObjectProperties);
+		}
+	}
+	
+	/**
+	 * @param rootNode
+	 */
+	private void createOntologyTreeDataPropertyModel(DefaultMutableTreeNode rootNode) {
+		if (topDataProperty.hasSubDataProperties()) {
+			ArrayList<OntologyDataProperty> subDataProperties = topDataProperty.getSubDataProperties();
+			addDataPropertiesToDPTree(ontologyTreeDataPropertyModel, rootNode, subDataProperties);
+		}
+	}
+	
+	/**
+	 * @param classes
+	 * @param node
+	 */
+	private void addObjectPropertiesToOPTree(DefaultTreeModel treeModel, DefaultMutableTreeNode node, ArrayList<OntologyObjectProperty> ontologyObjProp) {
+		//count the index of the last child added to the node
+		int treeIndex = 0;
+		//add the classes as node childs of the node 
+		for (OntologyObjectProperty objectProp : ontologyObjProp) {
+			//creates and inserts the new node
+			DefaultMutableTreeNode objectPropNode = new DefaultMutableTreeNode(objectProp);
+			treeModel.insertNodeInto(objectPropNode , node, treeIndex++);
+			
+			//recursively adds the childs of the classes just added to the tree
+			this.addObjectPropertiesToOPTree(treeModel, objectPropNode, objectProp.getSubObjectProperties());
+		}
+	}
+	
+	/**
+	 * @param classes
+	 * @param node
+	 */
+	private void addDataPropertiesToDPTree(DefaultTreeModel treeModel, DefaultMutableTreeNode node, ArrayList<OntologyDataProperty> ontologyDataProp) {
+		//count the index of the last child added to the node
+		int treeIndex = 0;
+		//add the classes as node childs of the node 
+		for (OntologyDataProperty dataProp : ontologyDataProp) {
+			//creates and inserts the new node
+			DefaultMutableTreeNode dataPropNode = new DefaultMutableTreeNode(dataProp);
+			treeModel.insertNodeInto(dataPropNode , node, treeIndex++);
+			
+			//recursively adds the childs of the classes just added to the tree
+			this.addDataPropertiesToDPTree(treeModel, dataPropNode, dataProp.getSubDataProperties());;
+		}
+	}
+	
 }

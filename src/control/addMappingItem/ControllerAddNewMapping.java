@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 
 import model.mapping.Mapping;
 import model.mapping.MappingElement;
+import view.ontology.ViewOntologyTree;
 import view.tableMapping.ViewTableMapping;
 
 /**
@@ -33,12 +34,13 @@ import view.tableMapping.ViewTableMapping;
 public class ControllerAddNewMapping implements ActionListener {
 
 	private MappingElement mappingItem;
-	private Mapping model;
-	private ViewTableMapping view;
+	private Mapping mappingModel;
+	private ViewTableMapping viewMapping;
+	private ViewOntologyTree viewOntology;
 	
 	public ControllerAddNewMapping(Mapping mappingModel, MappingElement mappingElement) {
 		mappingItem = mappingElement;
-		model = mappingModel;
+		this.mappingModel = mappingModel;
 	}
 	
 	/**
@@ -49,16 +51,28 @@ public class ControllerAddNewMapping implements ActionListener {
 	private void changeModel(Component source) {
 		if (source.getName().equals("buttonAddMapping")) {
 			MappingElement item = copy(mappingItem);
-			model.addMapping(item);
+			String dirtyIRI = mappingItem.getOntologyElement().getIRI();
+			viewOntology.findInMappingNodes(dirtyIRI, true);
+			//System.out.println("changeModel: " + dirtyIRI);
+			mappingModel.addMapping(item);
 		}
 		// TODO controlar que pasa si el mappingItem es null
 	}
 	
-	public void setView(ViewTableMapping v) {
-		view = v;
+	/**
+	 * @param view
+	 */
+	public void setViewMapping(ViewTableMapping view) {
+		viewMapping = view;
 	}
 	
-
+	/**
+	 * @param viewOntology the viewOntology to set
+	 */
+	public void setViewOntology(ViewOntologyTree viewOntology) {
+		this.viewOntology = viewOntology;
+	}
+	
     /**
      * Defensive copy used in changeModel.
      * 
@@ -74,7 +88,7 @@ public class ControllerAddNewMapping implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Component source = (Component) e.getSource();
 		changeModel(source);
-		view.repaint();
+		viewMapping.repaint();
 	}
 
 }

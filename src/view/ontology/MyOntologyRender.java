@@ -39,9 +39,9 @@ public class MyOntologyRender extends DefaultTreeCellRenderer {
 
 	private static final long serialVersionUID = 5537249275462431499L;
 	
-	private ImageIcon iconClass = new ImageIcon();
-	private ImageIcon iconObjectProperty = new ImageIcon();
-	private ImageIcon iconDataProperty = new ImageIcon();
+	private ImageIcon iconClass = new ImageIcon("C:/Users/Manuel/Desktop/Icons/circle_yellow.png");
+	private ImageIcon iconObjectProperty = new ImageIcon("C:/Users/Manuel/Desktop/Icons/circle_blue.png");
+	private ImageIcon iconDataProperty = new ImageIcon("C:/Users/Manuel/Desktop/Icons/circle_green.png");
 	
 	private String start = null;
 	
@@ -69,7 +69,7 @@ public class MyOntologyRender extends DefaultTreeCellRenderer {
 		
 		Object nodeObject = ((DefaultMutableTreeNode)value).getUserObject();
 		
-		String dispalyName = ((OntologyElement)nodeObject).getDisplayName().toLowerCase();
+		String displayName = ((OntologyElement)nodeObject).getDisplayName().toLowerCase();
 		
 		if(nodeObject instanceof OntologyObjectProperty) {
 			setIcon(iconObjectProperty);
@@ -86,9 +86,18 @@ public class MyOntologyRender extends DefaultTreeCellRenderer {
 		
 		if (((OntologyElement) nodeObject).getInMapping()) {
 			setForeground(Color.GREEN);
+			//System.out.println("getTreeCellRendererComponent: Poniendo verde " + ((OntologyElement) nodeObject).getDisplayName());
+		}
+		else {
+			if (selected) {
+				setForeground(textSelectionColor);
+			}
+			else {
+				setForeground(textNonSelectionColor);
+			}
 		}
 	
-		if (start != null && !start.isEmpty() && dispalyName.startsWith(start)) {
+		if (start != null && !start.isEmpty() && displayName.startsWith(start)) {
 			setOpaque(true);
 			if (selected) {
 				setBackground(Color.RED);

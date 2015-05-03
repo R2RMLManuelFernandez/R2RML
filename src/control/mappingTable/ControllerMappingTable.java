@@ -23,6 +23,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JTable;
 
 import model.mapping.MappingTable;
+import model.ontology.OntologyElement;
+import view.ontology.ViewOntologyTree;
 import view.tableMapping.ViewTableMapping;
 
 /**
@@ -34,7 +36,9 @@ import view.tableMapping.ViewTableMapping;
 public class ControllerMappingTable implements ActionListener {
 
 	private MappingTable model;
-	private ViewTableMapping view;	
+	private ViewTableMapping view;
+	private ViewOntologyTree viewOntology;
+	private OntologyElement dirtyElement;
 	
 	public ControllerMappingTable(MappingTable m) {
 		this.model = m;
@@ -48,11 +52,18 @@ public class ControllerMappingTable implements ActionListener {
 			JTable table = view.getTable();
 			int row = table.getSelectedRow();
 			if (row != -1)
+				dirtyElement = (OntologyElement) model.getValueAt(row, 0);
+				String dirtyIRI = dirtyElement.getIRI();
+				viewOntology.findInMappingNodes(dirtyIRI, false);
 				model.removeMappingElement(row);
+				
 		}
 		else if (source.getName().equals("btnDeleteAll")) {
 			int rows = model.getRowCount();
 			for (int i = 0; i < rows; i++) {
+				dirtyElement = (OntologyElement) model.getValueAt(0, 0);
+				String dirtyIRI = dirtyElement.getIRI();
+				viewOntology.findInMappingNodes(dirtyIRI, false);
 				model.removeMappingElement(0);
 			}
 		}
@@ -80,5 +91,12 @@ public class ControllerMappingTable implements ActionListener {
 	public void setView(ViewTableMapping view) {
 		this.view = view;
 	}
-
+	
+	/**
+	 * @param viewOntology the viewOntology to set
+	 */
+	public void setViewOntology(ViewOntologyTree viewOntology) {
+		this.viewOntology = viewOntology;
+	}
+	
 }

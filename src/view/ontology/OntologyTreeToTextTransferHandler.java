@@ -84,7 +84,8 @@ public class OntologyTreeToTextTransferHandler extends TransferHandler {
      * @see javax.swing.TransferHandler#exportDone(javax.swing.JComponent, java.awt.datatransfer.Transferable, int)
      */
     protected void exportDone(JComponent source, Transferable data, int action) {
-    	dirtOntologyElement(source, action == TransferHandler.COPY_OR_MOVE);
+/*    	dirtOntologyElement(source, action == TransferHandler.COPY_OR_MOVE);
+    	System.out.println("Ensuciando modelo");*/
     }
 
     /* (non-Javadoc)
@@ -136,7 +137,7 @@ public class OntologyTreeToTextTransferHandler extends TransferHandler {
         return true;
     }
     
-    private void dirtOntologyElement(JComponent source, boolean inMapping) {
+/*    private void dirtOntologyElement(JComponent source, boolean inMapping) {
     	
     	JTree tree = (JTree) source;
         TreePath path = tree.getSelectionPath();
@@ -144,8 +145,9 @@ public class OntologyTreeToTextTransferHandler extends TransferHandler {
         	DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
             Object nodeObject = node.getUserObject();
             ((OntologyElement) nodeObject).setInMapping(true);
+        	System.out.println("dirtOntologyElement: " + ((OntologyElement) nodeObject).getDisplayName() + ((OntologyElement) nodeObject).getInMapping());
         }
         tree.repaint();
-    }
+    }*/
 
 }

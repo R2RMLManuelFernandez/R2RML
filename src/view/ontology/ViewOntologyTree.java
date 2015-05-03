@@ -41,12 +41,18 @@ public class ViewOntologyTree extends JPanel {
 
 	private static final long serialVersionUID = 2335706050345687194L;
 
-	private JTree treeOntology;
-	private DefaultTreeModel model;
 	private OntologyModelConstructor ontologyModel = null;
 	private OntologyTreeModelConstructor ontologyTreeModel = null;
 	private JTextField textFieldOntologySearch;
 	private MyOntologyRender ontologyRender;
+	private JTree treeAllOntology;
+	private DefaultTreeModel modelGeneral;
+	private JTree treeClassOntology;
+	private DefaultTreeModel modelClass;
+	private JTree treeObjectPropertyOntology;
+	private DefaultTreeModel modelObjectProperty;
+	private JTree treeDataPropertyOntology;
+	private DefaultTreeModel modelDataProperty;
 	
 	/**
 	 * Create the panel.
@@ -58,8 +64,8 @@ public class ViewOntologyTree extends JPanel {
 		add(panelFind, "cell 0 0,grow");
 		panelFind.setLayout(new MigLayout("", "[35.00px][86px,grow][]", "[18.00px][18.00px]"));
 		
-		JLabel lblFnd = new JLabel("Find:");
-		panelFind.add(lblFnd, "cell 0 0 1 2,alignx center,aligny center");
+		JLabel labelFind = new JLabel("Find:");
+		panelFind.add(labelFind, "cell 0 0 1 2,alignx center,aligny center");
 		
 		textFieldOntologySearch = new JTextField();
 		panelFind.add(textFieldOntologySearch, "flowx,cell 1 0 1 2,growx,aligny center");
@@ -68,17 +74,17 @@ public class ViewOntologyTree extends JPanel {
 			
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				findOntologyNodes(treeOntology);
+				findOntologyNodes(treeAllOntology);
 			}
 			
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				findOntologyNodes(treeOntology);
+				findOntologyNodes(treeAllOntology);
 			}
 			
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				findOntologyNodes(treeOntology);
+				findOntologyNodes(treeAllOntology);
 			}
 		});
 		
@@ -87,7 +93,7 @@ public class ViewOntologyTree extends JPanel {
 		buttonOntologyFindPrevious.setMinimumSize(new Dimension(30, 15));
 		buttonOntologyFindPrevious.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				buttonOntologyFindPreviousActionPerformed(treeOntology);
+				buttonOntologyFindPreviousActionPerformed(treeAllOntology);
 			}
 		});
 		
@@ -96,7 +102,7 @@ public class ViewOntologyTree extends JPanel {
 		buttonOntologyFindNext.setMinimumSize(new Dimension(30, 15));
 		buttonOntologyFindNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				buttonOntologyFindNextActionPerformed(treeOntology);
+				buttonOntologyFindNextActionPerformed(treeAllOntology);
 			}
 		});
 		
@@ -110,7 +116,7 @@ public class ViewOntologyTree extends JPanel {
 		JButton buttonExpandOntologyTree = new JButton("Expand");
 		buttonExpandOntologyTree.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				TreeUtil.expandAll(treeOntology);
+				TreeUtil.expandAll(treeAllOntology);
 			}
 		});
 		panelTreeButton.add(buttonExpandOntologyTree, "cell 1 0,alignx left");
@@ -120,7 +126,7 @@ public class ViewOntologyTree extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TreeUtil.collapseAll(treeOntology);
+				TreeUtil.collapseAll(treeAllOntology);
 			}
 		});
 		panelTreeButton.add(buttonCollapseOntologyTree, "cell 3 0,alignx right");
@@ -135,34 +141,57 @@ public class ViewOntologyTree extends JPanel {
 		add(tabbedPane, "cell 0 5,grow");
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		
-		JScrollPane scrollPaneOntologyTree = new JScrollPane();
-		tabbedPane.addTab("All", null, scrollPaneOntologyTree, null);
+		JScrollPane scrollPaneOntologyGeneralTree = new JScrollPane();
+		tabbedPane.addTab("All", null, scrollPaneOntologyGeneralTree, "All elements in ontology");
 		
-		tabbedPane.addTab("Classes", null, new JTree(), null);
+		JScrollPane scrollPaneOntologyClassTree = new JScrollPane();
+		tabbedPane.addTab("Classes", null, scrollPaneOntologyClassTree, "Classes");
 		
-		tabbedPane.addTab("Data Properties", null, new JTree(), null);
+		JScrollPane scrollPaneOntologyObjectPropertyTree = new JScrollPane();
+		tabbedPane.addTab("Object Properties", null, scrollPaneOntologyObjectPropertyTree, "Object Properties");
 		
-		tabbedPane.addTab("Object Properties", null, new JTree(), null);
+		JScrollPane scrollPaneOntologyDataPropertyTree = new JScrollPane();
+		tabbedPane.addTab("Data Properties", null, scrollPaneOntologyDataPropertyTree, "Data Properties");
 		
-		treeOntology = new JTree(new DefaultTreeModel(null));
-		treeOntology.setCellRenderer(ontologyRender);
-		treeOntology.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);		
-		treeOntology.setDragEnabled(true);
-		treeOntology.setDropMode(DropMode.ON_OR_INSERT);
-		scrollPaneOntologyTree.setViewportView(treeOntology);
+		treeAllOntology = new JTree(new DefaultTreeModel(null));
         ontologyRender = new MyOntologyRender();
-
+        treeAllOntology.setCellRenderer(ontologyRender);
+        treeAllOntology.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);		
+        treeAllOntology.setDragEnabled(true);
+        treeAllOntology.setDropMode(DropMode.ON_OR_INSERT);
+		scrollPaneOntologyGeneralTree.setViewportView(treeAllOntology);
+		
+		treeClassOntology = new JTree(new DefaultTreeModel(null));
+        treeClassOntology.setCellRenderer(ontologyRender);
+        treeClassOntology.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);		
+        treeClassOntology.setDragEnabled(true);
+        treeClassOntology.setDropMode(DropMode.ON_OR_INSERT);
+		scrollPaneOntologyClassTree.setViewportView(treeClassOntology);
+		
+		treeObjectPropertyOntology = new JTree(new DefaultTreeModel(null));
+		treeObjectPropertyOntology.setCellRenderer(ontologyRender);
+		treeObjectPropertyOntology.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);		
+		treeObjectPropertyOntology.setDragEnabled(true);
+		treeObjectPropertyOntology.setDropMode(DropMode.ON_OR_INSERT);
+		scrollPaneOntologyObjectPropertyTree.setViewportView(treeObjectPropertyOntology);
+		
+		treeDataPropertyOntology = new JTree(new DefaultTreeModel(null));
+		treeDataPropertyOntology.setCellRenderer(ontologyRender);
+		treeDataPropertyOntology.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);		
+		treeDataPropertyOntology.setDragEnabled(true);
+		treeDataPropertyOntology.setDropMode(DropMode.ON_OR_INSERT);
+		scrollPaneOntologyDataPropertyTree.setViewportView(treeDataPropertyOntology);
 		
 	}
 	
 	/**
-	 * Sets the transferhandler for the tree
+	 * Sets the transferhandler for the general tree
 	 * 
 	 * @param paramTransferHandler
 	 */
 	public void setOntologyTransferHandler(TransferHandler paramTransferHandler) {
 		
-		treeOntology.setTransferHandler(paramTransferHandler);
+		treeAllOntology.setTransferHandler(paramTransferHandler);
 		
 	}
 		
@@ -180,10 +209,20 @@ public class ViewOntologyTree extends JPanel {
 			// TODO Auto-generated catch block
 			throw(e);
 		}
-		ontologyTreeModel = new OntologyTreeModelConstructor(ontologyModel.getThing());
+		ontologyTreeModel = new OntologyTreeModelConstructor(ontologyModel.getThing(), ontologyModel.getTopObjectProperty(),
+								ontologyModel.getTopDataProperty());
 		
-		this.model = ontologyTreeModel.getOntologyTreeModel();
-		this.treeOntology.setModel(model);
+		this.modelGeneral = ontologyTreeModel.getOntologyTreeGeneralModel();
+		this.treeAllOntology.setModel(modelGeneral);
+		
+		this.modelClass = ontologyTreeModel.getOntologyTreeClassModel();
+		this.treeClassOntology.setModel(modelClass);
+		
+		this.modelObjectProperty = ontologyTreeModel.getOntologyTreeObjectPropertiesModel();
+		this.treeObjectPropertyOntology.setModel(modelObjectProperty);
+		
+		this.modelDataProperty = ontologyTreeModel.getOntologyTreeDataPropertiesModel();
+		this.treeDataPropertyOntology.setModel(modelDataProperty);
 		
 	}
 
@@ -194,7 +233,7 @@ public class ViewOntologyTree extends JPanel {
 		String textToFind = textFieldOntologySearch.getText();
 		ontologyRender.setStart(textToFind);
 		if (textToFind != null && !textToFind.isEmpty()) {
-			TreeUtil.searchOntologyTree(paramTree, paramTree.getPathForRow(0), textToFind.toLowerCase());
+			TreeUtil.searchNameInOntologyTree(paramTree, paramTree.getPathForRow(0), textToFind.toLowerCase());
 		}
 		paramTree.repaint();
 	}
@@ -251,31 +290,43 @@ public class ViewOntologyTree extends JPanel {
 			if (row < 0 ) {
 				row = paramTree.getRowCount() - 1;
 			}
-			if (row > treeOntology.getRowCount()) {
+			if (row > paramTree.getRowCount()) {
 				row = 0;
 			}
 	
 			TreePath path = null;
 			try {
-				path = treeOntology.getNextMatch(text, row, Position.Bias.Backward);
+				path = paramTree.getNextMatch(text, row, Position.Bias.Backward);
 			} catch (IllegalArgumentException  ia) {
 				System.out.print(row);
 				ia.printStackTrace();
 			}
 			
 			if (path != null) {
-				treeOntology.setSelectionPath(path);
-				treeOntology.scrollPathToVisible(path);
+				paramTree.setSelectionPath(path);
+				paramTree.scrollPathToVisible(path);
 			}
 			else {
 				if (row != 0) {
-					path = treeOntology.getNextMatch(text, treeOntology.getRowCount(), Position.Bias.Backward);
+					path = paramTree.getNextMatch(text, paramTree.getRowCount(), Position.Bias.Backward);
 					if (path != null) {
-						treeOntology.setSelectionPath(path);
+						paramTree.setSelectionPath(path);
 					}
 				}
 			}
 		}
+	}
+	
+
+	/**
+	 * Find the nodes in the ontology tree which label begins whith the pattern
+	 */
+	public void findInMappingNodes(String iri, Boolean dirt) {
+		
+		//System.out.println("findInMappingNodes: " + iri);
+		TreeUtil.searchIriInOntologyTree(treeAllOntology, treeAllOntology.getPathForRow(0), iri, dirt);
+
+		treeAllOntology.repaint();
 	}
 
 }

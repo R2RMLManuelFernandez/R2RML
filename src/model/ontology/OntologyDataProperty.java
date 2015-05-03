@@ -16,6 +16,9 @@
 
 package model.ontology;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 /**
  * Class representing an ontology data proprety 
  *
@@ -23,9 +26,40 @@ package model.ontology;
  *
  */
 public class OntologyDataProperty extends OntologyElement {
+	
+	private ArrayList<OntologyDataProperty> subDataProperties = null;
 
 	public OntologyDataProperty(String IRI, String displayName, String nameSpace) {
 		super(IRI, displayName, nameSpace);
+		this.subDataProperties = new ArrayList<OntologyDataProperty>();
+	}
+	
+	/**
+	 * @param subDataProperty
+	 */
+	public void addSubDataProperty (OntologyDataProperty subDataProperty) {
+		this.subDataProperties.add(subDataProperty);
+	}
+	
+	/**
+	 * @param subDataProperties
+	 */
+	public void addSubDataProperties (Set<OntologyDataProperty> subDataProperties) {
+		this.subDataProperties.addAll(subDataProperties);
+	}
+	
+	/**
+	 * @return
+	 */
+	public ArrayList<OntologyDataProperty> getSubDataProperties() {
+		return subDataProperties;
+	}
+	
+	/**
+	 * @return
+	 */
+	public Boolean hasSubDataProperties() {
+		return this.subDataProperties.isEmpty()? false : true;
 	}
 	
 	/**

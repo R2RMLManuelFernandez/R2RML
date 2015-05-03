@@ -170,13 +170,15 @@ public class R2RMLMain {
 		viewTableMapping.setModel(modelMappingTable);
 		frame.getContentPane().add(viewTableMapping, "cell 1 3,grow");
 		
-		controlAddNewMapping.setView(viewTableMapping);
+		controlAddNewMapping.setViewMapping(viewTableMapping);
+		controlAddNewMapping.setViewOntology(viewOntologyTree);
 		
 		//controller for the mapping
 		ControllerMappingTable controlTableMapping = new ControllerMappingTable(modelMappingTable);
 		
 		viewTableMapping.setController(controlTableMapping);
-		controlTableMapping.setView(viewTableMapping);		
+		controlTableMapping.setView(viewTableMapping);
+		controlTableMapping.setViewOntology(viewOntologyTree);
 
 		frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		frame.pack();

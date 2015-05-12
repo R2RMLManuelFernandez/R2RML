@@ -53,7 +53,7 @@ import view.database.ViewDatabaseTree;
 import view.menu.database.OpenDatabaseDialog;
 import view.menu.ontology.OpenOntologyIRI;
 import view.ontology.OntologyTreeToTextTransferHandler;
-import view.ontology.ViewOntologyTree;
+import view.ontology.ViewOntology;
 import view.tableMapping.ViewTableMapping;
 import control.addMappingItem.ControllerAddNewMapping;
 import control.mappingTable.ControllerMappingTable;
@@ -76,8 +76,8 @@ public class R2RMLMain {
 	private StaXListOntologySourcesWriter recentsWriter;
 	private ViewAddMappingItem viewAddNewMapping;
 	private ViewTableMapping viewTableMapping;
-	private ViewOntologyTree viewOntologyTree;
-	private ViewDatabaseTree viewDatabaseTree;
+	private ViewOntology viewOntology;
+	private ViewDatabaseTree viewDatabase;
 	
 
 	/**
@@ -128,22 +128,22 @@ public class R2RMLMain {
 		createMenuBar();
 		
 		//view for the ontology 
-		viewOntologyTree = new ViewOntologyTree();
-		frame.getContentPane().add(viewOntologyTree, "cell 0 0 1 4,grow");
+		viewOntology = new ViewOntology();
+		frame.getContentPane().add(viewOntology, "cell 0 0 1 4,grow");
 
 		//transferhandler between ontology view and the view to add a term to the mapping
         TransferHandler ontologyTransferHandler = new OntologyTreeToTextTransferHandler();
         
-        viewOntologyTree.setOntologyTransferHandler(ontologyTransferHandler);
+        viewOntology.setOntologyTransferHandler(ontologyTransferHandler);
 
 		//view for the database 
-        viewDatabaseTree = new ViewDatabaseTree();
-        frame.getContentPane().add(viewDatabaseTree, "cell 2 0 1 4,grow");
+        viewDatabase = new ViewDatabaseTree();
+        frame.getContentPane().add(viewDatabase, "cell 2 0 1 4,grow");
 
 		//transferhandler between database view and the view to add a term to the mapping
         TransferHandler databaseTransferHandler = new DatabaseTreeToTextTransferHandler();
         
-        viewDatabaseTree.setDatabaseTransferHandler(databaseTransferHandler);
+        viewDatabase.setDatabaseTransferHandler(databaseTransferHandler);
        
         //model for the mapping term view
 		MappingElement viewMappingModel = new MappingElement();
@@ -156,6 +156,12 @@ public class R2RMLMain {
 		viewAddNewMapping.setBorder(new LineBorder(Color.DARK_GRAY));
 		viewAddNewMapping.setBackground(UIManager.getColor("EditorPane.background"));
 		frame.getContentPane().add(viewAddNewMapping, "cell 1 1 1 2,grow");
+		
+		//model mappingElement for the ontology tree action listener
+		viewOntology.setMappingItem(viewMappingModel);
+		
+		//model mappingElement for the database tree action listener
+		viewDatabase.setMappingItem(viewMappingModel);
 		
 		//model for the mapping
 		MappingTable modelMappingTable = new MappingTable(new Mapping());
@@ -171,14 +177,14 @@ public class R2RMLMain {
 		frame.getContentPane().add(viewTableMapping, "cell 1 3,grow");
 		
 		controlAddNewMapping.setViewMapping(viewTableMapping);
-		controlAddNewMapping.setViewOntology(viewOntologyTree);
+		controlAddNewMapping.setViewOntology(viewOntology);
 		
 		//controller for the mapping
 		ControllerMappingTable controlTableMapping = new ControllerMappingTable(modelMappingTable);
 		
 		viewTableMapping.setController(controlTableMapping);
 		controlTableMapping.setView(viewTableMapping);
-		controlTableMapping.setViewOntology(viewOntologyTree);
+		controlTableMapping.setViewOntology(viewOntology);
 
 		frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		frame.pack();
@@ -339,7 +345,8 @@ public class R2RMLMain {
 			addToRecents(source);
 				
 			try {
-				viewOntologyTree.setOntologyModel(iri);
+				viewOntology.setOntologyModel(iri);
+				// TODO Cuando cambia el modelo tamabien hay que cambiar el transferhandler
 			} catch (OWLOntologyCreationException e1) {
 				// TODO Auto-generated catch block
 		    	JOptionPane.showMessageDialog(frame, "Unable to open the ontology", "Error loading ontology", JOptionPane.ERROR_MESSAGE);
@@ -371,7 +378,7 @@ public class R2RMLMain {
 			addToRecents(source);
 			
 			try {
-				viewOntologyTree.setOntologyModel(file);
+				viewOntology.setOntologyModel(file);
 			} catch (OWLOntologyCreationException e) {
 				// TODO Auto-generated catch block
 		    	JOptionPane.showMessageDialog(frame, "Unable to open the ontology", "Error loading ontology", JOptionPane.ERROR_MESSAGE);
@@ -414,7 +421,7 @@ public class R2RMLMain {
 			String password = (String) dbDesc[5];
 			
 			try {
-				viewDatabaseTree.setDatabaseModel(dbms, name, adress, port, userName, password);
+				viewDatabase.setDatabaseModel(dbms, name, adress, port, userName, password);
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 		    	JOptionPane.showMessageDialog(frame, "Unable to connect to the database", "Error connecting to database", JOptionPane.ERROR_MESSAGE);
@@ -516,7 +523,7 @@ public class R2RMLMain {
 		addToRecents(source);
 		
 		try {
-			viewOntologyTree.setOntologyModel(ontologySource);
+			viewOntology.setOntologyModel(ontologySource);
 		} catch (OWLOntologyCreationException oe) {
 			// TODO Auto-generated catch block
 	    	JOptionPane.showMessageDialog(frame, "Unable to open the ontology", "Error loading ontology", JOptionPane.ERROR_MESSAGE);	

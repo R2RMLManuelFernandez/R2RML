@@ -22,7 +22,7 @@ import java.awt.event.ActionListener;
 
 import model.mapping.Mapping;
 import model.mapping.MappingElement;
-import view.ontology.ViewOntologyTree;
+import view.ontology.ViewOntology;
 import view.tableMapping.ViewTableMapping;
 
 /**
@@ -36,7 +36,7 @@ public class ControllerAddNewMapping implements ActionListener {
 	private MappingElement mappingItem;
 	private Mapping mappingModel;
 	private ViewTableMapping viewMapping;
-	private ViewOntologyTree viewOntology;
+	private ViewOntology viewOntology;
 	
 	public ControllerAddNewMapping(Mapping mappingModel, MappingElement mappingElement) {
 		mappingItem = mappingElement;
@@ -69,7 +69,7 @@ public class ControllerAddNewMapping implements ActionListener {
 	/**
 	 * @param viewOntology the viewOntology to set
 	 */
-	public void setViewOntology(ViewOntologyTree viewOntology) {
+	public void setViewOntology(ViewOntology viewOntology) {
 		this.viewOntology = viewOntology;
 	}
 	

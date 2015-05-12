@@ -102,13 +102,21 @@ public class ViewAddMappingItem extends JPanel implements Observer {
 	 */
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		if (model.getOntologyElement().equals(null)) {
-			System.out.println("El elemneto de la ontologia del Mapping es null");
+		if (model.getOntologyElement() == null) {
+			System.out.println("El elemento de la ontologia del Mapping es null");
 		}
-		String ontElementName = model.getOntologyElement().getDisplayName();
-		textFieldOntology.setText(ontElementName);
-		String columnName = model.getDatabaseColumn().getColumnName();
-		textFieldDatabase.setText(columnName);
+		else {
+			String ontElementName = model.getOntologyElement().getDisplayName();
+			textFieldOntology.setText(ontElementName);
+		}
+		
+		if (model.getDatabaseColumn() == null) {
+			System.out.println("El elemento de la BBDD del Mapping es null");
+		}
+		else {
+			String columnName = model.getDatabaseColumn().getColumnName();
+			textFieldDatabase.setText(columnName);
+		}
 		repaint();
 	}
 }

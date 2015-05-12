@@ -86,7 +86,7 @@ public class MyOntologyRender extends DefaultTreeCellRenderer {
 		
 		if (((OntologyElement) nodeObject).getInMapping()) {
 			setForeground(Color.GREEN);
-			//System.out.println("getTreeCellRendererComponent: Poniendo verde " + ((OntologyElement) nodeObject).getDisplayName());
+			System.out.println("getTreeCellRendererComponent: Poniendo verde " + ((OntologyElement) nodeObject).getDisplayName());
 		}
 		else {
 			if (selected) {

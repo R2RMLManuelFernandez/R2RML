@@ -39,11 +39,15 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import view.util.DatabaseTreePopupHandler;
+import view.util.TreePopupHandler;
 import view.util.TreeUtil;
 import control.database.load.DatabaseLoader;
 import control.database.load.DatabaseTreeModelConstructor;
 import model.database.Database;
+import model.mapping.MappingElement;
 import net.miginfocom.swing.MigLayout;
+
 import javax.swing.JSeparator;
 
 /**
@@ -62,6 +66,8 @@ public class ViewDatabaseTree extends JPanel {
 	private DatabaseLoader DBLoader = null;
 	private JTree treeDatabase;
 	private MyDatabaseRender databaseRender;
+	private TreePopupHandler databasePopupHandler;
+	private MappingElement mappingItem;
 	
 	/**
 	 * Create the panel.
@@ -154,7 +160,7 @@ public class ViewDatabaseTree extends JPanel {
 		treeDatabase = new JTree(new DefaultTreeModel(null));
 		databaseRender = new MyDatabaseRender();
 		treeDatabase.setCellRenderer(databaseRender);
-		treeDatabase.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);		
+		treeDatabase.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);		
 		treeDatabase.setDragEnabled(true);
 		treeDatabase.setDropMode(DropMode.ON_OR_INSERT);
 		treeDatabase.setRootVisible(false);
@@ -203,8 +209,17 @@ public class ViewDatabaseTree extends JPanel {
 
 		this.model = DBModelT.getDatabaseTreeModel();
 
-		this.treeDatabase.setModel(model);;
+		this.treeDatabase.setModel(model);
+		
+		databasePopupHandler = new DatabaseTreePopupHandler(treeDatabase, mappingItem);
+		treeDatabase.add(databasePopupHandler.getPopup());
 
+	}
+	
+	public void setMappingItem (MappingElement mappingItem) {
+		
+		this.mappingItem = mappingItem;
+		
 	}
 	
 	/**

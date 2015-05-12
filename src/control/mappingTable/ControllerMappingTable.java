@@ -24,7 +24,7 @@ import javax.swing.JTable;
 
 import model.mapping.MappingTable;
 import model.ontology.OntologyElement;
-import view.ontology.ViewOntologyTree;
+import view.ontology.ViewOntology;
 import view.tableMapping.ViewTableMapping;
 
 /**
@@ -37,7 +37,7 @@ public class ControllerMappingTable implements ActionListener {
 
 	private MappingTable model;
 	private ViewTableMapping view;
-	private ViewOntologyTree viewOntology;
+	private ViewOntology viewOntology;
 	private OntologyElement dirtyElement;
 	
 	public ControllerMappingTable(MappingTable m) {
@@ -95,7 +95,7 @@ public class ControllerMappingTable implements ActionListener {
 	/**
 	 * @param viewOntology the viewOntology to set
 	 */
-	public void setViewOntology(ViewOntologyTree viewOntology) {
+	public void setViewOntology(ViewOntology viewOntology) {
 		this.viewOntology = viewOntology;
 	}
 	

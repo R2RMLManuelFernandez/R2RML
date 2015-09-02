@@ -28,7 +28,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import model.database.Column;
-import model.mapping.MappingElement;
+import model.r2rmlmapping.triplesMap.TriplesMap;
 import view.addMappingItem.MappingTextField;
 import control.database.load.TransferableDatabaseNode;
 
@@ -129,7 +129,7 @@ public class DatabaseTreeToTextTransferHandler extends TransferHandler {
         // Add data to model.
         MappingTextField databaseTextField = (MappingTextField) info.getComponent();
         Column databaseColumn = (Column) node.getUserObject();
-        MappingElement mapping = databaseTextField.getModel();
+        TriplesMap mapping = databaseTextField.getModel();
 //		System.out.println("Se añade la columna de la BBDD");
         databaseTextField.setText(databaseColumn.getColumnName());
         mapping.setDatabaseColumn(databaseColumn);

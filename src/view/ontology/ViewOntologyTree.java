@@ -22,13 +22,14 @@ import java.awt.event.ActionListener;
 
 import javax.swing.DropMode;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
-import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Position;
@@ -36,10 +37,9 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import model.mapping.MappingElement;
+import model.r2rmlmapping.triplesMap.TriplesMap;
 import net.miginfocom.swing.MigLayout;
 import view.util.OntologyTreePopupHandler;
-import view.util.TreePopupHandler;
 import view.util.TreeUtil;
 
 /**
@@ -57,21 +57,24 @@ public class ViewOntologyTree extends JPanel {
 	private MyOntologyRender ontologyRender;
 	private JTextField textFieldOntologySearch;
 	private JTree treeOntology;
-	private MappingElement mappingItem;
-	private TreePopupHandler popupHandler;
+	@SuppressWarnings("unused")
+	private TriplesMap mappingItem;
+	private OntologyTreePopupHandler popupHandler;
+	private JFrame frame;
 	
 	/**
 	 * Create the panel.
 	 */
-	public ViewOntologyTree() {
+	public ViewOntologyTree(JFrame paramFrame) {
+		
+		this.frame = paramFrame;
 		
         ontologyRender = new MyOntologyRender();
-		setLayout(new MigLayout("", "[316px,grow]", "[62px][50.00px][grow]"));
+		setLayout(new MigLayout("", "[316px,grow]", "[62px][2.00][38.00px][grow]"));
 		
 		JPanel panelFind = new JPanel();
-		panelFind.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		add(panelFind, "cell 0 0,alignx left,aligny top");
-		panelFind.setLayout(new MigLayout("", "[40.00px][150.00,grow][100.00px]", "[16px][4px][16px]"));
+		panelFind.setLayout(new MigLayout("", "[40.00px][150.00,grow][100.00px]", "[18.00px][4px][18.00px]"));
 		
 		JLabel labelFind = new JLabel("Find:");
 		panelFind.add(labelFind, "cell 0 0 1 3,alignx center,aligny center");
@@ -115,9 +118,11 @@ public class ViewOntologyTree extends JPanel {
 			}
 		});
 		
+		JSeparator separator = new JSeparator();
+		add(separator, "cell 0 1,growx");
+		
 		JPanel panelTreeButton = new JPanel();
-		panelTreeButton.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		add(panelTreeButton, "cell 0 1,grow");
+		add(panelTreeButton, "cell 0 2,grow");
 		panelTreeButton.setLayout(new MigLayout("", "[-92.00,grow][85.00][10.00][85.00][grow]", "[]"));
 		
 		JButton buttonExpandOntologyTree = new JButton("Expand");
@@ -139,7 +144,7 @@ public class ViewOntologyTree extends JPanel {
 		panelTreeButton.add(buttonCollapseOntologyTree, "cell 3 0,growx");
         
         JScrollPane scrollPaneOntologyTree = new JScrollPane();		
-        add(scrollPaneOntologyTree, "cell 0 2,grow");
+        add(scrollPaneOntologyTree, "cell 0 3,grow");
         
         treeOntology = new JTree(new DefaultTreeModel(null));
         scrollPaneOntologyTree.setViewportView(treeOntology);
@@ -158,18 +163,20 @@ public class ViewOntologyTree extends JPanel {
 	public void setTreeModel(DefaultTreeModel treeModel) {
 		
 		this.treeOntology.setModel(treeModel);
-		
-        //creo el mappingItem vacuo y lo asigno vacio al popup-habdler
-        //tengo que establecer el mappingItem antes de asignarselo al popuphandler
-        popupHandler = new OntologyTreePopupHandler(treeOntology, mappingItem);
-        treeOntology.add(popupHandler.getPopup());
 
 	}
 	
-	public void setMappingItem (MappingElement mappingItem) {
+	/**
+	 * @param mappingItem
+	 */
+	public void setMappingItem (TriplesMap mappingItem) {
 		
 		this.mappingItem = mappingItem;
 		
+        //creo el mappingItem vacio y lo asigno vacio al popup-habdler
+        //tengo que establecer el mappingItem antes de crear el popuphandler
+        popupHandler = new OntologyTreePopupHandler(treeOntology, mappingItem, frame);
+        treeOntology.add(popupHandler.getPopup());		
 	}
 	
 	/**

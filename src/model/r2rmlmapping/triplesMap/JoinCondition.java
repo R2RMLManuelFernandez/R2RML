@@ -14,39 +14,50 @@
  * limitations under the License.
  */
 
-package view.addMappingItem;
+package model.r2rmlmapping.triplesMap;
 
-import javax.swing.JTextField;
+import java.util.Observable;
 
-import model.r2rmlmapping.triplesMap.TriplesMap;
+import model.database.Column;
 
 /**
- * Auxiliar: view for the model of the mapping element 
+ * Represents a join condition of a refernced object map
  * 
  * @author Manuel Fernandez Perez
  *
  */
-public class MappingTextField extends JTextField {
-
-	private static final long serialVersionUID = -2161715131382328708L;
-
-	private TriplesMap model;
+public class JoinCondition extends Observable {
 	
-	public MappingTextField() {
-	}
-
+	private Column child = null;
+	private Column parent = null;
+	
 	/**
-	 * @return the model
+	 * @return the child
 	 */
-	public TriplesMap getModel() {
-		return model;
+	public Column getChild() {
+		return child;
 	}
-
 	/**
-	 * @param model the model to set
+	 * @param child the child to set
 	 */
-	public void setModel(TriplesMap model) {
-		this.model = model;
+	public void setChild(Column child) {
+		this.child = child;
+		setChanged();
+		notifyObservers();
 	}
-
+	/**
+	 * @return the parent
+	 */
+	public Column getParent() {
+		return parent;
+	}
+	/**
+	 * @param parent the parent to set
+	 */
+	public void setParent(Column parent) {
+		this.parent = parent;
+		setChanged();
+		notifyObservers();
+	}
+	
 }

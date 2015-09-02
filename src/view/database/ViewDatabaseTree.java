@@ -24,9 +24,11 @@ import java.util.Enumeration;
 
 import javax.swing.DropMode;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
@@ -39,16 +41,13 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import model.database.Database;
+import model.r2rmlmapping.triplesMap.TriplesMap;
+import net.miginfocom.swing.MigLayout;
 import view.util.DatabaseTreePopupHandler;
-import view.util.TreePopupHandler;
 import view.util.TreeUtil;
 import control.database.load.DatabaseLoader;
 import control.database.load.DatabaseTreeModelConstructor;
-import model.database.Database;
-import model.mapping.MappingElement;
-import net.miginfocom.swing.MigLayout;
-
-import javax.swing.JSeparator;
 
 /**
  * Displays the database model in a tree
@@ -66,17 +65,29 @@ public class ViewDatabaseTree extends JPanel {
 	private DatabaseLoader DBLoader = null;
 	private JTree treeDatabase;
 	private MyDatabaseRender databaseRender;
-	private TreePopupHandler databasePopupHandler;
-	private MappingElement mappingItem;
+	private DatabaseTreePopupHandler databasePopupHandler;
+	@SuppressWarnings("unused")
+	private TriplesMap mappingItem;
+
+	private JFrame frame;
 	
 	/**
 	 * Create the panel.
 	 */
-	public ViewDatabaseTree() {
-		setLayout(new MigLayout("", "[grow]", "[55.00][pref!][][pref!][][grow]"));
+	public ViewDatabaseTree(JFrame frame) {
+		
+		this.frame = frame;
+		
+		setLayout(new MigLayout("", "[grow]", "[][2.00][55.00][pref!][][grow]"));
+		
+		JLabel labelDatabaseName = new JLabel("Database:");
+		add(labelDatabaseName, "cell 0 0");
+		
+		JSeparator separator_1 = new JSeparator();
+		add(separator_1, "cell 0 1,grow");
 		
 		JPanel panelFind = new JPanel();
-		add(panelFind, "cell 0 0,grow");
+		add(panelFind, "cell 0 2,grow");
 		panelFind.setLayout(new MigLayout("", "[30.00px][grow][]", "[18.00px,grow][18.00]"));
 		
 		JLabel labelDatabaseSearch = new JLabel("Find:");
@@ -124,10 +135,10 @@ public class ViewDatabaseTree extends JPanel {
 		panelFind.add(buttonDatabaseFindNext, "cell 2 1,grow");
 		
 		JSeparator separator = new JSeparator();
-		add(separator, "cell 0 1,grow");
+		add(separator, "cell 0 3,grow");
 		
 		JPanel panelTreeButton = new JPanel();
-		add(panelTreeButton, "cell 0 2,grow");
+		add(panelTreeButton, "cell 0 4,grow");
 		panelTreeButton.setLayout(new MigLayout("", "[grow][89px][15][][grow]", "[23px]"));
 		
 		JButton buttonExpandDatabaseTree = new JButton("Expand");
@@ -147,12 +158,6 @@ public class ViewDatabaseTree extends JPanel {
 			}
 		});
 		panelTreeButton.add(buttonCollapseDatabaseTree, "cell 3 0,alignx right");
-		
-		JSeparator separator_1 = new JSeparator();
-		add(separator_1, "cell 0 3,grow");
-		
-		JLabel labelDatabaseName = new JLabel("Database:");
-		add(labelDatabaseName, "cell 0 4");
 		
 		JScrollPane scrollPaneDatabaseTree = new JScrollPane();
 		add(scrollPaneDatabaseTree, "cell 0 5,grow");
@@ -210,15 +215,14 @@ public class ViewDatabaseTree extends JPanel {
 		this.model = DBModelT.getDatabaseTreeModel();
 
 		this.treeDatabase.setModel(model);
-		
-		databasePopupHandler = new DatabaseTreePopupHandler(treeDatabase, mappingItem);
-		treeDatabase.add(databasePopupHandler.getPopup());
 
 	}
 	
-	public void setMappingItem (MappingElement mappingItem) {
+	public void setMappingItem (TriplesMap mappingItem) {
 		
 		this.mappingItem = mappingItem;
+		databasePopupHandler = new DatabaseTreePopupHandler(frame, treeDatabase, mappingItem);
+		treeDatabase.add(databasePopupHandler.getPopup());
 		
 	}
 	
@@ -310,6 +314,13 @@ public class ViewDatabaseTree extends JPanel {
 				treeDatabase.scrollPathToVisible(path);
 			}
 		}		
+	}
+
+	/**
+	 * @return the database
+	 */
+	public Database getDatabase() {
+		return database;
 	}
 
 }

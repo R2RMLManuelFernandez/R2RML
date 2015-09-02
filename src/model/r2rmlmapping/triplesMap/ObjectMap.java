@@ -14,39 +14,24 @@
  * limitations under the License.
  */
 
-package view.addMappingItem;
-
-import javax.swing.JTextField;
-
-import model.r2rmlmapping.triplesMap.TriplesMap;
+package model.r2rmlmapping.triplesMap;
 
 /**
- * Auxiliar: view for the model of the mapping element 
+ * Interface for object map of a R2RML mapping
  * 
  * @author Manuel Fernandez Perez
  *
  */
-public class MappingTextField extends JTextField {
-
-	private static final long serialVersionUID = -2161715131382328708L;
-
-	private TriplesMap model;
+public interface ObjectMap {
 	
-	public MappingTextField() {
-	}
+	/**
+	 * @return the predicateObjectMap
+	 */
+	public PredicateObjectMap getPredicateObjectMap();
 
 	/**
-	 * @return the model
+	 * @return the type
 	 */
-	public TriplesMap getModel() {
-		return model;
-	}
-
-	/**
-	 * @param model the model to set
-	 */
-	public void setModel(TriplesMap model) {
-		this.model = model;
-	}
+	public String getType();
 
 }

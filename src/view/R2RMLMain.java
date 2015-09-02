@@ -38,25 +38,26 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-
-import model.mapping.Mapping;
-import model.mapping.MappingElement;
-import model.mapping.MappingTable;
 import model.menu.bookmarks.OntologySource;
 import model.menu.bookmarks.StaXListOntologySourcesParser;
 import model.menu.bookmarks.StaXListOntologySourcesWriter;
+import model.r2rmlmapping.R2RMLMapping;
+import model.r2rmlmapping.triplesMap.TriplesMap;
 import net.miginfocom.swing.MigLayout;
-import view.addMappingItem.ViewAddMappingItem;
+
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+
 import view.database.DatabaseTreeToTextTransferHandler;
 import view.database.ViewDatabaseTree;
 import view.menu.database.OpenDatabaseDialog;
 import view.menu.ontology.OpenOntologyIRI;
 import view.ontology.OntologyTreeToTextTransferHandler;
 import view.ontology.ViewOntology;
-import view.tableMapping.ViewTableMapping;
-import control.addMappingItem.ControllerAddNewMapping;
-import control.mappingTable.ControllerMappingTable;
+import view.r2rmlMapping.TriplesMapSelector;
+import view.r2rmlMapping.ViewR2RMLMapping;
+import view.triplesMap.TriplesMapTableSelector;
+import view.triplesMap.ViewTriplesMap;
+import control.r2rmlmapping.triplesMap.ControllerTriplesMap;
 
 /**
  * Main view
@@ -70,16 +71,24 @@ public class R2RMLMain {
 	private JMenuBar menuBar;
 	private OpenDatabaseDialog openDatabaseDialog;
 	private OpenOntologyIRI openOntologyIRI;
+	private TriplesMapTableSelector openTriplesMap;
+	private TriplesMapSelector triplesMapSelector; 
 	private JFileChooser fileChooserOntology;
 	private List<OntologySource> recentOntologies;
 	private JMenu menuRecent;
 	private StaXListOntologySourcesWriter recentsWriter;
-	private ViewAddMappingItem viewAddNewMapping;
-	private ViewTableMapping viewTableMapping;
+	private ViewTriplesMap viewTriplesMap;
 	private ViewOntology viewOntology;
 	private ViewDatabaseTree viewDatabase;
+	private R2RMLMapping r2rmlMappingModel;
+	private TriplesMap triplesMapModel;
+	private ControllerTriplesMap triplesMapController;
+	private ViewR2RMLMapping viewR2RMLMapping;
 	
-
+	private Boolean ontologyLoaded = false;
+	private Boolean databaseLoaded = false;
+	private Boolean r2rmlMapingLoaded = false;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -122,13 +131,13 @@ public class R2RMLMain {
 	private void initialize() {
 		frame = new JFrame();
 		frame.getContentPane().setBackground(Color.GRAY);
-		frame.getContentPane().setLayout(new MigLayout("", "[300.00,grow][656.00,grow][300.00,grow]", "[83.00,grow,center][grow][97.00][716.00,grow][]"));
+		frame.getContentPane().setLayout(new MigLayout("", "[300.00,grow][656.00,grow][300.00,grow]", "[83.00,grow,center][grow][345.00][550.00,grow][]"));
 		
 		//creates the menu
 		createMenuBar();
 		
-		//view for the ontology 
-		viewOntology = new ViewOntology();
+		//view for the ontologyv (the model is declared in the view)
+		viewOntology = new ViewOntology(frame);
 		frame.getContentPane().add(viewOntology, "cell 0 0 1 4,grow");
 
 		//transferhandler between ontology view and the view to add a term to the mapping
@@ -136,40 +145,42 @@ public class R2RMLMain {
         
         viewOntology.setOntologyTransferHandler(ontologyTransferHandler);
 
-		//view for the database 
-        viewDatabase = new ViewDatabaseTree();
+		//view for the database (the model is declared in the view)
+        viewDatabase = new ViewDatabaseTree(frame);
         frame.getContentPane().add(viewDatabase, "cell 2 0 1 4,grow");
 
 		//transferhandler between database view and the view to add a term to the mapping
         TransferHandler databaseTransferHandler = new DatabaseTreeToTextTransferHandler();
         
         viewDatabase.setDatabaseTransferHandler(databaseTransferHandler);
-       
-        //model for the mapping term view
-		MappingElement viewMappingModel = new MappingElement();
+ 
+		//the view to add a triples map to the r2rml mapping
+        viewTriplesMap = new ViewTriplesMap(frame);
+//        viewTriplesMap.setOntologyTransferHandler(ontologyTransferHandler);
+//        viewTriplesMap.setDatabaseTransferHandler(databaseTransferHandler);
+        viewTriplesMap.setBorder(new LineBorder(Color.DARK_GRAY));
+        viewTriplesMap.setBackground(UIManager.getColor("EditorPane.background"));
+		frame.getContentPane().add(viewTriplesMap, "cell 1 0 1 3,grow");
 
-		//the view to add a term to the mapping
-		viewAddNewMapping = new ViewAddMappingItem();
-		viewAddNewMapping.setModel(viewMappingModel);
-		viewAddNewMapping.setOntologyTransferHandler(ontologyTransferHandler);
-        viewAddNewMapping.setDatabaseTransferHandler(databaseTransferHandler);
-		viewAddNewMapping.setBorder(new LineBorder(Color.DARK_GRAY));
-		viewAddNewMapping.setBackground(UIManager.getColor("EditorPane.background"));
-		frame.getContentPane().add(viewAddNewMapping, "cell 1 1 1 2,grow");
+        //model for the R2RML mapping
+        r2rmlMappingModel = new R2RMLMapping();
+        r2rmlMapingLoaded = true;
+        
+        System.out.println("R2RMLMain --> Creado el modelo del mapping R2RML");
+        
+		//the view for the r2rml mapping
+		viewR2RMLMapping = new ViewR2RMLMapping();
+		frame.getContentPane().add(viewR2RMLMapping, "cell 1 3 ,grow");
 		
-		//model mappingElement for the ontology tree action listener
-		viewOntology.setMappingItem(viewMappingModel);
+		viewR2RMLMapping.setModel(r2rmlMappingModel);
 		
-		//model mappingElement for the database tree action listener
-		viewDatabase.setMappingItem(viewMappingModel);
-		
-		//model for the mapping
-		MappingTable modelMappingTable = new MappingTable(new Mapping());
-		
+
+//		MappingTable modelMappingTable = new MappingTable(new R2RMLMapping());
+/*			
 		//controller to add a term to the mapping
 		ControllerAddNewMapping controlAddNewMapping = new ControllerAddNewMapping(modelMappingTable.getModel(), viewMappingModel);
-		
-		viewAddNewMapping.setController(controlAddNewMapping);
+	
+		viewTriplesMap.setController(controlAddNewMapping);
 
 		//view for the mapping
 		viewTableMapping = new ViewTableMapping();
@@ -178,14 +189,16 @@ public class R2RMLMain {
 		
 		controlAddNewMapping.setViewMapping(viewTableMapping);
 		controlAddNewMapping.setViewOntology(viewOntology);
-		
+*/		
+
+/*		
 		//controller for the mapping
 		ControllerMappingTable controlTableMapping = new ControllerMappingTable(modelMappingTable);
 		
 		viewTableMapping.setController(controlTableMapping);
 		controlTableMapping.setView(viewTableMapping);
 		controlTableMapping.setViewOntology(viewOntology);
-
+*/
 		frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -252,7 +265,7 @@ public class R2RMLMain {
 		menuRecent = new JMenu("Open Recent ...");
 		paramMenu.add(menuRecent);
 		
-		//reads the lst of recent ontologies from the auxiliar XML file
+		//reads the list of recent ontologies from the auxiliar XML file
 		StaXListOntologySourcesParser importRecentParser = new StaXListOntologySourcesParser("ontology", "source","xmls/RecentOntologies.xml");
 		
 		JSeparator separatorRecent = new JSeparator();
@@ -304,6 +317,65 @@ public class R2RMLMain {
 		JMenu menuMapping = new JMenu("R2RML Mapping");
 		menuBar.add(menuMapping);
 		
+		JMenuItem menuItemNewR2RMLMapping = new JMenuItem("New R2RML Mapping");
+		menuItemNewR2RMLMapping.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				menuItemNewR2RMLMappingActionPerformed(e);
+				
+			}
+		});
+
+		menuMapping.add(menuItemNewR2RMLMapping);
+		
+		JMenuItem menuItemOpenR2RMLMapping = new JMenuItem("Open R2RML Mapping ...");
+		menuItemOpenR2RMLMapping.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				menuItemOpenR2RMLMappingActionPerformes(e);
+				
+			}
+		});
+		menuMapping.add(menuItemOpenR2RMLMapping);
+		
+		JSeparator separatorR2RMLFromTriples = new JSeparator();
+		menuMapping.add(separatorR2RMLFromTriples);
+		
+		JMenuItem menuItemNewTriplesMap = new JMenuItem("New Triples Map");
+		menuItemNewTriplesMap.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				menuItemNewTriplesMapActionPerformed(e);
+				
+			}
+		});
+		menuMapping.add(menuItemNewTriplesMap);
+		
+		JMenuItem menuItemEditTriplesMap = new JMenuItem("Edit Triples Map ...");
+		menuItemEditTriplesMap.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				menuItemEditTriplesMapActionPerformed(e);
+				
+			}
+		});
+		menuMapping.add(menuItemEditTriplesMap);
+		
+		JMenuItem menuItemDeleteTriplesMap = new JMenuItem("Delete Triples Map ...");
+		menuItemDeleteTriplesMap.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				menuItemDeleteTriplesMapActionPerformes(e);
+				
+			}
+		});
+		menuMapping.add(menuItemDeleteTriplesMap);
+		
 	}
 
 	/**
@@ -347,6 +419,8 @@ public class R2RMLMain {
 			try {
 				viewOntology.setOntologyModel(iri);
 				// TODO Cuando cambia el modelo tamabien hay que cambiar el transferhandler
+				ontologyLoaded = true;
+				checkEnableTriplesMap();
 			} catch (OWLOntologyCreationException e1) {
 				// TODO Auto-generated catch block
 		    	JOptionPane.showMessageDialog(frame, "Unable to open the ontology", "Error loading ontology", JOptionPane.ERROR_MESSAGE);
@@ -379,6 +453,8 @@ public class R2RMLMain {
 			
 			try {
 				viewOntology.setOntologyModel(file);
+				ontologyLoaded = true;
+				checkEnableTriplesMap();
 			} catch (OWLOntologyCreationException e) {
 				// TODO Auto-generated catch block
 		    	JOptionPane.showMessageDialog(frame, "Unable to open the ontology", "Error loading ontology", JOptionPane.ERROR_MESSAGE);
@@ -422,6 +498,8 @@ public class R2RMLMain {
 			
 			try {
 				viewDatabase.setDatabaseModel(dbms, name, adress, port, userName, password);
+				databaseLoaded = true;
+				checkEnableTriplesMap();
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 		    	JOptionPane.showMessageDialog(frame, "Unable to connect to the database", "Error connecting to database", JOptionPane.ERROR_MESSAGE);
@@ -450,7 +528,7 @@ public class R2RMLMain {
 	}
 
 	/**
-	 * reloads the list recent ontologies 
+	 * reloads the list of recent ontologies 
 	 */
 	private void loadAllRecents() {
 		
@@ -524,6 +602,8 @@ public class R2RMLMain {
 		
 		try {
 			viewOntology.setOntologyModel(ontologySource);
+			ontologyLoaded = true;
+			checkEnableTriplesMap();
 		} catch (OWLOntologyCreationException oe) {
 			// TODO Auto-generated catch block
 	    	JOptionPane.showMessageDialog(frame, "Unable to open the ontology", "Error loading ontology", JOptionPane.ERROR_MESSAGE);	
@@ -556,4 +636,170 @@ public class R2RMLMain {
 			e.printStackTrace();
 		}
 	}
+	
+
+	/**
+	 * @param e
+	 */
+	protected void menuItemNewR2RMLMappingActionPerformed(ActionEvent e) {
+		
+        //model for the R2RML mapping
+        r2rmlMappingModel = new R2RMLMapping();
+        System.out.println("R2RMLMain --> Creado el modelo del mapping R2RML");
+		viewR2RMLMapping.setModel(r2rmlMappingModel);
+		checkEnableTriplesMap();
+		
+	}
+
+	/**
+	 * @param e
+	 */
+	protected void menuItemOpenR2RMLMappingActionPerformes(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @param e
+	 */
+	protected void menuItemNewTriplesMapActionPerformed(ActionEvent e) {
+		
+		createTriplesMap();
+		
+	}
+
+	/**
+	 * @param e
+	 */
+	protected void menuItemEditTriplesMapActionPerformed(ActionEvent e) {
+		if (ontologyLoaded && databaseLoaded && r2rmlMapingLoaded) {
+			triplesMapSelector = new TriplesMapSelector(frame, r2rmlMappingModel.getAllTriplesMap().size());
+			triplesMapSelector.pack();
+			triplesMapSelector.setLocationRelativeTo(frame);
+			triplesMapSelector.setVisible(true);
+			if (!triplesMapSelector.checkCancel()) {
+				int triplesMapIndex = triplesMapSelector.getTriplesMapSelected();
+				triplesMapModel = r2rmlMappingModel.getTriplesMap(triplesMapIndex);
+		        triplesMapController = new ControllerTriplesMap(viewTriplesMap, triplesMapModel);
+
+		        viewTriplesMap.setTriplesMapModel(triplesMapModel);
+		        viewTriplesMap.setController(triplesMapController);
+		        viewTriplesMap.repaint();
+		        viewTriplesMap.revalidate();
+		        viewTriplesMap.updateUI();
+//		        viewTriplesMap.setEnabled(false);
+		        
+				//model mappingElement for the ontology tree action listener
+				viewOntology.setMappingItem(triplesMapModel);
+				
+				//model mappingElement for the database tree action listener
+				viewDatabase.setMappingItem(triplesMapModel);
+			}
+		}
+		
+	}
+
+	/**
+	 * @param e
+	 */
+	protected void menuItemDeleteTriplesMapActionPerformes(ActionEvent e) {
+		if (ontologyLoaded && databaseLoaded && r2rmlMapingLoaded) {
+			triplesMapSelector = new TriplesMapSelector(frame, r2rmlMappingModel.getAllTriplesMap().size());
+			triplesMapSelector.pack();
+			triplesMapSelector.setLocationRelativeTo(frame);
+			triplesMapSelector.setVisible(true);
+			if (!triplesMapSelector.checkCancel()) {
+				int triplesMapIndex = triplesMapSelector.getTriplesMapSelected();
+				r2rmlMappingModel.removeTriplesMapAt(triplesMapIndex);
+			}
+		}
+		
+	}
+
+
+	private void checkEnableTriplesMap() {
+		if (ontologyLoaded && databaseLoaded) {
+			createTriplesMap();
+			System.out.println("R2RMLMain --> Alguien ha creado un triples Map");
+		}
+		else
+			System.out.println("R2RMLMain --> Aun no se pueden crear triples Map");
+		
+	}
+
+	/**
+	 * 
+	 */
+	private void createTriplesMap() {
+        //model for the mapping triples map 
+        //TODO Cambiar la forma en que se inicia el triple Map para que lea el numero de identificador que le corresponde en vez de 0
+		//TODO Hacer un JDialog para que el usuario elija la tabla de la BBDD
+/*		
+		if (openDatabaseDialog == null) {		
+			openDatabaseDialog = new OpenDatabaseDialog(frame);
+			openDatabaseDialog.pack();
+			openDatabaseDialog.setLocationRelativeTo(frame);
+		}
+		else {
+			openDatabaseDialog.resetCancel();
+			openDatabaseDialog.pack();
+			openDatabaseDialog.setLocationRelativeTo(frame);
+		}
+		openDatabaseDialog.setVisible(true);
+		
+		if (!(openDatabaseDialog.checkCancel())) {
+			Object[] dbDesc = new Object[6];
+			dbDesc = openDatabaseDialog.getDatabaseDescription();
+//			System.out.println("DBdesc " + dbDesc[0] + ", " + dbDesc[1] +
+//						", " + dbDesc[2] +", " + dbDesc[3] +", " + dbDesc[4] +", " + dbDesc[5]);
+			
+			String dbms = (String) dbDesc[0];
+			String name = (String) dbDesc[1];
+			InetAddress adress = (InetAddress) dbDesc[2];
+			int port = (int) dbDesc[3];
+			String userName = (String) dbDesc[4];
+			String password = (String) dbDesc[5];
+			
+			try {
+				viewDatabase.setDatabaseModel(dbms, name, adress, port, userName, password);
+				databaseLoaded = true;
+				checkEnableTriplesMap();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+		    	JOptionPane.showMessageDialog(frame, "Unable to connect to the database", "Error connecting to database", JOptionPane.ERROR_MESSAGE);
+				e1.printStackTrace();
+			}
+
+		*/
+		
+		if (ontologyLoaded && databaseLoaded && r2rmlMapingLoaded) {
+			openTriplesMap = new TriplesMapTableSelector(frame, viewDatabase.getDatabase().getTables());
+			openTriplesMap.pack();
+			openTriplesMap.setLocationRelativeTo(frame);
+			openTriplesMap.setVisible(true);
+			
+			if (!openTriplesMap.checkCancel()) {
+
+		        triplesMapModel = new TriplesMap(r2rmlMappingModel.getIdentifierCounter(), r2rmlMappingModel, openTriplesMap.getTable());
+		        
+		        System.out.println("R2RMLMain --> Creado el modelo del triples map");
+		        System.out.println("R2RMLMain --> El nameSapce es " + triplesMapModel.getNameSpace());
+		        triplesMapController = new ControllerTriplesMap(viewTriplesMap, triplesMapModel);
+
+		        viewTriplesMap.setTriplesMapModel(triplesMapModel);
+		        viewTriplesMap.setController(triplesMapController);
+		        viewTriplesMap.repaint();
+		        viewTriplesMap.revalidate();
+		        viewTriplesMap.updateUI();
+//		        viewTriplesMap.setEnabled(false);
+		        
+				//model mappingElement for the ontology tree action listener
+				viewOntology.setMappingItem(triplesMapModel);
+				
+				//model mappingElement for the database tree action listener
+				viewDatabase.setMappingItem(triplesMapModel);
+			}
+		}
+	}
+	
 }

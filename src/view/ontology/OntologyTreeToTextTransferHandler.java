@@ -27,8 +27,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import model.mapping.MappingElement;
 import model.ontology.OntologyElement;
+import model.r2rmlmapping.triplesMap.TriplesMap;
 import view.addMappingItem.MappingTextField;
 import control.ontology.TransferableOntologyNode;
 
@@ -129,7 +129,7 @@ public class OntologyTreeToTextTransferHandler extends TransferHandler {
         // Add data to model.
         MappingTextField textFieldOntology = (MappingTextField) info.getComponent();
         OntologyElement ontologyElement = (OntologyElement) node.getUserObject();
-        MappingElement mappingElement = textFieldOntology.getModel();
+        TriplesMap mappingElement = textFieldOntology.getModel();
 //		System.out.println("Se añade el elemento de la ontologia");
         textFieldOntology.setText(ontologyElement.getDisplayName());
         mappingElement.setOntologyElement(ontologyElement);

@@ -28,7 +28,7 @@ import javax.swing.JTree;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import model.mapping.MappingElement;
+import model.r2rmlmapping.triplesMap.TriplesMap;
 
 /**
  * @author Manuel
@@ -41,9 +41,9 @@ public abstract class TreePopupHandler implements ActionListener, PopupMenuListe
 	protected JPopupMenu popup;
 //	private JMenu menu;
 //	private boolean overRoot = false;
-	protected MappingElement mappingElement;
+	protected TriplesMap mappingElement;
 	
-	public TreePopupHandler(JTree tree, MappingElement mappingItem) {
+	public TreePopupHandler(JTree tree, TriplesMap mappingItem) {
 		
 		this.tree = tree;
 		this.mappingElement = mappingItem;

@@ -16,13 +16,14 @@
 
 package view.ontology;
 
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultTreeModel;
 
-import model.mapping.MappingElement;
+import model.r2rmlmapping.triplesMap.TriplesMap;
 import net.miginfocom.swing.MigLayout;
 
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -56,7 +57,9 @@ public class ViewOntology extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public ViewOntology() {
+	public ViewOntology(JFrame frame) {
+		
+		
 		setLayout(new MigLayout("", "[325px,grow]", "[14px][563px,grow]"));
 		
 		//Base Panel
@@ -70,22 +73,22 @@ public class ViewOntology extends JPanel {
 		
 		//General Tree ---------------------------------------------------------------------------------------------
 
-        treePanelGeneral = new ViewOntologyTree();
+        treePanelGeneral = new ViewOntologyTree(frame);
 		tabbedPane.addTab("All", null, treePanelGeneral, "All elements in ontology");
 		
 		//Class Tree ---------------------------------------------------------------------------------------------
 		
-		treePanelClasses = new ViewOntologyTree();
+		treePanelClasses = new ViewOntologyTree(frame);
 		tabbedPane.addTab("Classes", null, treePanelClasses, "Classes");
 		
 		//Object Porperties Tree ---------------------------------------------------------------------------------
 		
-		treePanelObjectProperties = new ViewOntologyTree();
+		treePanelObjectProperties = new ViewOntologyTree(frame);
 		tabbedPane.addTab("Object Properties", null, treePanelObjectProperties, "Object Properties");
 		
 		//Data Porperties Tree ------------------------------------------------------------------------------------
 		
-		treePanelDataProperties = new ViewOntologyTree();
+		treePanelDataProperties = new ViewOntologyTree(frame);
 		tabbedPane.addTab("Data Properties", null, treePanelDataProperties, "Data Properties");
 
 	}
@@ -139,7 +142,10 @@ public class ViewOntology extends JPanel {
 		
 	}
 	
-	public void setMappingItem(MappingElement paramMappingItem) {
+	/**
+	 * @param paramMappingItem
+	 */
+	public void setMappingItem(TriplesMap paramMappingItem) {
 		
 		treePanelGeneral.setMappingItem(paramMappingItem);
 		treePanelClasses.setMappingItem(paramMappingItem);

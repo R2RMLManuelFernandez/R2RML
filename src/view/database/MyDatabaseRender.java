@@ -37,11 +37,11 @@ public class MyDatabaseRender extends DefaultTreeCellRenderer {
 
 	private static final long serialVersionUID = 532093803954905531L;
 	
-	private ImageIcon iconPrimaryKey = new ImageIcon();
-	private ImageIcon iconForeignKey = new ImageIcon();
-	private ImageIcon iconPrimaryForeignKey = new ImageIcon();
-	private ImageIcon iconSimple = new ImageIcon();
-	private ImageIcon iconTable = new ImageIcon();
+	private ImageIcon iconPrimaryKey = new ImageIcon("");
+	private ImageIcon iconForeignKey = new ImageIcon("");
+	private ImageIcon iconPrimaryForeignKey = new ImageIcon("");
+	private ImageIcon iconSimple = new ImageIcon("");
+	private ImageIcon iconTable = new ImageIcon("");
 	
 	private String start = null;
 	

@@ -20,8 +20,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import model.mapping.Mapping;
-import model.mapping.MappingElement;
+import model.r2rmlmapping.R2RMLMapping;
+import model.r2rmlmapping.triplesMap.TriplesMap;
 import view.ontology.ViewOntology;
 import view.tableMapping.ViewTableMapping;
 
@@ -33,12 +33,12 @@ import view.tableMapping.ViewTableMapping;
  */
 public class ControllerAddNewMapping implements ActionListener {
 
-	private MappingElement mappingItem;
-	private Mapping mappingModel;
+	private TriplesMap mappingItem;
+	private R2RMLMapping mappingModel;
 	private ViewTableMapping viewMapping;
 	private ViewOntology viewOntology;
 	
-	public ControllerAddNewMapping(Mapping mappingModel, MappingElement mappingElement) {
+	public ControllerAddNewMapping(R2RMLMapping mappingModel, TriplesMap mappingElement) {
 		mappingItem = mappingElement;
 		this.mappingModel = mappingModel;
 	}
@@ -50,7 +50,7 @@ public class ControllerAddNewMapping implements ActionListener {
 	 */
 	private void changeModel(Component source) {
 		if (source.getName().equals("buttonAddMapping")) {
-			MappingElement item = copy(mappingItem);
+			TriplesMap item = copy(mappingItem);
 			String dirtyIRI = mappingItem.getOntologyElement().getIRI();
 			viewOntology.findInMappingNodes(dirtyIRI, true);
 			//System.out.println("changeModel: " + dirtyIRI);
@@ -79,8 +79,8 @@ public class ControllerAddNewMapping implements ActionListener {
      * @param item
      * @return
      */
-    private MappingElement copy(MappingElement item) {
-        MappingElement newItem = new MappingElement(item.getDatabaseColumn(), item.getOntologyElement());
+    private TriplesMap copy(TriplesMap item) {
+        TriplesMap newItem = new TriplesMap(item.getDatabaseColumns(), item.getOntologyElement());
         return newItem;
     }
 	

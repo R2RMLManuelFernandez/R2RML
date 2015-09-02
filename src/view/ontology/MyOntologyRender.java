@@ -39,9 +39,9 @@ public class MyOntologyRender extends DefaultTreeCellRenderer {
 
 	private static final long serialVersionUID = 5537249275462431499L;
 	
-	private ImageIcon iconClass = new ImageIcon("C:/Users/Manuel/Desktop/Icons/circle_yellow.png");
-	private ImageIcon iconObjectProperty = new ImageIcon("C:/Users/Manuel/Desktop/Icons/circle_blue.png");
-	private ImageIcon iconDataProperty = new ImageIcon("C:/Users/Manuel/Desktop/Icons/circle_green.png");
+	private ImageIcon iconClass = new ImageIcon("");
+	private ImageIcon iconObjectProperty = new ImageIcon("");
+	private ImageIcon iconDataProperty = new ImageIcon("");
 	
 	private String start = null;
 	

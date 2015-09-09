@@ -29,7 +29,6 @@ import javax.swing.tree.TreePath;
 
 import model.ontology.OntologyElement;
 import model.r2rmlmapping.triplesMap.TriplesMap;
-import view.addMappingItem.MappingTextField;
 import control.ontology.TransferableOntologyNode;
 
 /**

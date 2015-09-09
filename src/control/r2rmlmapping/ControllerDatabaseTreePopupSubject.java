@@ -64,8 +64,14 @@ public class ControllerDatabaseTreePopupSubject implements ActionListener {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
 				Column column = (Column) node.getUserObject();
 //				columns.add(column);
-				triplesMap.getSubjectMap().addColumn(column);
-				System.out.println("ControllerDatabaseTreePopupSubject --> Se añade el elemento de la BBDD: " + column.getColumnName());
+				if (column.getTable().equals(triplesMap.getLogicalTable())) {
+					triplesMap.getSubjectMap().addColumn(column);
+					System.out.println("ControllerDatabaseTreePopupSubject --> Se añade el elemento de la BBDD: " + column.getColumnName());
+				}
+				else {
+					JOptionPane.showMessageDialog(popup, "You have to select a column from the table corresponding to the triples map", "Wrong column selection", JOptionPane.ERROR_MESSAGE);
+				}
+
 			}
 			
 /*			

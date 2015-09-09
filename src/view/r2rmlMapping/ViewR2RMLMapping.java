@@ -137,13 +137,16 @@ public class ViewR2RMLMapping extends JPanel implements Observer {
         textArea.append("Numero de TriplesMap: ");
 		int triplesMapCounter = r2rmlMapping.getIdentifierCounter();
 		textArea.append(String.valueOf(triplesMapCounter) + "\n");
+		textArea.append("\n");
 		
 		if (r2rmlMapping.hasTriplesMap()) {
 			System.out.println("ViewR2RMLMapping --> Tiene triplesMap " + r2rmlMapping.hasTriplesMap().toString());
 			for (int i = 0; i < triplesMapCounter; i++) {
 				triplesMapAux = r2rmlMapping.getTriplesMap(i);
-				subjectMapAux = triplesMapAux.getSubjectMap();
 				textArea.append("Triples Map\n");
+				textArea.append("Logical table " + triplesMapAux.getLogicalTable().getTableName());
+				textArea.append("\n");
+				subjectMapAux = triplesMapAux.getSubjectMap();
 				textArea.append(subjectMapAux.getSubject());
 				textArea.append("\n");
 				textArea.append(subjectMapAux.getRdfClass());
@@ -178,6 +181,7 @@ public class ViewR2RMLMapping extends JPanel implements Observer {
 			        			else {
 			        				ReferenceObjectMap ref = (ReferenceObjectMap) object;
 									textArea.append("Parent Triples Map " + ref.getParentTriplesMap().getIdentifier() + "\n");
+									textArea.append("Logical table Triples Map " + ref.getParentTriplesMap().getLogicalTable().getTableName() + "\n");
 									ArrayList<JoinCondition> jConds = ref.getJoinConditions();
 									for (JoinCondition jCond : jConds) {
 										textArea.append("JoinCondition/n");	

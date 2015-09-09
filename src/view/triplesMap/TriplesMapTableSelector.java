@@ -59,7 +59,7 @@ public class TriplesMapTableSelector extends JDialog {
 	 * @param databaseTables 
 	 */
 	public TriplesMapTableSelector(JFrame frame, ArrayList<Table> paramDatabaseTables) {
-		super(frame);
+		super(frame, true);
 		this.databaseTables = paramDatabaseTables;
 		tableNames = new String[databaseTables.size()];
 		int tblNameSize = databaseTables.size();
@@ -164,7 +164,7 @@ public class TriplesMapTableSelector extends JDialog {
 
 		int tableSelected = comboBox.getSelectedIndex();	
 		selectedTable = databaseTables.get(tableSelected);
-
+		System.out.println("La tabla que se ha elegido es: " + selectedTable.getTableName());
 	}
 
 	/**

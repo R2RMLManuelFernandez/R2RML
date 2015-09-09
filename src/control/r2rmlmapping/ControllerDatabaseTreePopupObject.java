@@ -103,38 +103,59 @@ public class ControllerDatabaseTreePopupObject implements ActionListener {
 									DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
 									Column column = (Column) node.getUserObject();
 									ColumnValueObjectMap columnValueObjectMap = (ColumnValueObjectMap) objectMaps.get(objectIndex);
-									columnValueObjectMap.addObjectColumn(column);
-									System.out.println("ControllerDatabaseTreePopupObject --> Se añade el elemento de la BBDD: " + column.getColumnName());
+									if (column.getTable().equals(triplesMap.getLogicalTable())) {
+										columnValueObjectMap.addObjectColumn(column);
+										System.out.println("ControllerDatabaseTreePopupObject --> Se añade el elemento de la BBDD: " + column.getColumnName());
+									}
+									else {
+										JOptionPane.showMessageDialog(popup, "You have to select a column from the table corresponding to the triples map", "Wrong column selection", JOptionPane.ERROR_MESSAGE);
+									}
+
 								}
 							
 					        }
 					        else if (objectMaps.get(objectIndex).getType().equals("Referenced")) {
+
 								ReferenceObjectMap referenceObjectMap = (ReferenceObjectMap) objectMaps.get(objectIndex);
 								ArrayList<JoinCondition> joinCond = referenceObjectMap.getJoinConditions();
-					        	joinCondSelector = new JoinConditionSelector(frame, joinCond.size());
-					        	joinCondSelector.pack();
-					        	joinCondSelector.setLocationRelativeTo(frame);
-					        	joinCondSelector.setVisible(true);
-					    		if (!joinCondSelector.checkCancel()) {
+						       	joinCondSelector = new JoinConditionSelector(frame, joinCond.size());
+						       	joinCondSelector.pack();
+						       	joinCondSelector.setLocationRelativeTo(frame);
+						       	joinCondSelector.setVisible(true);
+						   		if (!joinCondSelector.checkCancel()) {
 						    		int joinCondIndex = joinCondSelector.getJoinConditionSelected();
 						    		JoinCondition joinC = joinCond.get(joinCondIndex);
 						    		int componentSelected = JOptionPane.showOptionDialog(frame, "Select the join condition component", 
-						    				"JoinCondition Component Selector", JOptionPane.YES_NO_CANCEL_OPTION,
+					    				"JoinCondition Component Selector", JOptionPane.YES_NO_CANCEL_OPTION,
 						    				JOptionPane.QUESTION_MESSAGE, null, 
 						    				new Object[] {"Parent", "Child", "Cancel"}, "Parent");
 						        	TreePath path2 = tree.getSelectionPath();
 									DefaultMutableTreeNode node2 = (DefaultMutableTreeNode)path2.getLastPathComponent();
 									Column column2 = (Column) node2.getUserObject();
-						    		if (componentSelected == 0) {
-										joinC.setParent(column2);
+							    	if (componentSelected == 0) {
+										if (column2.getTable().equals(referenceObjectMap.getParentTriplesMap().getLogicalTable())) {
+											joinC.setParent(column2);
+										}
+										else {
+											JOptionPane.showMessageDialog(popup, 
+											"You have to select a column from the table corresponding to the parent triples map", 
+											"Wrong column selection", 
+											JOptionPane.ERROR_MESSAGE);
+										}
 						    		}
 						    		else if (componentSelected == 1) {
-						    			joinC.setChild(column2);
-						    		}
-					    		}
+						    			if (column2.getTable().equals(triplesMap.getLogicalTable())) {
+							    			joinC.setChild(column2);
+										}
+										else {
+											JOptionPane.showMessageDialog(popup, 
+											"You have to select a column from the table corresponding to the triples map", 												"Wrong column selection", 
+												JOptionPane.ERROR_MESSAGE);
+										}
+							    	}
+						    	}
 					        }
-				        }
-
+					    }
 			    	}
 	    	    }
 	        }

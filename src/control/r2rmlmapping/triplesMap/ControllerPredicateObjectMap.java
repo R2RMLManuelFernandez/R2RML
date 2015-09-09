@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import model.r2rmlmapping.triplesMap.ColumnValueObjectMap;
 import model.r2rmlmapping.triplesMap.ObjectMap;
@@ -78,16 +79,21 @@ public class ControllerPredicateObjectMap implements ActionListener {
 		}
 		else if (source.getName().equals("Add Ref Obj")) {
 			System.out.println("ControllerPredicateObject --> action Add Ref Obj");
-			ArrayList<TriplesMap> posiblesParentTriplesMaps = model.getTriplesMap().getR2RmlMapping().getAllTriplesMap();
-			ParentTriplesMapSelector parentTriplesMapSelector = new ParentTriplesMapSelector(frame, posiblesParentTriplesMaps.size());
-			parentTriplesMapSelector.pack();
-			parentTriplesMapSelector.setLocationRelativeTo(frame);
-			parentTriplesMapSelector.setVisible(true);
-			if (!parentTriplesMapSelector.checkCancel()) {
-				int parentTriplesMapIndex = parentTriplesMapSelector.getParentTriplesMapSelected();
-				ReferenceObjectMap object = new ReferenceObjectMap(model);
-				object.setParentTriplesMap(model.getTriplesMap().getR2RmlMapping().getTriplesMap(parentTriplesMapIndex));
-				model.addObjectMap(object);
+			if (model.getTriplesMap().getR2RmlMapping().getAllTriplesMap().size() > 0) {
+				ArrayList<TriplesMap> posiblesParentTriplesMaps = model.getTriplesMap().getR2RmlMapping().getAllTriplesMap();
+				ParentTriplesMapSelector parentTriplesMapSelector = new ParentTriplesMapSelector(frame, posiblesParentTriplesMaps.size());
+				parentTriplesMapSelector.pack();
+				parentTriplesMapSelector.setLocationRelativeTo(frame);
+				parentTriplesMapSelector.setVisible(true);
+				if (!parentTriplesMapSelector.checkCancel()) {
+					int parentTriplesMapIndex = parentTriplesMapSelector.getParentTriplesMapSelected();
+					ReferenceObjectMap object = new ReferenceObjectMap(model);
+					object.setParentTriplesMap(model.getTriplesMap().getR2RmlMapping().getTriplesMap(parentTriplesMapIndex));
+					model.addObjectMap(object);
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "there is no triplesmap to be parent triples map", "Wrning no tripes map", JOptionPane.WARNING_MESSAGE);
 			}
 		}
 		else if (source.getName().equals("Delete")) {

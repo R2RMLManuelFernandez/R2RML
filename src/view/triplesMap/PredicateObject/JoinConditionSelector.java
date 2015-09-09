@@ -50,7 +50,7 @@ public class JoinConditionSelector extends JDialog {
 	 */
 	private void initialize() {
 		
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow][][][grow][]"));
 		
 		JLabel labelSelectTheJoinCondition = new JLabel("Select the join condition");

@@ -29,7 +29,6 @@ import javax.swing.tree.TreePath;
 
 import model.database.Column;
 import model.r2rmlmapping.triplesMap.TriplesMap;
-import view.addMappingItem.MappingTextField;
 import control.database.load.TransferableDatabaseNode;
 
 /**

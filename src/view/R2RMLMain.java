@@ -673,27 +673,32 @@ public class R2RMLMain {
 	 */
 	protected void menuItemEditTriplesMapActionPerformed(ActionEvent e) {
 		if (ontologyLoaded && databaseLoaded && r2rmlMapingLoaded) {
-			triplesMapSelector = new TriplesMapSelector(frame, r2rmlMappingModel.getAllTriplesMap().size());
-			triplesMapSelector.pack();
-			triplesMapSelector.setLocationRelativeTo(frame);
-			triplesMapSelector.setVisible(true);
-			if (!triplesMapSelector.checkCancel()) {
-				int triplesMapIndex = triplesMapSelector.getTriplesMapSelected();
-				triplesMapModel = r2rmlMappingModel.getTriplesMap(triplesMapIndex);
-		        triplesMapController = new ControllerTriplesMap(viewTriplesMap, triplesMapModel);
+			if (r2rmlMappingModel.getAllTriplesMap().size() > 0) {
+				triplesMapSelector = new TriplesMapSelector(frame, r2rmlMappingModel.getAllTriplesMap().size());
+				triplesMapSelector.pack();
+				triplesMapSelector.setLocationRelativeTo(frame);
+				triplesMapSelector.setVisible(true);
+				if (!triplesMapSelector.checkCancel()) {
+					int triplesMapIndex = triplesMapSelector.getTriplesMapSelected();
+					triplesMapModel = r2rmlMappingModel.getTriplesMap(triplesMapIndex);
+			        triplesMapController = new ControllerTriplesMap(viewTriplesMap, triplesMapModel);
 
-		        viewTriplesMap.setTriplesMapModel(triplesMapModel);
-		        viewTriplesMap.setController(triplesMapController);
-		        viewTriplesMap.repaint();
-		        viewTriplesMap.revalidate();
-		        viewTriplesMap.updateUI();
-//		        viewTriplesMap.setEnabled(false);
-		        
-				//model mappingElement for the ontology tree action listener
-				viewOntology.setMappingItem(triplesMapModel);
-				
-				//model mappingElement for the database tree action listener
-				viewDatabase.setMappingItem(triplesMapModel);
+			        viewTriplesMap.setTriplesMapModel(triplesMapModel);
+			        viewTriplesMap.setController(triplesMapController);
+			        viewTriplesMap.repaint();
+			        viewTriplesMap.revalidate();
+			        viewTriplesMap.updateUI();
+//			        viewTriplesMap.setEnabled(false);
+			        
+					//model mappingElement for the ontology tree action listener
+					viewOntology.setMappingItem(triplesMapModel);
+					
+					//model mappingElement for the database tree action listener
+					viewDatabase.setMappingItem(triplesMapModel);
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "The R2RMLMAPPING has not triples map to edit", "Warning editing triples map", JOptionPane.WARNING_MESSAGE);
 			}
 		}
 		
@@ -704,14 +709,20 @@ public class R2RMLMain {
 	 */
 	protected void menuItemDeleteTriplesMapActionPerformes(ActionEvent e) {
 		if (ontologyLoaded && databaseLoaded && r2rmlMapingLoaded) {
-			triplesMapSelector = new TriplesMapSelector(frame, r2rmlMappingModel.getAllTriplesMap().size());
-			triplesMapSelector.pack();
-			triplesMapSelector.setLocationRelativeTo(frame);
-			triplesMapSelector.setVisible(true);
-			if (!triplesMapSelector.checkCancel()) {
-				int triplesMapIndex = triplesMapSelector.getTriplesMapSelected();
-				r2rmlMappingModel.removeTriplesMapAt(triplesMapIndex);
+			if (r2rmlMappingModel.getAllTriplesMap().size() > 0) {
+				triplesMapSelector = new TriplesMapSelector(frame, r2rmlMappingModel.getAllTriplesMap().size());
+				triplesMapSelector.pack();
+				triplesMapSelector.setLocationRelativeTo(frame);
+				triplesMapSelector.setVisible(true);
+				if (!triplesMapSelector.checkCancel()) {
+					int triplesMapIndex = triplesMapSelector.getTriplesMapSelected();
+					r2rmlMappingModel.removeTriplesMapAt(triplesMapIndex);
+				}
 			}
+			else {
+				JOptionPane.showMessageDialog(frame, "The R2RMLMAPPING has not triples map to delete", "Warning deleting triples map", JOptionPane.WARNING_MESSAGE);
+			}
+
 		}
 		
 	}

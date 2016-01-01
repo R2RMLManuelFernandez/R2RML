@@ -22,7 +22,7 @@ import java.awt.event.ActionListener;
 
 import model.r2rmlmapping.triplesMap.JoinCondition;
 import model.r2rmlmapping.triplesMap.ObjectMap;
-import model.r2rmlmapping.triplesMap.ReferenceObjectMap;
+import model.r2rmlmapping.triplesMap.ReferencingObjectMap;
 import view.triplesMap.PredicateObject.ViewObjectReferenced;
 
 /**
@@ -33,12 +33,12 @@ import view.triplesMap.PredicateObject.ViewObjectReferenced;
 public class ControllerReferencedObjectMap implements ActionListener {
 
 	private ViewObjectReferenced view;
-	private ReferenceObjectMap model;
+	private ReferencingObjectMap model;
 	
 	public ControllerReferencedObjectMap(ViewObjectReferenced viewObjectRef,
 			ObjectMap objectMap) {
 		this.view = viewObjectRef;
-		this.model = (ReferenceObjectMap) objectMap;
+		this.model = (ReferencingObjectMap) objectMap;
 	}
 
 	@Override

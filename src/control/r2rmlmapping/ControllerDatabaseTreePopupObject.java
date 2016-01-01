@@ -32,7 +32,7 @@ import model.r2rmlmapping.triplesMap.ColumnValueObjectMap;
 import model.r2rmlmapping.triplesMap.JoinCondition;
 import model.r2rmlmapping.triplesMap.ObjectMap;
 import model.r2rmlmapping.triplesMap.PredicateObjectMap;
-import model.r2rmlmapping.triplesMap.ReferenceObjectMap;
+import model.r2rmlmapping.triplesMap.ReferencingObjectMap;
 import model.r2rmlmapping.triplesMap.TriplesMap;
 import view.triplesMap.TriplesMapPredicateObjectSelector;
 import view.triplesMap.PredicateObject.JoinConditionSelector;
@@ -114,9 +114,9 @@ public class ControllerDatabaseTreePopupObject implements ActionListener {
 								}
 							
 					        }
-					        else if (objectMaps.get(objectIndex).getType().equals("Referenced")) {
+					        else if (objectMaps.get(objectIndex).getType().equals("Referencing")) {
 
-								ReferenceObjectMap referenceObjectMap = (ReferenceObjectMap) objectMaps.get(objectIndex);
+								ReferencingObjectMap referenceObjectMap = (ReferencingObjectMap) objectMaps.get(objectIndex);
 								ArrayList<JoinCondition> joinCond = referenceObjectMap.getJoinConditions();
 						       	joinCondSelector = new JoinConditionSelector(frame, joinCond.size());
 						       	joinCondSelector.pack();

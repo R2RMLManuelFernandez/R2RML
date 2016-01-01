@@ -38,6 +38,7 @@ public class PredicateObjectMap extends Observable {
 		initPredicateObject();
 	}
 	
+	//TODO hacer que cuandose cree un nuevo triples map se inicie con un predicate y un object o se cree vacio
 	private void initPredicateObject() {
 		this.predicateMaps = new ArrayList<PredicateMap>();
 		PredicateMap predicateMap = new PredicateMap(this);

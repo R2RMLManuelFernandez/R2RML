@@ -20,8 +20,12 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import model.r2rmlmapping.triplesMap.PredicateObjectMap;
 import model.r2rmlmapping.triplesMap.TriplesMap;
+import view.R2RMLMain;
 import view.triplesMap.ViewTriplesMap;
 
 /**
@@ -35,6 +39,8 @@ public class ControllerTriplesMap implements ActionListener {
 	private TriplesMap model;
 	@SuppressWarnings("unused")
 	private ViewTriplesMap view;
+	
+	private static Logger logger = LoggerFactory.getLogger(R2RMLMain.class);
 	
 	/**
 	 * @param paramView
@@ -60,7 +66,7 @@ public class ControllerTriplesMap implements ActionListener {
 	 */
 	private void changeModel(Component source) {
 		
-        System.out.println("ControllerTriplesMap --> Disparado cambio de modelo P-O");
+		logger.trace("ControllerTriplesMap --> Disparado cambio de modelo P-O");
         
 		if (source.getName().equals("Add Predicate-Object")) {
 			PredicateObjectMap predicateObjectMap = new PredicateObjectMap(0, model);
@@ -76,7 +82,7 @@ public class ControllerTriplesMap implements ActionListener {
 
 			}
 
-	        System.out.println("R2RMLMain --> Añadido triples map a modelo r2rml");
+	        logger.trace("ControllerTriplesMap --> Añadido triples map a modelo r2rml");
 		}
 		
 	}

@@ -17,6 +17,7 @@
 package model.database;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Represents a database table
@@ -84,6 +85,23 @@ public class Table {
 	 */
 	public Boolean hasColumns() {
 		return this.columns.isEmpty()? false : true;
+	}
+	
+	public Column getColumn(String columnName) {
+
+		if (!(columns.isEmpty())) {
+			
+			Iterator<Column> iterCol = columns.iterator();
+			while (iterCol.hasNext()) {
+				Column col = iterCol.next();
+				if (columnName.equalsIgnoreCase(col.getColumnName())) {
+					return col;
+				}
+			}
+		}
+		
+		return null;
+		
 	}
 	
 }

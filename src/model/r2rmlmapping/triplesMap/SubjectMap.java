@@ -21,6 +21,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Observable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import view.R2RMLMain;
 import model.database.Column;
 
 /**
@@ -30,21 +34,22 @@ import model.database.Column;
  *
  */
 public class SubjectMap extends Observable {
-	
-	@SuppressWarnings("unused")
-	private TriplesMap triplesMap;
+
 	private String subject;
 	private String rdfClass;
 	private HashSet<Column> subjectColumns;
+	
+	@SuppressWarnings("unused")
+	private static Logger logger = LoggerFactory.getLogger(R2RMLMain.class);
 
 	public SubjectMap() {
 
-		this.subject = "prueba";
-		this.rdfClass = "ontology class";
+		this.subject = "";
+		this.rdfClass = "";
 		this.subjectColumns = new HashSet<Column>();
 		setChanged();
 		notifyObservers();
-        System.out.println("SubjectMap --> Establecidos valores iniciales del subject");
+
 	}
 	
 	/**
@@ -193,5 +198,6 @@ public class SubjectMap extends Observable {
 		this.subject = subjectAfter;
 		System.out.println("SubjectMap --> Subject after " + subjectAfter);
 	}
+
 
 }

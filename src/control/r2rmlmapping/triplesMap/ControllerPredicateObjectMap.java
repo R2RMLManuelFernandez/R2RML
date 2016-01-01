@@ -24,12 +24,16 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import model.r2rmlmapping.triplesMap.ColumnValueObjectMap;
 import model.r2rmlmapping.triplesMap.ObjectMap;
 import model.r2rmlmapping.triplesMap.PredicateMap;
 import model.r2rmlmapping.triplesMap.PredicateObjectMap;
-import model.r2rmlmapping.triplesMap.ReferenceObjectMap;
+import model.r2rmlmapping.triplesMap.ReferencingObjectMap;
 import model.r2rmlmapping.triplesMap.TriplesMap;
+import view.R2RMLMain;
 import view.triplesMap.PredicateObject.ParentTriplesMapSelector;
 import view.triplesMap.PredicateObject.ViewPredicateObject;
 
@@ -44,6 +48,8 @@ public class ControllerPredicateObjectMap implements ActionListener {
 	private ViewPredicateObject view;
 	private PredicateObjectMap model;
 	private JFrame frame;
+	
+	private static Logger logger = LoggerFactory.getLogger(R2RMLMain.class);
 	
 	/**
 	 * @param paramView
@@ -68,18 +74,19 @@ public class ControllerPredicateObjectMap implements ActionListener {
 	private void changeModel(Component source) {
 
 		if (source.getName().equals("Add Predicate")) {
-			System.out.println("ControllerPredicateObject --> action Add Predicate");
+			logger.trace("ControllerPredicateObject --> action Add Predicate");
 			PredicateMap predicate = new PredicateMap(model);
 			model.addPredicateMap(predicate);
 		}
 		else if (source.getName().equals("Add Col Obj")) {
-			System.out.println("ControllerPredicateObject --> action Add Col Obj");
+			logger.trace("ControllerPredicateObject --> action Add Col Obj");
 			ObjectMap object = new ColumnValueObjectMap(model);
 			model.addObjectMap(object);
 		}
 		else if (source.getName().equals("Add Ref Obj")) {
-			System.out.println("ControllerPredicateObject --> action Add Ref Obj");
+			logger.trace("ControllerPredicateObject --> action Add Ref Obj");
 			if (model.getTriplesMap().getR2RmlMapping().getAllTriplesMap().size() > 0) {
+				logger.trace("ControllerPredicateObject --> hay triples map " + model.getTriplesMap().getR2RmlMapping().getAllTriplesMap().size());
 				ArrayList<TriplesMap> posiblesParentTriplesMaps = model.getTriplesMap().getR2RmlMapping().getAllTriplesMap();
 				ParentTriplesMapSelector parentTriplesMapSelector = new ParentTriplesMapSelector(frame, posiblesParentTriplesMaps.size());
 				parentTriplesMapSelector.pack();
@@ -87,8 +94,10 @@ public class ControllerPredicateObjectMap implements ActionListener {
 				parentTriplesMapSelector.setVisible(true);
 				if (!parentTriplesMapSelector.checkCancel()) {
 					int parentTriplesMapIndex = parentTriplesMapSelector.getParentTriplesMapSelected();
-					ReferenceObjectMap object = new ReferenceObjectMap(model);
+					logger.trace("parent triples map index " + parentTriplesMapIndex);
+					ReferencingObjectMap object = new ReferencingObjectMap(model);
 					object.setParentTriplesMap(model.getTriplesMap().getR2RmlMapping().getTriplesMap(parentTriplesMapIndex));
+					logger.trace("creado object map y establecido parent triples map");
 					model.addObjectMap(object);
 				}
 			}
@@ -97,7 +106,7 @@ public class ControllerPredicateObjectMap implements ActionListener {
 			}
 		}
 		else if (source.getName().equals("Delete")) {
-			System.out.println("ControllerPredicateObject --> action Delete");
+			logger.trace("ControllerPredicateObject --> action Delete");
 			model.getTriplesMap().deletePredicateObjectMap(model);
 		} 
 		

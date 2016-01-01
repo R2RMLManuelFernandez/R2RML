@@ -25,16 +25,16 @@ import java.util.Observable;
  * @author Manuel Fernandez Perez
  *
  */
-public class ReferenceObjectMap extends Observable implements ObjectMap {
+public class ReferencingObjectMap extends Observable implements ObjectMap {
 
-	public static final String ReferenceType = "Referenced";
+	public static final String ReferenceType = "Referencing";
 	
 	private TriplesMap parentTriplesMap;
 	private ArrayList<JoinCondition> joinConditions;
 	private PredicateObjectMap predicateObjectMap;
 	private String type;
 
-	public ReferenceObjectMap(PredicateObjectMap paramPredicateObjectMap) {
+	public ReferencingObjectMap(PredicateObjectMap paramPredicateObjectMap) {
 		this.predicateObjectMap = paramPredicateObjectMap;
 		this.type = ReferenceType;
 		this.joinConditions = new ArrayList<JoinCondition>();

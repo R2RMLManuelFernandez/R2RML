@@ -1,7 +1,10 @@
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
 <recents>
 	<ontology>
 		<source>C:\Users\Manuel\Desktop\Ontologias\myOnto.owl</source>
+	</ontology>
+	<ontology>
+		<source>http://protege.stanford.edu/ontologies/pizza/pizza.owl</source>
 	</ontology>
 	<ontology>
 		<source>C:\Users\Manuel\Desktop\Ontologias\pizza.owl</source>

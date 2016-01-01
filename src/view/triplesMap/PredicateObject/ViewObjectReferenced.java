@@ -30,7 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
 import model.r2rmlmapping.triplesMap.JoinCondition;
-import model.r2rmlmapping.triplesMap.ReferenceObjectMap;
+import model.r2rmlmapping.triplesMap.ReferencingObjectMap;
 import model.r2rmlmapping.triplesMap.TriplesMap;
 import net.miginfocom.swing.MigLayout;
 import control.r2rmlmapping.triplesMap.ControllerReferencedObjectMap;
@@ -60,7 +60,7 @@ public class ViewObjectReferenced extends JPanel implements Observer {
 	private DefaultComboBoxModel<String> comboBoxTriMapModel;
 	private String[] triplesMapNames;
 */	
-	private ReferenceObjectMap model;
+	private ReferencingObjectMap model;
 
 
 	/**
@@ -126,7 +126,7 @@ public class ViewObjectReferenced extends JPanel implements Observer {
 	/**
 	 * @param objectMap
 	 */
-	public void setModel(ReferenceObjectMap objectMap) {
+	public void setModel(ReferencingObjectMap objectMap) {
 		this.model = objectMap;
 		this.model.addObserver(this);
 		TriplesMap triplesMap = this.model.getParentTriplesMap();

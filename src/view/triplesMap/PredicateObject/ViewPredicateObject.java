@@ -26,6 +26,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import view.R2RMLMain;
 import control.r2rmlmapping.triplesMap.ControllerColumnValueObjectMap;
 import control.r2rmlmapping.triplesMap.ControllerPredicateMap;
 import control.r2rmlmapping.triplesMap.ControllerPredicateObjectMap;
@@ -34,7 +38,7 @@ import model.r2rmlmapping.triplesMap.ColumnValueObjectMap;
 import model.r2rmlmapping.triplesMap.ObjectMap;
 import model.r2rmlmapping.triplesMap.PredicateMap;
 import model.r2rmlmapping.triplesMap.PredicateObjectMap;
-import model.r2rmlmapping.triplesMap.ReferenceObjectMap;
+import model.r2rmlmapping.triplesMap.ReferencingObjectMap;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -61,6 +65,8 @@ public class ViewPredicateObject extends JPanel implements Observer {
 	
 	private PredicateObjectMap model;
 
+	private static Logger logger = LoggerFactory.getLogger(R2RMLMain.class);
+	
 	/**
 	 * Create the panel.
 	 */
@@ -116,6 +122,7 @@ public class ViewPredicateObject extends JPanel implements Observer {
 		panelPredicateObject.updateUI();*/
 		
 		ArrayList<PredicateMap> predicateMaps = model.getPredicateMaps();
+		logger.trace("ViewPredicateObject update --> numer de predMaps " + predicateMaps.size());
 		panelPredicates.removeAll();
 		for (PredicateMap predicate: predicateMaps) {
 			ViewPredicate viewPredicate = new ViewPredicate();
@@ -123,31 +130,34 @@ public class ViewPredicateObject extends JPanel implements Observer {
 			ControllerPredicateMap controllerPredicateMap = new ControllerPredicateMap(viewPredicate, predicate);
 			viewPredicate.setController(controllerPredicateMap);
 			panelPredicates.add(viewPredicate);
-			System.out.println("ViewPredicateObject --> Deberia haberse añadido una viewPredicate");
+			logger.trace("ViewPredicateObject update --> Deberia haberse añadido una viewPredicate");
 		}
-		panelPredicates.repaint();
-		panelPredicates.revalidate();
-		panelPredicates.updateUI();
+
 		
 		ArrayList<ObjectMap> objects = model.getObjectMaps();
+		logger.trace("ViewPredicateObject update --> numer de predObjMaps " + objects.size());
 		panelObjects.removeAll();
 		for (ObjectMap objectMap : objects) {
 			//TODO decidir como qiiero que sea la vista de los objetos
 			// a lo mejor no necesito que sea una subvista dentro de una general sino una vista para cada tipo
 			//y cambiar la vista cuando se vambie el tipo de map
+
 			String objectType = objectMap.getType();
+			
+			logger.trace("ViewPredicateObject update --> tipo del object map " + objectType);
+			
 			if (objectType.equals("Column-Valued")) {
-				System.out.println("ViewPredicateObject --> Deberia haberse añadido una viewColumnValued object");
+				logger.trace("ViewPredicateObject update --> Deberia haberse añadido una viewColumnValued object");
 				ViewObjectColumnValue viewObjectCV = new ViewObjectColumnValue();
 				viewObjectCV.setModel((ColumnValueObjectMap) objectMap);
 				ControllerColumnValueObjectMap controllerObjectCV = new ControllerColumnValueObjectMap(viewObjectCV, objectMap);
 				viewObjectCV.setController(controllerObjectCV);
 				panelObjects.add(viewObjectCV);
 			}
-			else if(objectType.equals("Referenced")) {
-				System.out.println("ViewPredicateObject --> Deberia haberse añadido una viewRefernced Object");
+			else if(objectType.equals("Referencing")) {
+				logger.trace("ViewPredicateObject update --> Deberia haberse añadido una viewRefernced Object");
 				ViewObjectReferenced viewObjectRef = new ViewObjectReferenced();
-				viewObjectRef.setModel((ReferenceObjectMap) objectMap);
+				viewObjectRef.setModel((ReferencingObjectMap) objectMap);
 				ControllerReferencedObjectMap controllerObjectRef = new ControllerReferencedObjectMap(viewObjectRef, objectMap);
 				viewObjectRef.setController(controllerObjectRef);
 				panelObjects.add(viewObjectRef);
@@ -157,6 +167,10 @@ public class ViewPredicateObject extends JPanel implements Observer {
 		panelObjects.revalidate();
 		panelObjects.updateUI();
 		
+		panelPredicates.repaint();
+		panelPredicates.revalidate();
+		panelPredicates.updateUI();
+
 	}
 
 	/**
@@ -179,13 +193,14 @@ public class ViewPredicateObject extends JPanel implements Observer {
 			ControllerPredicateMap controllerPredicateMap = new ControllerPredicateMap(viewPredicate, predicate);
 			viewPredicate.setController(controllerPredicateMap);
 			panelPredicates.add(viewPredicate);
-			System.out.println("ViewPredicateObject --> Deberia haberse añadido una viewPredicate");
+			logger.trace("ViewPredicateObject setModel --> Deberia haberse añadido una viewPredicate");
 		}
 		panelPredicates.repaint();
 		panelPredicates.revalidate();
 		panelPredicates.updateUI();
 		
 		ArrayList<ObjectMap> objects = model.getObjectMaps();
+		logger.trace("ViewPredicateObject setModel --> objects " + objects.size());
 		panelObjects.removeAll();
 		for (ObjectMap objectMap : objects) {
 			//TODO decidir como qiiero que sea la vista de los objetos
@@ -193,7 +208,7 @@ public class ViewPredicateObject extends JPanel implements Observer {
 			//y cambiar la vista cuando se vambie el tipo de map
 			String objectType = objectMap.getType();
 			if (objectType.equals("Column-Valued")) {
-				System.out.println("ViewPredicateObject --> Deberia haberse añadido una viewColumnValued object");
+				logger.trace("ViewPredicateObject setModel --> Deberia haberse añadido una viewColumnValued object");
 				ViewObjectColumnValue viewObjectCV = new ViewObjectColumnValue();
 				viewObjectCV.setModel((ColumnValueObjectMap) objectMap);
 				ControllerColumnValueObjectMap controllerObjectCV = new ControllerColumnValueObjectMap(viewObjectCV, objectMap);
@@ -201,9 +216,9 @@ public class ViewPredicateObject extends JPanel implements Observer {
 				panelObjects.add(viewObjectCV);
 			}
 			else if(objectType.equals("Referenced")) {
-				System.out.println("ViewPredicateObject --> Deberia haberse añadido una viewRefernced Object");
+				logger.trace("ViewPredicateObject setModel --> Deberia haberse añadido una viewRefernced Object");
 				ViewObjectReferenced viewObjectRef = new ViewObjectReferenced();
-				viewObjectRef.setModel((ReferenceObjectMap) objectMap);
+				viewObjectRef.setModel((ReferencingObjectMap) objectMap);
 				ControllerReferencedObjectMap controllerObjectRef = new ControllerReferencedObjectMap(viewObjectRef, objectMap);
 				viewObjectRef.setController(controllerObjectRef);
 				panelObjects.add(viewObjectRef);

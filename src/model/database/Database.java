@@ -18,6 +18,7 @@ package model.database;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Represents a database
@@ -167,6 +168,26 @@ public class Database {
 	 */
 	public Boolean hasTables() {
 		return this.tables.isEmpty()? false : true;
+	}
+	
+	/**
+	 * @param tableName
+	 * @return table
+	 */
+	public Table getTable(String tableName) {
+		
+		if (!(tables.isEmpty())) {
+			
+			Iterator<Table> itTab = tables.iterator();
+			while (itTab.hasNext()) {
+				Table table = itTab.next();
+				if (tableName.equalsIgnoreCase(table.getTableName())) {
+					return table;
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 }

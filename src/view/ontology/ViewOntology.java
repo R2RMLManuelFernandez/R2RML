@@ -20,7 +20,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultTreeModel;
 
 import model.r2rmlmapping.triplesMap.TriplesMap;
@@ -93,20 +92,6 @@ public class ViewOntology extends JPanel {
 
 	}
 	
-	/**
-	 * Sets the transferhandler for the general tree
-	 * 
-	 * @param paramTransferHandler
-	 */
-	public void setOntologyTransferHandler(TransferHandler paramTransferHandler) {
-		
-		treePanelGeneral.setTreeTransferHandler(paramTransferHandler);
-		treePanelClasses.setTreeTransferHandler(paramTransferHandler);
-		treePanelObjectProperties.setTreeTransferHandler(paramTransferHandler);
-		treePanelDataProperties.setTreeTransferHandler(paramTransferHandler);
-		
-	}
-		
 	/**
 	 * Creates a new ontology model and loads it into the tree
 	 * 

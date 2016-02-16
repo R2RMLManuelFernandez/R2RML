@@ -22,7 +22,6 @@ import java.awt.event.ActionListener;
 import java.net.InetAddress;
 import java.util.Enumeration;
 
-import javax.swing.DropMode;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -31,7 +30,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.TransferHandler;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Position;
@@ -166,22 +164,9 @@ public class ViewDatabaseTree extends JPanel {
 		databaseRender = new MyDatabaseRender();
 		treeDatabase.setCellRenderer(databaseRender);
 		treeDatabase.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);		
-		treeDatabase.setDragEnabled(true);
-		treeDatabase.setDropMode(DropMode.ON_OR_INSERT);
 		treeDatabase.setRootVisible(false);
 		scrollPaneDatabaseTree.setViewportView(treeDatabase);
 
-	}
-
-	/**
-	 * Sets the transferhandler for the tree
-	 * 
-	 * @param paramTransferHandler
-	 */
-	public void setDatabaseTransferHandler(TransferHandler paramTransferHandler) {
-		
-		treeDatabase.setTransferHandler(paramTransferHandler);
-		
 	}
 	
 	/**

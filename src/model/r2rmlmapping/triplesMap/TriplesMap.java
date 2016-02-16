@@ -34,16 +34,17 @@ public class TriplesMap extends Observable {
 	private Table logicalTable;
 	private SubjectMap subjectMap;
 	private ArrayList<PredicateObjectMap> predicateObjectMaps;	
-	private String ontologyNameSpace;
 	private R2RMLMapping r2rmlMapping;
+	private ArrayList<ReferencingObjectMap> referencingObjectMapsInTriplesMap;	
 
-	public TriplesMap(int identifier, R2RMLMapping paramR2rmlMapping, Table paramTable) {
+	public TriplesMap(int identifier, R2RMLMapping paramR2RMLMapping, Table paramTable) {
 		
 		super();
 		this.identifier = identifier;
 		this.subjectMap = new SubjectMap();
 		this.predicateObjectMaps = new ArrayList<PredicateObjectMap>();
-		this.r2rmlMapping = paramR2rmlMapping;
+		this.referencingObjectMapsInTriplesMap =new ArrayList<ReferencingObjectMap>(0);
+		this.r2rmlMapping = paramR2RMLMapping;
 		this.logicalTable = paramTable;
 		setChanged();
 		notifyObservers();
@@ -125,24 +126,30 @@ public class TriplesMap extends Observable {
 	}
 
 	/**
-	 * @return the nameSpace
-	 */
-	public String getNameSpace() {
-		return ontologyNameSpace;
-	}
-
-	/**
-	 * @param nameSpace the nameSpace to set
-	 */
-	public void setNameSpace(String nameSpace) {
-		this.ontologyNameSpace = nameSpace;
-	}
-
-	/**
 	 * @return the r2rmlMapping
 	 */
 	public R2RMLMapping getR2RmlMapping() {
 		return r2rmlMapping;
 	}
 
+	/**
+	 * @return the referencingObjectMapsInTriplesMap
+	 */
+	public ArrayList<ReferencingObjectMap> getReferencingObjectMapsInTriplesMap() {
+		return referencingObjectMapsInTriplesMap;
+	}
+	
+	/**
+	 * @param refObjectMap
+	 */
+	protected void addReferencingObjectMapToObjectsMapsInTriplesMap (ReferencingObjectMap refObjectMap) {
+		referencingObjectMapsInTriplesMap.add(refObjectMap);
+	}
+	
+	/**
+	 * @param refObjectMap
+	 */
+	protected void deleteReferencingObjectMapInObjectsMapsInTriplesMap (ReferencingObjectMap refObjectMap) {
+		referencingObjectMapsInTriplesMap.remove(refObjectMap);
+	}
 }

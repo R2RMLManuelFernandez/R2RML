@@ -17,9 +17,19 @@
 package model.r2rmlmapping;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Observable;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import model.r2rmlmapping.triplesMap.ReferencingObjectMap;
 import model.r2rmlmapping.triplesMap.TriplesMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import view.R2RMLMain;
 
 /**
  * Represents a R2RML mapping
@@ -30,8 +40,12 @@ import model.r2rmlmapping.triplesMap.TriplesMap;
 public class R2RMLMapping extends Observable {
 
 	private int identifierCounter;
+	
+	private String rdfNameSpace;
 
 	private ArrayList<TriplesMap> triplesMaps = null;
+	
+	private static Logger logger = LoggerFactory.getLogger(R2RMLMain.class);
 
 	public R2RMLMapping() {
 
@@ -59,7 +73,7 @@ public class R2RMLMapping extends Observable {
 		this.identifierCounter++;
 		setChanged();
 		notifyObservers();
-        System.out.println("R2RMLMapping --> Disparado add triples map a modelo r2rml");
+		logger.trace("R2RMLMapping --> Disparado add triples map a modelo r2rml");
 	}
 	
 	/**
@@ -86,6 +100,20 @@ public class R2RMLMapping extends Observable {
 			this.identifierCounter--;
 			setChanged();
 			notifyObservers();
+/*			for (TriplesMap triplesMap : triplesMaps) {
+				ArrayList<ReferencingObjectMap>refObjectMapsInTriplesMap = triplesMap.getReferencingObjectMapsInTriplesMap();
+				for (ReferencingObjectMap referencingObjectMap : refObjectMapsInTriplesMap) {
+					if (referencingObjectMap.getParentTriplesMap().equals(element)) {
+						logger.trace("Preguntar al usuario si quiere borrar el triplesMap");
+						if (true) {//"quiere borrarlo"
+							referencingObjectMap.getPredicateObjectMap().deleteObjectMap(referencingObjectMap);
+						}
+						else {
+							logger.trace("Advertir al usuario de las consecuencias de no borrar el triplesMap");
+						}
+					}
+				}
+			}*/
 			return true;
 			
 		}
@@ -101,12 +129,54 @@ public class R2RMLMapping extends Observable {
 	 * @param element
 	 * @return
 	 */
-	public Boolean removeTriplesMapAt(int ident) {
+	public Boolean removeTriplesMapAt(int ident, JFrame frame) {
 
+		TriplesMap triplesMapToRemove = this.triplesMaps.get(ident);
 		this.triplesMaps.remove(ident);
 		this.identifierCounter--;
 		setChanged();
 		notifyObservers();
+		
+		for (TriplesMap triplesMap : triplesMaps) {
+			
+			ArrayList<ReferencingObjectMap>refObjectMapsInTriplesMap = triplesMap.getReferencingObjectMapsInTriplesMap();
+//			ArrayList<ReferencingObjectMap>refObjectMapsInTriplesMap = refObjectMapsInTriplesMap.;
+			
+			Iterator<ReferencingObjectMap> iterRefObjectMaps = refObjectMapsInTriplesMap.iterator();
+			
+			while (iterRefObjectMaps.hasNext()) {
+				
+				ReferencingObjectMap referencingObjectMap = iterRefObjectMaps.next();
+				
+				if (referencingObjectMap.getParentTriplesMap().equals(triplesMapToRemove)) {
+					
+					logger.trace("Preguntar al usuario si quiere borrar el triplesMap");
+					String[] options = {"Yes, I would like to remove the unconsistent referencing objectMap from the R2RML Map", "No, keep the Referncin object map in tehe R2RML Map"};
+					int delete = JOptionPane.showOptionDialog(frame, "Would you like to remove the unconsistent referencing objectMap from the R2RML Map?", "Remove inconsistent object map",
+							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+					
+					if (delete == JOptionPane.YES_OPTION) {//"quiere borrarlo"
+						
+						referencingObjectMap.getPredicateObjectMap().deleteObjectMap(referencingObjectMap);
+						iterRefObjectMaps.remove();
+						setChanged();
+						notifyObservers();
+						logger.trace("Debereia haberse borrado el triplesMap inconsistente");
+						
+					}
+					else {
+						
+						logger.trace("Advertir al usuario de las consecuencias de no borrar el triplesMap");
+						JOptionPane.showMessageDialog(frame, "The R2RML map will be inconsistent", "Warning", JOptionPane.WARNING_MESSAGE, null);
+					
+					}
+					
+				}
+				
+			}
+			
+		}
+		
 		return true;
 			
 	}
@@ -163,4 +233,20 @@ public class R2RMLMapping extends Observable {
 	public int getIdentifierCounter() {
 		return identifierCounter;
 	}
+	
+
+	/**
+	 * @return the rdfNameSpace
+	 */
+	public String getRdfNameSpace() {
+		return rdfNameSpace;
+	}
+
+	/**
+	 * @param rdfNameSpace the rdfNameSpace to set
+	 */
+	public void setRdfNameSpace(String rdfNameSpace) {
+		this.rdfNameSpace = rdfNameSpace;
+	}
+
 }

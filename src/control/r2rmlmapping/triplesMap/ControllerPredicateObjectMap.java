@@ -95,8 +95,7 @@ public class ControllerPredicateObjectMap implements ActionListener {
 				if (!parentTriplesMapSelector.checkCancel()) {
 					int parentTriplesMapIndex = parentTriplesMapSelector.getParentTriplesMapSelected();
 					logger.trace("parent triples map index " + parentTriplesMapIndex);
-					ReferencingObjectMap object = new ReferencingObjectMap(model);
-					object.setParentTriplesMap(model.getTriplesMap().getR2RmlMapping().getTriplesMap(parentTriplesMapIndex));
+					ReferencingObjectMap object = new ReferencingObjectMap(model, model.getTriplesMap().getR2RmlMapping().getTriplesMap(parentTriplesMapIndex));
 					logger.trace("creado object map y establecido parent triples map");
 					model.addObjectMap(object);
 				}

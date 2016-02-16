@@ -43,10 +43,10 @@ public abstract class OntologyElement {
 	}
 	
 	/**
-	 * @param nameSpace
+	 * @param displayName
 	 */
-	public void setDisplayName(String nameSpace) {
-		this.displayName = nameSpace;
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 	
 	/**

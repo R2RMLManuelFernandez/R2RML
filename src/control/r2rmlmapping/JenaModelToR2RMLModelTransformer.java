@@ -264,7 +264,7 @@ public class JenaModelToR2RMLModelTransformer {
 		    				Table table = database.getTable(nameTable);
 		    				logger.trace("table for triples map " + table.getTableName());
 		    				//TODO cambiar el constructor del triplesmap para que no coja int sino Strings
-		    				TriplesMap triplesMap = new TriplesMap(0, r2rmlMapping, table);
+		    				TriplesMap triplesMap = new TriplesMap(r2rmlMapping.getIdentifierCounter(), r2rmlMapping, table);
 		    				r2rmlMapping.addTriplesMap(triplesMap);
 		    				logger.trace("key triples map added " + subject.toString());
 		    				triplesMapMap.put(subject.toString(), triplesMap);
@@ -337,6 +337,7 @@ public class JenaModelToR2RMLModelTransformer {
 											if (stmtRdfClass.getSubject().equals((Resource)subjectMapObject)) {
 												if (stmtRdfClass.getObject() instanceof Literal) {
 													subjMap.setRdfClass(stmtRdfClass.getObject().toString());
+													//TODO buscar en la ontologia la clase a la que correspnde la IRI 
 												}
 												else {
 								    				logger.error("The statement is not a RdfClass", stmtRdfClass);
@@ -458,8 +459,7 @@ public class JenaModelToR2RMLModelTransformer {
 										logger.trace("parentTripMap " + referencedObjStmt.getObject().toString());
 										logger.trace("triples map keys " + triplesMapMap.keySet());
 
-										ReferencingObjectMap refObjMap = new ReferencingObjectMap(predObjMap);
-										refObjMap.setParentTriplesMap(parentTripMap);
+										ReferencingObjectMap refObjMap = new ReferencingObjectMap(predObjMap, parentTripMap);
 										
 										for (Statement joinConditionStmt : listJoinConditions) {
 											if (joinConditionStmt.getSubject().equals((Resource)objectStmtObject)) {

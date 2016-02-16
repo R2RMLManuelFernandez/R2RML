@@ -33,17 +33,19 @@ public class PredicateObjectMap extends Observable {
 	private ArrayList<ObjectMap> objectMaps;
 	
 	public PredicateObjectMap(int paramIdentifier, TriplesMap paramTriplesMap) {
+		
 		this.identifier = paramIdentifier;
 		this.triplesMap = paramTriplesMap;
-		initPredicateObject();
+		this.predicateMaps = new ArrayList<PredicateMap>();
+		this.objectMaps = new ArrayList<ObjectMap>();
+		
 	}
 	
 	//TODO hacer que cuandose cree un nuevo triples map se inicie con un predicate y un object o se cree vacio
-	private void initPredicateObject() {
-		this.predicateMaps = new ArrayList<PredicateMap>();
+	public void initPredicateObject() {
+		
 		PredicateMap predicateMap = new PredicateMap(this);
 		this.predicateMaps.add(predicateMap);
-		this.objectMaps = new ArrayList<ObjectMap>();
 		//al primer objeto le asigno arbitrariamente que sea del tipo colval
 		//si cambia el tipo deberia cambiar el modelo del objeto
 		ObjectMap objectMap = new ColumnValueObjectMap(this);
@@ -89,6 +91,11 @@ public class PredicateObjectMap extends Observable {
 	 */
 	public void addObjectMap(ObjectMap objectMap) {
 		this.objectMaps.add(objectMap);
+		if (objectMap instanceof ReferencingObjectMap) {
+			
+			this.triplesMap.addReferencingObjectMapToObjectsMapsInTriplesMap((ReferencingObjectMap)objectMap);
+			
+		}
 		setChanged();
 		notifyObservers();
 	}
@@ -99,6 +106,11 @@ public class PredicateObjectMap extends Observable {
 	 */
 	public void deleteObjectMap(ObjectMap objectMap) {
 		this.objectMaps.remove(objectMap);
+/*		if (objectMap instanceof ReferencingObjectMap) {
+			
+			this.triplesMap.deleteReferencingObjectMapInObjectsMapsInTriplesMap((ReferencingObjectMap) objectMap);
+			
+		}*/
 		setChanged();
 		notifyObservers();
 	}

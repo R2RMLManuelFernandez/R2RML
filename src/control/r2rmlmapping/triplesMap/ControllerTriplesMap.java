@@ -70,6 +70,7 @@ public class ControllerTriplesMap implements ActionListener {
         
 		if (source.getName().equals("Add Predicate-Object")) {
 			PredicateObjectMap predicateObjectMap = new PredicateObjectMap(0, model);
+			predicateObjectMap.initPredicateObject();
 			model.addPredicateObjectMap(predicateObjectMap);
 		}
 		else if (source.getName().equals("Update TriplesMap")) {

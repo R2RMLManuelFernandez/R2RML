@@ -34,9 +34,10 @@ public class ReferencingObjectMap extends Observable implements ObjectMap {
 	private PredicateObjectMap predicateObjectMap;
 	private String type;
 
-	public ReferencingObjectMap(PredicateObjectMap paramPredicateObjectMap) {
+	public ReferencingObjectMap(PredicateObjectMap paramPredicateObjectMap, TriplesMap paramParentTriplesMap) {
 		this.predicateObjectMap = paramPredicateObjectMap;
 		this.type = ReferenceType;
+		this.parentTriplesMap = paramParentTriplesMap;
 		this.joinConditions = new ArrayList<JoinCondition>();
 	}
 
@@ -64,16 +65,7 @@ public class ReferencingObjectMap extends Observable implements ObjectMap {
 	}
 
 	/**
-	 * @param parent the parent to set
-	 */
-	public void setParentTriplesMap(TriplesMap parent) {
-		this.parentTriplesMap = parent;
-		setChanged();
-		notifyObservers();
-	}
-
-	/**
-	 * @return the joinConditions
+	 * @return the joinCondition at index position
 	 */
 	public JoinCondition getJoinConditionAt(int index) {
 		return joinConditions.get(index);

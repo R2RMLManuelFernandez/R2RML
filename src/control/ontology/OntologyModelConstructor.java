@@ -39,16 +39,16 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.util.SimpleRootClassChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Manuel Fernandez Perez
  *
  */
-/**
- * @author Manuel Fernandez Perez
- *
- */
 public class OntologyModelConstructor {
+	
+	private static Logger logger = LoggerFactory.getLogger(OntologyModelConstructor.class);
     
 	private OWLOntologyManager manager;
     
@@ -56,6 +56,9 @@ public class OntologyModelConstructor {
     
 	//the set of OwlClass to allocate in the model
     private Set<OWLClass> owlClasses;
+    
+//the set of OwlClass allocated in the model
+//    private Set<OWLClass> owlClassesAllocated;
     
 	//the set of OWLDataProperty in the ontology
     private Set<OWLDataProperty> owlDataProperties;
@@ -113,7 +116,7 @@ public class OntologyModelConstructor {
     	this.owlClasses = this.owlOntology.getClassesInSignature();
     	this.owlObjectProperties = this.owlOntology.getObjectPropertiesInSignature();
     	this.owlDataProperties = this.owlOntology.getDataPropertiesInSignature();
-//    	System.out.println("createOntologyModel: Nº de clases: " + this.owlClasses.size());
+ //    	System.out.println("createOntologyModel: Nº de clases: " + this.owlClasses.size());
     	
     	createObjectPropertiesHierarchy();
     	
@@ -140,13 +143,29 @@ public class OntologyModelConstructor {
 		}
 
 		if (this.owlClasses.size() > 0) {
-			this.reallocaRemainClasses();
+			logger.trace("numero de clases por clasisficar antes del realloc: " + this.owlClasses.size());
+			this.reallocRemainClasses();
+			logger.trace("numero de clases por clasisficar despues del realloc: " + this.owlClasses.size());
 		}
 		
 		if (this.owlClasses.size() > 0) {
+			logger.trace("numero de clases por clasisficar antes de asignar a Thing: " + this.owlClasses.size());
 			for (OWLClass remainClass: this.owlClasses) {
 				createClass(this.thing, remainClass);
 			}
+			logger.trace("numero de clases por clasisficar despues de asignar a Thing: " + this.owlClasses.size());
+
+//------------------------------------------------------------------------------------------------------------------------
+/*			Iterator<OWLClass> iterRemainClasses = this.owlClasses.iterator();
+			
+			while (iterRemainClasses.hasNext()) {
+				
+				OWLClass remainClass = iterRemainClasses.next();
+				iterRemainClasses.remove();
+				createClass(this.thing, remainClass, iterRemainClasses);
+				
+			}*/
+//------------------------------------------------------------------------------------------------------------------------
 		}
 		
 	}
@@ -203,7 +222,7 @@ public class OntologyModelConstructor {
 	}
 	
 	/**
-	 * generates th OntologyClass for Thing. If OwlClass thing doesnt exits its created whit default parameters 
+	 * generates the OntologyClass for Thing. If OwlClass thing doesnt exits its created whit default parameters 
 	 * 
 	 * @param owlThing
 	 */
@@ -217,7 +236,13 @@ public class OntologyModelConstructor {
 			String nameSpace = ontologyIRI.getNamespace();
 			Thing = new OntologyClass(ontologyIRI.toString(), displayName, nameSpace);
 			this.owlClasses.remove(paramOwlThing);
+//			this.owlClassesAllocated.add(paramOwlThing);
 //			System.out.println("Nº de clases: " + this.owlClasses.size());
+			Set<OWLClass> owlSubclasses = findOwlSubclasses(paramOwlThing);
+			for (OWLClass owlSubclass: owlSubclasses) {
+				createClass(Thing, owlSubclass);
+			}
+
 		}
 		else {
 			Thing = new OntologyClass("http://www.w3.org/2002/07/owl#Thing", "Thing", "http://www.w3.org/2002/07/owl#");
@@ -233,6 +258,7 @@ public class OntologyModelConstructor {
 	 * Recursively creates the classes of the ontology
 	 * 
 	 * @param paramSuperClass
+	 * @param paramOwlClass
 	 */
 	private void createClass(OntologyClass paramSuperClass, OWLClass paramOwlClass) {
 		
@@ -241,6 +267,27 @@ public class OntologyModelConstructor {
 		String nameSpace = owlIRI.getNamespace();
 		OntologyClass newOntologyClazz = new OntologyClass(owlIRI.toString(), displayName, nameSpace);
 		paramSuperClass.addSubclass(newOntologyClazz);
+		
+/*		//Initialise
+		OWLOntologyManager m = create();
+		OWLOntology o = m.loadOntologyFromOntologyDocument(pizza_iri);
+		OWLDataFactory df = OWLManager.getOWLDataFactory();
+
+		//Get your class of interest
+		OWLClass cls = df.getOWLClass(IRI.create(pizza_iri + "#foo"));
+
+		// Get the annotations on the class that use the label property (rdfs:label)
+		for (OWLAnnotation annotation : cls.getAnnotations(o, df.getRDFSLabel())) {
+		  if (annotation.getValue() instanceof OWLLiteral) {
+		    OWLLiteral val = (OWLLiteral) annotation.getValue();
+		    // look for portuguese labels - can be skipped
+		      if (val.hasLang("pt")) {
+		        //Get your String here
+		        System.out.println(cls + " labelled " + val.getLiteral());
+		      }
+		   }
+		}
+*/
 		
 //		Set<OntologyObjectProperty> classObjectProperties = createObjectProperties(getOwlClassObjectProperties(paramOwlClass));
 		Set<OWLObjectProperty> classOwlObjectProperties = getOwlClassObjectProperties(paramOwlClass);
@@ -274,7 +321,22 @@ public class OntologyModelConstructor {
 		for (OWLClass owlSubclass: owlSubclasses) {
 			createClass(newOntologyClazz, owlSubclass);
 		}
+
+//------------------------------------------------------------------------------------------------------------------------
+/*		iterClasses.remove();
 		
+		Set<OWLClass> owlSubclasses = findOwlSubclasses(paramOwlClass);
+		
+		Iterator<OWLClass> iterSubClasses = owlSubclasses.iterator();
+		
+		while (iterSubClasses.hasNext()) {
+			
+			OWLClass owlSubclass = iterSubClasses.next();
+			iterSubClasses.remove();
+			createClass(newOntologyClazz, owlSubclass, iterSubClasses);
+			
+		}*/
+//------------------------------------------------------------------------------------------------------------------------	
 	}
 	
 	/**
@@ -305,7 +367,7 @@ public class OntologyModelConstructor {
 	/**
 	 * places in the ontology model the classes whitout superclasses, but whit equivalent classes already in the model
 	 */
-	private void reallocaRemainClasses() {
+	private void reallocRemainClasses() {
 		//conjunto de las clases que quedan por colocar
 		Set<OWLClass> remainOwlClasses = this.owlClasses;
 		//conjunto de las iris de las clases que hay que buscar por que tienen clases equivalemtes que hay que colocar
@@ -720,9 +782,10 @@ public class OntologyModelConstructor {
 		
 		try {
 //			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/pizza.owl");
-			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/myOnto.owl");
-//			OntMConstructor ontmConstructor = new OntMConstructor("C:/Users/Manuel/Desktop/Ontologias/onto2.owl");
-//			OntMConstructor ontmConstructor = new OntMConstructor("C:/Users/Manuel/Desktop/Ontologias/onto.rdf");
+//			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/myOnto.owl");
+//			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/onto2.owl");
+//			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/onto.rdf");
+			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/beer-ontology-ontologies-owl-REVISION-49/root-ontology.owl");
 			
 			ontmConstructor.printClass(ontmConstructor.getThing());
 			

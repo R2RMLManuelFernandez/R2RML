@@ -39,9 +39,9 @@ public class MyOntologyRender extends DefaultTreeCellRenderer {
 
 	private static final long serialVersionUID = 5537249275462431499L;
 	
-	private ImageIcon iconClass = new ImageIcon("");
-	private ImageIcon iconObjectProperty = new ImageIcon("");
-	private ImageIcon iconDataProperty = new ImageIcon("");
+	private ImageIcon iconClass = new ImageIcon(getClass().getResource("/icons/Bola Amarilla.png"));
+	private ImageIcon iconObjectProperty = new ImageIcon(getClass().getResource("/icons/Bola Azul.png"));
+	private ImageIcon iconDataProperty = new ImageIcon(getClass().getResource("/icons/Bola Verde.png"));
 	
 	private String start = null;
 	
@@ -69,7 +69,7 @@ public class MyOntologyRender extends DefaultTreeCellRenderer {
 		
 		Object nodeObject = ((DefaultMutableTreeNode)value).getUserObject();
 		
-		String displayName = ((OntologyElement)nodeObject).getDisplayName().toLowerCase();
+		String displayName = ((OntologyElement)nodeObject).getFragment().toLowerCase();
 		
 		if(nodeObject instanceof OntologyObjectProperty) {
 			setIcon(iconObjectProperty);

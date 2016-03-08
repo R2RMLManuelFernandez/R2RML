@@ -21,7 +21,7 @@ import java.sql.SQLException;
 import model.database.Database;
 
 /**
- * Represents the connection to a MySql database
+ * Connection to MySql database
  * 
  * @author Manuel Fernandez Perez
  *

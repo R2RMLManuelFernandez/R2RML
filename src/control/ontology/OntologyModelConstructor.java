@@ -29,10 +29,13 @@ import model.ontology.OntologyObjectProperty;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -51,6 +54,8 @@ public class OntologyModelConstructor {
 	private static Logger logger = LoggerFactory.getLogger(OntologyModelConstructor.class);
     
 	private OWLOntologyManager manager;
+	
+	private OWLDataFactory dataFactory;
     
 	private OWLOntology owlOntology;
     
@@ -97,12 +102,18 @@ public class OntologyModelConstructor {
 		
 		//Identifies the the ontology source 
 		if (paramOntologySource.startsWith("http://", 0)) {
+			
 			IRI owlOntologyIRI = IRI.create(paramOntologySource);
 			this.owlOntology = manager.loadOntologyFromOntologyDocument(owlOntologyIRI);
+			this.dataFactory = manager.getOWLDataFactory();
+			
 		}
 		else {
+			
 			File file = new File(paramOntologySource);
 			this.owlOntology = manager.loadOntologyFromOntologyDocument(file);
+			this.dataFactory = manager.getOWLDataFactory();
+			
 		}
 
 	}
@@ -143,16 +154,23 @@ public class OntologyModelConstructor {
 		}
 
 		if (this.owlClasses.size() > 0) {
+			
 			logger.trace("numero de clases por clasisficar antes del realloc: " + this.owlClasses.size());
 			this.reallocRemainClasses();
 			logger.trace("numero de clases por clasisficar despues del realloc: " + this.owlClasses.size());
+			
 		}
 		
 		if (this.owlClasses.size() > 0) {
+			
 			logger.trace("numero de clases por clasisficar antes de asignar a Thing: " + this.owlClasses.size());
+			
 			for (OWLClass remainClass: this.owlClasses) {
+				
 				createClass(this.thing, remainClass);
+				
 			}
+			
 			logger.trace("numero de clases por clasisficar despues de asignar a Thing: " + this.owlClasses.size());
 
 //------------------------------------------------------------------------------------------------------------------------
@@ -186,9 +204,13 @@ public class OntologyModelConstructor {
 		SimpleRootClassChecker rootChecker = new SimpleRootClassChecker(owlOntologies);
 		
 		for (OWLClass owlClass : owlClasses) {
+			
 			if (rootChecker.isRootClass(owlClass)) {
+				
 				owlRootClasses.add(owlClass);
+				
 			}
+
 		}
 		
 		return owlRootClasses;
@@ -206,15 +228,21 @@ public class OntologyModelConstructor {
 		OWLClass owlthing = null;
 		
 		for (OWLClass clazz : paramOwlRootClasses) {
-			if (clazz.isOWLThing()){
+			
+			if (clazz.isOWLThing()) {
+				
 				owlthing = clazz;	
 				break;
+				
 			}
+			
 		}
 		
 		if (owlthing != null) {
+			
 			paramOwlRootClasses.remove(owlthing);
 //			System.out.println("Owl Thing: " + owlthing.getIRI());
+
 		}
 		
 		return owlthing;
@@ -231,6 +259,7 @@ public class OntologyModelConstructor {
 		OntologyClass Thing = null;
 		
 		if (paramOwlThing != null) {
+			
 			IRI ontologyIRI = paramOwlThing.getIRI();
 			String displayName = ontologyIRI.getFragment();
 			String nameSpace = ontologyIRI.getNamespace();
@@ -239,13 +268,18 @@ public class OntologyModelConstructor {
 //			this.owlClassesAllocated.add(paramOwlThing);
 //			System.out.println("Nº de clases: " + this.owlClasses.size());
 			Set<OWLClass> owlSubclasses = findOwlSubclasses(paramOwlThing);
+			
 			for (OWLClass owlSubclass: owlSubclasses) {
+				
 				createClass(Thing, owlSubclass);
+				
 			}
 
 		}
 		else {
+			
 			Thing = new OntologyClass("http://www.w3.org/2002/07/owl#Thing", "Thing", "http://www.w3.org/2002/07/owl#");
+			
 		}
 		
 //		System.out.println("createThing: Ontology Thing: " + Thing.getIRI() + ", " + Thing.getDisplayName() + ", " + Thing.getNameSpace());
@@ -267,6 +301,44 @@ public class OntologyModelConstructor {
 		String nameSpace = owlIRI.getNamespace();
 		OntologyClass newOntologyClazz = new OntologyClass(owlIRI.toString(), displayName, nameSpace);
 		paramSuperClass.addSubclass(newOntologyClazz);
+		HashMap<String, String> labels = new HashMap<String, String>();
+		
+		for (OWLAnnotation annotation: paramOwlClass.getAnnotations(owlOntology, dataFactory.getRDFSLabel())) {
+			
+			if (annotation.getValue() instanceof OWLLiteral) {
+				
+				OWLLiteral rawLabel = (OWLLiteral) annotation.getValue();
+				String label = rawLabel.getLiteral();
+				String language = rawLabel.getLang();
+				labels.put(language, label);
+				
+			}
+			
+		}
+		
+		Iterator<String> iter = labels.keySet().iterator();
+		
+		if (labels.size() > 1) {
+			
+			while (iter.hasNext()) {
+				
+				String keyLang = iter.next();
+				
+				if (keyLang.equals("eng")) {
+					
+					newOntologyClazz.setLabel(labels.get(keyLang));
+					
+				}
+				
+			}
+			
+		}
+		else if (labels.size() == 1) {
+			
+			newOntologyClazz.setLabel(labels.get(iter.next()));
+			
+		}
+		
 		
 /*		//Initialise
 		OWLOntologyManager m = create();
@@ -287,6 +359,24 @@ public class OntologyModelConstructor {
 		      }
 		   }
 		}
+		
+		// create string enumeration from subclasses' names
+		Map<String,IRI> enumElements = new HashMap<String,IRI>();
+		for(OWLClass subclass : subclasses)
+		{
+			Set<OWLAnnotation> subLabels = subclass.getAnnotations(ont, df.getRDFSLabel());
+			
+			// for now we presume only one label and no internationalization (i.e. English labels only)
+			if(subLabels.size()==0)
+				continue;
+			
+			String label = ((OWLLiteral)subLabels.iterator().next().getValue()).getLiteral();		
+			IRI subIRI = subclass.getIRI();
+			
+			enumElements.put(label, subIRI);
+		}
+		enumType.setEnumElements(enumElements);
+		
 */
 		
 //		Set<OntologyObjectProperty> classObjectProperties = createObjectProperties(getOwlClassObjectProperties(paramOwlClass));
@@ -299,7 +389,9 @@ public class OntologyModelConstructor {
 //		System.out.println("createClass --> " + displayName + " OP: " + classObjectProperties.size());
 		
 		for (OntologyObjectProperty classObjectProperty: classObjectProperties) {
+			
 			newOntologyClazz.addObjectProperty(classObjectProperty);
+			
 		}
 		
 //		Set<OntologyDataProperty> classDataProperties = createClassDataProperties(getOwlClassDataProperties(paramOwlClass));
@@ -312,14 +404,19 @@ public class OntologyModelConstructor {
 //		System.out.println("createClass --> " + displayName + " DP: " + classDataProperties.size());
 		
 		for (OntologyDataProperty classDataProperty: classDataProperties) {
+			
 			newOntologyClazz.addDataProperty(classDataProperty);
+			
 		}
 		
 		this.owlClasses.remove(paramOwlClass);
 //		System.out.println("createClass: " + paramOwlClass.getIRI() + " removed. " + "Nº de clases restantes: " + this.owlClasses.size());
 		Set<OWLClass> owlSubclasses = findOwlSubclasses(paramOwlClass);
+		
 		for (OWLClass owlSubclass: owlSubclasses) {
+			
 			createClass(newOntologyClazz, owlSubclass);
+
 		}
 
 //------------------------------------------------------------------------------------------------------------------------
@@ -544,9 +641,31 @@ public class OntologyModelConstructor {
 	 */
 	private void createObjectPropertiesHierarchy() {
 		
-		//creates the topObjectProperty
-		this.topObjectProperty = new OntologyObjectProperty("http://www.w3.org/2002/07/owl#topObjectProperty",
-				"topObjectProperty", "http://www.w3.org/2002/07/owl#");
+		//searches for the topObjectProperty
+		Iterator<OWLObjectProperty> iterOWLObjProp = this.owlObjectProperties.iterator();
+		
+		while (iterOWLObjProp.hasNext()) {
+			
+			OWLObjectProperty owlObjectProperty = (OWLObjectProperty) iterOWLObjProp.next();
+			
+			if (owlObjectProperty.isOWLTopObjectProperty()) {
+				
+				this.topObjectProperty = createObjectProperty(owlObjectProperty);
+				iterOWLObjProp.remove();
+				break;
+				
+			}
+			
+		}
+		
+		//if there is not topObjectProperty , is created
+		
+		if (this.topObjectProperty == null) {
+			
+			this.topObjectProperty = new OntologyObjectProperty("http://www.w3.org/2002/07/owl#topObjectProperty",
+					"topObjectProperty", "http://www.w3.org/2002/07/owl#");
+			
+		}
 		
 		//search for the rootobjectProperties
 		
@@ -572,10 +691,49 @@ public class OntologyModelConstructor {
 		IRI iriObjectProperty = owlObjectProperty.getIRI();
 		String displayName = iriObjectProperty.getFragment();
 		String nameSpace = iriObjectProperty.getNamespace();
+		HashMap<String, String> labels = new HashMap<String, String>();
 		
 		OntologyObjectProperty ontologyObjectProperty = new OntologyObjectProperty(iriObjectProperty.toString(),
 																displayName, nameSpace);
     	//System.out.println("createObjectProperty -> ontologyObjectProperty: " + ontologyObjectProperty.getIRI());
+		
+		for (OWLAnnotation annotation: owlObjectProperty.getAnnotations(owlOntology, dataFactory.getRDFSLabel())) {
+			
+			if (annotation.getValue() instanceof OWLLiteral) {
+				
+				OWLLiteral rawLabel = (OWLLiteral) annotation.getValue();
+				String label = rawLabel.getLiteral();
+				String language = rawLabel.getLang();
+//				ontologyObjectProperty.addLabel(language, label);
+				labels.put(language, label);
+				
+			}
+			
+		}
+		
+		Iterator<String> iter = labels.keySet().iterator();
+		
+		if (labels.size() > 1) {
+			
+			while (iter.hasNext()) {
+				
+				String keyLang = iter.next();
+				
+				if (keyLang.equals("eng")) {
+					
+					ontologyObjectProperty.setLabel(labels.get(keyLang));
+					
+				}
+				
+			}
+			
+		}
+		else if (labels.size() == 1) {
+			
+			ontologyObjectProperty.setLabel(labels.get(iter.next()));
+			
+		}
+		
 		
 		this.mapEquivalentObjectProperties.put(iriObjectProperty.toString(), ontologyObjectProperty);
 		
@@ -601,10 +759,32 @@ public class OntologyModelConstructor {
 	 */
 	private void createDataPropertiesHierarchy() {
 		
-		//creates the topDataProperty
-		this.topDataProperty = new OntologyDataProperty("http://www.w3.org/2002/07/owl#topDataProperty",
-				"topDataProperty", "http://www.w3.org/2002/07/owl#");
+		//searches for the topDataProperty
+		Iterator<OWLDataProperty> iterOWLDataProp = this.owlDataProperties.iterator();
 		
+		while (iterOWLDataProp.hasNext()) {
+			
+			OWLDataProperty owlDataProperty = iterOWLDataProp.next();
+			
+			if (owlDataProperty.isOWLTopDataProperty()) {
+				
+				this.topDataProperty = createDataProperty(owlDataProperty);
+				iterOWLDataProp.remove();
+				break;
+				
+			}
+			
+		}
+		
+		//if there is not topDataProperty , is created
+		
+		if (this.topDataProperty == null) {
+			
+			this.topDataProperty = new OntologyDataProperty("http://www.w3.org/2002/07/owl#topDataProperty",
+					"topDataProperty", "http://www.w3.org/2002/07/owl#");
+			
+		}
+
 		//search for the rootDataProperties
 		
 		for (OWLDataProperty owlDataProperty: this.owlDataProperties) {
@@ -629,9 +809,48 @@ public class OntologyModelConstructor {
 		IRI iriDataProperty = owlDataProperty.getIRI();
 		String displayName = iriDataProperty.getFragment();
 		String nameSpace = iriDataProperty.getNamespace();
+		HashMap<String, String> labels = new HashMap<String, String>();
 		
 		OntologyDataProperty ontologyDataProperty = new OntologyDataProperty(iriDataProperty.toString(),
 																displayName, nameSpace);
+		
+		for (OWLAnnotation annotation: owlDataProperty.getAnnotations(owlOntology, dataFactory.getRDFSLabel())) {
+			
+			if (annotation.getValue() instanceof OWLLiteral) {
+				
+				OWLLiteral rawLabel = (OWLLiteral) annotation.getValue();
+				String label = rawLabel.getLiteral();
+				String language = rawLabel.getLang();
+//				ontologyDataProperty.addLabel(language, label);
+				labels.put(language, label);
+				
+			}
+		
+		}
+		
+		Iterator<String> iter = labels.keySet().iterator();
+		
+		if (labels.size() > 1) {
+			
+			while (iter.hasNext()) {
+				
+				String keyLang = iter.next();
+				
+				if (keyLang.equals("eng")) {
+					
+					ontologyDataProperty.setLabel(labels.get(keyLang));
+					
+				}
+				
+			}
+			
+		}
+		else if (labels.size() == 1) {
+			
+			ontologyDataProperty.setLabel(labels.get(iter.next()));
+			
+		}
+		
 		this.mapEquivalentDataProperties.put(iriDataProperty.toString(), ontologyDataProperty);
 		
 		Set<OWLDataPropertyExpression> owlDataSubProperties = owlDataProperty.getSubProperties(owlOntology);
@@ -700,6 +919,87 @@ public class OntologyModelConstructor {
 	}
 	
 	
+	/**
+	 * 
+	 */
+	public void changeModelToString() {
+		
+		ArrayList<OntologyClass> subClases = this.thing.getSubclasses();
+		
+		for (OntologyClass ontClass: subClases) {
+			
+			changeClassToString(ontClass);
+			
+		}
+		
+		ArrayList<OntologyObjectProperty> subObjectProperties = this.topObjectProperty.getSubObjectProperties();
+		
+		for (OntologyObjectProperty subObjectProperty: subObjectProperties) {
+			
+			changeObjectPropertyToString(subObjectProperty);
+			
+		}
+		
+		ArrayList<OntologyDataProperty> subDataProperties = this.topDataProperty.getSubDataProperties();
+		
+		for (OntologyDataProperty subDataProperty: subDataProperties) {
+			
+			changeDataPropertyToString(subDataProperty);
+			
+		}
+
+	}
+	
+	/**
+	 * @param ontClass
+	 */
+	public void changeClassToString(OntologyClass ontClass) {
+		
+		ontClass.changeShowLabel();
+		
+		ArrayList<OntologyClass> subClases = ontClass.getSubclasses();
+		
+		for (OntologyClass subClass: subClases) {
+			
+			changeClassToString(subClass);
+			
+		}
+		
+	}
+	
+	/**
+	 * @param ontClass
+	 */
+	public void changeObjectPropertyToString(OntologyObjectProperty ontObjectProperty) {
+		
+		ontObjectProperty.changeShowLabel();
+		
+		ArrayList<OntologyObjectProperty> subObjectProperties = ontObjectProperty.getSubObjectProperties();
+		
+		for (OntologyObjectProperty subObjectProperty: subObjectProperties) {
+			
+			changeObjectPropertyToString(subObjectProperty);;
+			
+		}
+		
+	}
+	
+	/**
+	 * @param ontClass
+	 */
+	public void changeDataPropertyToString(OntologyDataProperty ontDataProperty) {
+		
+		ontDataProperty.changeShowLabel();
+		
+		ArrayList<OntologyDataProperty> subDataProperties = ontDataProperty.getSubDataProperties();
+		
+		for (OntologyDataProperty subDataProperty: subDataProperties) {
+			
+			changeDataPropertyToString(subDataProperty);
+			
+		}
+		
+	}
 	
 //--------------------------------------------------------------------------------------------------------------------------------	
 
@@ -743,30 +1043,42 @@ public class OntologyModelConstructor {
 	private void printClass (OntologyClass oClass) {
 		
 		System.out.println();
-		System.out.println("printClass --> Class Name: " + oClass.getDisplayName());
+		System.out.println("printClass --> Class Name: " + oClass.getFragment());
+		
+		System.out.println("printClass --> Labels");
+		if (oClass.getLabel() != null) {
+			System.out.println("printClass --> Printing Label for : " + oClass.getFragment());
+			System.out.println(oClass.getLabel());
+		}
 
 		System.out.println("printClass --> Has Object Properties : " + oClass.hasObjectProperties());
 		if (oClass.hasObjectProperties()) {
-			System.out.println("printClass --> Printing Object Properties for : " + oClass.getDisplayName());
+			System.out.println("printClass --> Printing Object Properties for : " + oClass.getFragment());
 			ArrayList<OntologyObjectProperty> objectProperties = oClass.getObjectProperties();
 			System.out.println("Number of object properties: " + objectProperties.size());
 			for (OntologyObjectProperty oProperty: objectProperties) {
-				System.out.println(oProperty.getDisplayName());
+				System.out.println(oProperty.getFragment());
+				if (oProperty.getLabel() != null) {
+					System.out.println(oProperty.getLabel());
+				}
 			}
 		}
 		
 		System.out.println("printClass --> Has Data Properties : " + oClass.hasDataProperties());
 		if (oClass.hasDataProperties()) {
-			System.out.println("printClass --> Printing Data Properties for : " + oClass.getDisplayName());
+			System.out.println("printClass --> Printing Data Properties for : " + oClass.getFragment());
 			ArrayList<OntologyDataProperty> dataProperties = oClass.getDataProperties();
 			System.out.println("Number of data properties: " + dataProperties.size());
 			for (OntologyDataProperty dProperty: dataProperties) {
-				System.out.println(dProperty.getDisplayName());
+				System.out.println(dProperty.getFragment());
+				if (dProperty.getLabel() != null) {
+					System.out.println(dProperty.getLabel());
+				}
 			}
 		}
 		
 		if (oClass.hasSubclasses()) {
-			System.out.println("printClass --> Printing SubClasses for : " + oClass.getDisplayName());
+			System.out.println("printClass --> Printing SubClasses for : " + oClass.getFragment());
 			ArrayList<OntologyClass> subClasses = oClass.getSubclasses();
 //			System.out.println("Number of subclasses: " + subClasses.size());
 			for (OntologyClass oSubClass: subClasses) {
@@ -782,10 +1094,10 @@ public class OntologyModelConstructor {
 		
 		try {
 //			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/pizza.owl");
-//			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/myOnto.owl");
+			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/myOnto.owl");
 //			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/onto2.owl");
 //			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/onto.rdf");
-			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/beer-ontology-ontologies-owl-REVISION-49/root-ontology.owl");
+//			OntologyModelConstructor ontmConstructor = new OntologyModelConstructor("C:/Users/Manuel/Desktop/Ontologias/beer-ontology-ontologies-owl-REVISION-49/root-ontology.owl");
 			
 			ontmConstructor.printClass(ontmConstructor.getThing());
 			

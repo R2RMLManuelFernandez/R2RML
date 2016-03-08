@@ -37,7 +37,7 @@ import javax.swing.JTextField;
  * @author Manuel Fernandez Perez
  *
  */
-public class R2RMLMapRDFNamespaceSelector extends JDialog {
+public class R2RMLMapBaseIRISelector extends JDialog {
 
 	/**
 	 * 
@@ -46,13 +46,13 @@ public class R2RMLMapRDFNamespaceSelector extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	
 	private boolean cancel = false;
-	private JTextField textFieldNamespace;
-	private String nameSpace;
+	private JTextField textFieldBaseIRI;
+	private String baseIRI;
 
 	/**
 	 * Create the dialog.
 	 */
-	public R2RMLMapRDFNamespaceSelector(JFrame frame) {
+	public R2RMLMapBaseIRISelector(JFrame frame) {
 		super(frame, true);
 		initialize();
 	}
@@ -69,21 +69,21 @@ public class R2RMLMapRDFNamespaceSelector extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new MigLayout("", "[grow]", "[grow][30px:n][30px:n][grow]"));
 		
-		JLabel labelR2RMLMapRDFNamespace = new JLabel("Enter the namespace for R2RML Map");
+		JLabel labelR2RMLMapBaseIRI = new JLabel("Enter the R2RML Map's base IRI");
 		
-		contentPanel.add(labelR2RMLMapRDFNamespace, "cell 0 1,alignx center,aligny center");
+		contentPanel.add(labelR2RMLMapBaseIRI, "cell 0 1,alignx center,aligny center");
 		
-		textFieldNamespace = new JTextField();
-		textFieldNamespace.addActionListener(new ActionListener() {
+		textFieldBaseIRI = new JTextField();
+		textFieldBaseIRI.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				textFieldNamespaceActionPerformed(e);
+				textFieldBaseIRIActionPerformed(e);
 				
 			}
 		});
-		contentPanel.add(textFieldNamespace, "cell 0 2,grow");
-		textFieldNamespace.setColumns(10);
+		contentPanel.add(textFieldBaseIRI, "cell 0 2,grow");
+		textFieldBaseIRI.setColumns(10);
 		
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -147,15 +147,15 @@ public class R2RMLMapRDFNamespaceSelector extends JDialog {
 	/**
 	 * @param e
 	 */
-	protected void textFieldNamespaceActionPerformed(ActionEvent e) {
-		nameSpace = textFieldNamespace.getText();
+	protected void textFieldBaseIRIActionPerformed(ActionEvent e) {
+		this.baseIRI = textFieldBaseIRI.getText();
 	}
 
 	/**
 	 * @return the predObjSelected
 	 */
-	public String getNamespaceSelected() {
-		return nameSpace;
+	public String getSelectedBaseIRI() {
+		return baseIRI;
 	}
 	
 }

@@ -109,69 +109,116 @@ public class ViewR2RMLMapping extends JPanel implements Observer {
 		textArea.append("\n");
 		
 		if (r2rmlMapping.hasTriplesMap()) {
+			
 			logger.trace(r2rmlMapping.hasTriplesMap().toString());
+			
 			for (int i = 0; i < triplesMapCounter; i++) {
+				
 				triplesMapAux = r2rmlMapping.getTriplesMap(i);
-				textArea.append("Triples Map\n");
-				textArea.append("Logical table " + triplesMapAux.getLogicalTable().getTableName());
+				textArea.append("Triples Map" + i + "\n");
+				textArea.append("    logicalTable    " + triplesMapAux.getLogicalTable().getTableName());
 				textArea.append("\n");
 				subjectMapAux = triplesMapAux.getSubjectMap();
-				textArea.append(subjectMapAux.getSubject());
+				textArea.append("    subjectMap [\n");
+				textArea.append("        template    " + subjectMapAux.getSubject());
 				textArea.append("\n");
-				textArea.append(subjectMapAux.getRdfClass());
+				textArea.append("        class    " + subjectMapAux.getRdfClass());
 				textArea.append("\n");
+				textArea.append("    ];\n");
 				logger.trace("ViewR2RMLMapping --> Imprimido sujeto en text area");
 		        int sizePredicateObjectMaps = triplesMapAux.getPredicateObjectMaps().size();
 		        logger.trace("ViewR2RMLMapping --> numero de pred obj maps " + sizePredicateObjectMaps);
+		        
 		        if (sizePredicateObjectMaps > 0) {
+		        	
 		        	ArrayList<PredicateObjectMap> predicateObjects = triplesMapAux.getPredicateObjectMaps();
+		        	
 		        	for (PredicateObjectMap predicateObject : predicateObjects) {
-						textArea.append("\n");
+		        		
+						textArea.append("    predicateObjectMap [\n");
+
 		        		int predicatesSize = predicateObject.getPredicateMaps().size();
+		        		
 		        		if (predicatesSize > 0)  {
-							textArea.append("Predicate    ");
+		        			
 		        			ArrayList<PredicateMap> predicates = predicateObject.getPredicateMaps();
+		        			
 			        		for (PredicateMap predicate : predicates) {
-								textArea.append(predicate.getPredicateIRI() + "\n");
+			        			
+								textArea.append("        predicate    " + predicate.getPredicateIRI() + "\n");
+								
 			        		}
+			        		
 		        		}
 
 		        		int ObjectsSize = predicateObject.getObjectMaps().size();
 		        		logger.trace("ViewR2RMLMapping --> numero de obj maps " + ObjectsSize);
+		        		
 		        		if (ObjectsSize > 0)  {
+		        			
 		        			ArrayList<ObjectMap> objects = predicateObject.getObjectMaps();
+		        			
 			        		for (ObjectMap object : objects) {
-								textArea.append("Object    ");
+								
 			        			if (object.getType().equals("Column-Valued")) {
+			        				
+									textArea.append("        objectMap    ");
+			        				
 			        				ColumnValueObjectMap columnVal = (ColumnValueObjectMap) object;
 			        				ArrayList<Column> cols =  columnVal.getObjectColumns();
+			        				
+									textArea.append("    column    ");
+			        				
 			        				for (Column col : cols) {
-										textArea.append(col.getColumnName() + "\n");
+			        					
+										textArea.append(" " + "\"" + col.getColumnName() + "\"");
+										
 			        				}
+			        				
+			        				textArea.append("\n");
+			        				
 			        			}
 			        			else {
+			        				
+									textArea.append("        objectMap [\n");
 			        				logger.trace("ViewR2RMLMapping --> tipo de obj map " + object.getType());
 			        				ReferencingObjectMap ref = (ReferencingObjectMap) object;
-									textArea.append("Parent Triples Map " + ref.getParentTriplesMap().getIdentifier() + "\n");
+									textArea.append("            parentTriplesMap  TriplesMap" + ref.getParentTriplesMap().getIdentifier() + "\n");
 									//textArea.append("Logical table Triples Map " + ref.toString());//getParentTriplesMap().getLogicalTable().getTableName() + "\n");
 									ArrayList<JoinCondition> jConds = ref.getJoinConditions();
+									
 									for (JoinCondition jCond : jConds) {
-										textArea.append("JoinCondition\n");	
-										textArea.append("Parent " + jCond.getParent().getColumnName() + "\n");
-										textArea.append("Child " + jCond.getChild().getColumnName() + "\n");	
+										
+										textArea.append("            joinCondition [\n");	
+										textArea.append("                parent    " + jCond.getParent().getColumnName() + "\n");
+										textArea.append("                child    " + jCond.getChild().getColumnName() + "\n");
+										textArea.append("            ]\n");
+										
 									}
+									
+									textArea.append("        ]\n");
+									
 			        			}
 			        			
 			        		}
+			        		
 		        		}
+		        		
+						textArea.append("    ];\n");
+		        		
 		        	}
+		        	
 		        }
+		        
 				textArea.append("\n");
+				
 			}
 		}
 		else {
+			
 	        logger.trace(r2rmlMapping.hasTriplesMap().toString());
 	        logger.trace(String.valueOf(r2rmlMapping.getIdentifierCounter()));
+	        
 		}
 		
 	}

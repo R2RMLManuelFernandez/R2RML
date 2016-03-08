@@ -21,19 +21,19 @@ import java.sql.SQLException;
 import model.database.Database;
 
 /**
- * Connection to Oracle database
+ * Connection to SQL Server database
  * 
  * @author Manuel Fernandez Perez
  *
  */
-public class OracleDatabaseConnection extends DatabaseConnection {
+public class FirebirdDatabaseConnection extends DatabaseConnection {
 
 	/**
 	 * oracle driver
 	 */
-	public static final String oracle_driver = "oracle.jdbc.driver.OracleDriver";
+	public static final String firebird_driver = "org.firebirdsql.jdbc.FBDriver";
 	
-	public OracleDatabaseConnection(Database database) throws SQLException {
+	public FirebirdDatabaseConnection(Database database) throws SQLException {
 		
 		super(database);
 		
@@ -45,7 +45,7 @@ public class OracleDatabaseConnection extends DatabaseConnection {
 	@Override
 	public void setDatabaseDriver() throws SQLException {
 		
-		super.driver = oracle_driver;
+		super.driver = firebird_driver;
 
 	}
 
@@ -55,7 +55,7 @@ public class OracleDatabaseConnection extends DatabaseConnection {
 	@Override
 	public void setDatabaseURL() throws SQLException {
 		
-		super.databaseURL = "jdbc:oracle:thin:@" + database.getHost().getHostAddress() + ":" + database.getPort() + "/" + database.getDatabaseName();
+		super.databaseURL = "jdbc:firebirdsql:" + database.getHost().getHostAddress() + ":" + database.getPort() + "/" + database.getDatabaseName();
 
 	}
 

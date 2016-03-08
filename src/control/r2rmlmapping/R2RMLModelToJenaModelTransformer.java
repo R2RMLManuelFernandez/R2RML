@@ -17,6 +17,8 @@
 package control.r2rmlmapping;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
@@ -30,6 +32,8 @@ import model.r2rmlmapping.triplesMap.PredicateObjectMap;
 import model.r2rmlmapping.triplesMap.ReferencingObjectMap;
 import model.r2rmlmapping.triplesMap.TriplesMap;
 
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +61,7 @@ public class R2RMLModelToJenaModelTransformer {
 	private final static String xsd = "http://www.w3.org/2001/XMLSchema#";
 	
 	private R2RMLMapping r2rmlModel;
-	private String nameSpace;
+	private String baseIRI;
 	private Model jenaModel;
 
 	/**
@@ -75,7 +79,8 @@ public class R2RMLModelToJenaModelTransformer {
 	 */
 	private void transformIntoJenaModel() {
 		
-		nameSpace = "http://example.com/test";
+//		baseIRI = "http://example.com/test#";
+		baseIRI = this.r2rmlModel.getBaseIRI();
 		//TODO: Obtener el namespace del mapping, para ello antes tiene que tenerlo el mapping (Obtener del ususario)
 		//TODO No olvidar escribir el namespace en el modelo jena
 		
@@ -102,7 +107,7 @@ public class R2RMLModelToJenaModelTransformer {
 	 */
 	private void transformIntoJenaTriplesMap(TriplesMap r2rmlTriplesMap, Model jenaModel) {
 
-		Resource jenaTriplesMap = jenaModel.createResource(nameSpace + "TriplesMap" + r2rmlTriplesMap.getIdentifier());
+		Resource jenaTriplesMap = jenaModel.createResource(baseIRI + "TriplesMap" + r2rmlTriplesMap.getIdentifier());
 		
 		//Creacion de la logical table
 		
@@ -126,7 +131,7 @@ public class R2RMLModelToJenaModelTransformer {
 		
 		final Property template = jenaModel.createProperty(rr + "template");
 
-		blankNodeSubjectMap.addProperty(template, r2rmlTriplesMap.getSubjectMap().getSubject());
+		blankNodeSubjectMap.addProperty(template, baseIRI +  r2rmlTriplesMap.getLogicalTable().getTableName() + "/" + r2rmlTriplesMap.getSubjectMap().getSubject());
 		
 		if (!r2rmlTriplesMap.getSubjectMap().getRdfClass().isEmpty()) {
 			
@@ -187,7 +192,7 @@ public class R2RMLModelToJenaModelTransformer {
 						
 						for (Column col : columns) {
 							
-							cols = cols + " {" + col.getColumnName() +"}";
+							cols = cols + "{" + col.getColumnName() +"}";
 							
 						}
 						
@@ -230,11 +235,27 @@ public class R2RMLModelToJenaModelTransformer {
 		
 	}
 	
+	/**
+	 * @param file
+	 * @throws FileNotFoundException
+	 */
 	public void writeR2RMLMappingToFile(String file) throws FileNotFoundException {
 		
 		PrintWriter modelWriter = new PrintWriter(file);
 		
-		jenaModel.write(modelWriter, "Turtle");
+		jenaModel.write(modelWriter, "TTL");
+		
+	}
+	
+	/**
+	 * @param file
+	 * @throws FileNotFoundException
+	 */
+	public void otherWrite(String file) throws IOException {
+		
+		FileOutputStream outStream = new FileOutputStream(file);
+		
+		RDFDataMgr.write(outStream, jenaModel, Lang.TURTLE);
 		
 	}
 	

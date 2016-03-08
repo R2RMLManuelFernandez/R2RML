@@ -16,6 +16,10 @@
 
 package view.ontology;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -53,21 +57,41 @@ public class ViewOntology extends JPanel {
 	private ViewOntologyTree treePanelObjectProperties;
 	private ViewOntologyTree treePanelDataProperties;
 	
+	private JButton buttonLabelsFragments;
+	
+	private JFrame frame;
+	
+	private JTabbedPane tabbedPane;
+	
 	/**
 	 * Create the panel.
 	 */
 	public ViewOntology(JFrame frame) {
 		
-		
 		setLayout(new MigLayout("", "[325px,grow]", "[14px][563px,grow]"));
+		
+		this.frame = frame;
 		
 		//Base Panel
 		
 		JLabel labelOntologyIRI = new JLabel("Ontology:");
 		add(labelOntologyIRI, "cell 0 0,alignx left,aligny top");
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		add(tabbedPane, "cell 0 1,grow");
+		buttonLabelsFragments = new JButton();
+		buttonLabelsFragments.setText("Fragments/Labels");
+		buttonLabelsFragments.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				buttonLabelsFragmentsActionPerformes(e);
+				
+			}
+		});
+		add(buttonLabelsFragments, "cell 1 0,alignx right,aligny top");
+		
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		add(tabbedPane, "cell 0 1 2 1,grow");
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		
 		//General Tree ---------------------------------------------------------------------------------------------
@@ -91,7 +115,7 @@ public class ViewOntology extends JPanel {
 		tabbedPane.addTab("Data Properties", null, treePanelDataProperties, "Data Properties");
 
 	}
-	
+
 	/**
 	 * Creates a new ontology model and loads it into the tree
 	 * 
@@ -152,6 +176,60 @@ public class ViewOntology extends JPanel {
 		treePanelClasses.repaintTree();
 		treePanelObjectProperties.repaintTree();
 		treePanelDataProperties.repaintTree();
+	}
+	
+	/**
+	 * @param e
+	 */
+	protected void buttonLabelsFragmentsActionPerformes(ActionEvent e) {
+
+		if (ontologyModel != null) {
+				
+			ontologyModel.changeModelToString();
+			
+			tabbedPane.removeAll();
+			add(tabbedPane, "cell 0 1 2 1,grow");
+			tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+			
+			//General Tree ---------------------------------------------------------------------------------------------
+
+	        treePanelGeneral = new ViewOntologyTree(frame);
+			tabbedPane.addTab("All", null, treePanelGeneral, "All elements in ontology");
+			
+			//Class Tree ---------------------------------------------------------------------------------------------
+			
+			treePanelClasses = new ViewOntologyTree(frame);
+			tabbedPane.addTab("Classes", null, treePanelClasses, "Classes");
+			
+			//Object Porperties Tree ---------------------------------------------------------------------------------
+			
+			treePanelObjectProperties = new ViewOntologyTree(frame);
+			tabbedPane.addTab("Object Properties", null, treePanelObjectProperties, "Object Properties");
+			
+			//Data Porperties Tree ------------------------------------------------------------------------------------
+			
+			treePanelDataProperties = new ViewOntologyTree(frame);
+			tabbedPane.addTab("Data Properties", null, treePanelDataProperties, "Data Properties");
+			
+			this.modelGeneral = ontologyTreeModel.getOntologyTreeGeneralModel();
+			treePanelGeneral.setTreeModel(modelGeneral);
+			
+			this.modelClass = ontologyTreeModel.getOntologyTreeClassModel();
+			treePanelClasses.setTreeModel(modelClass);
+			
+			this.modelObjectProperty = ontologyTreeModel.getOntologyTreeObjectPropertiesModel();
+			treePanelObjectProperties.setTreeModel(modelObjectProperty);
+			
+			this.modelDataProperty = ontologyTreeModel.getOntologyTreeDataPropertiesModel();
+			treePanelDataProperties.setTreeModel(modelDataProperty);
+				
+		}
+		
+		treePanelGeneral.repaintTree();
+		treePanelClasses.repaintTree();
+		treePanelObjectProperties.repaintTree();
+		treePanelDataProperties.repaintTree();
+		
 	}
 
 }

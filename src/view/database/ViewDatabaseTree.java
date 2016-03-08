@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.net.InetAddress;
 import java.util.Enumeration;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Position;
@@ -78,7 +80,9 @@ public class ViewDatabaseTree extends JPanel {
 		
 		setLayout(new MigLayout("", "[grow]", "[][2.00][55.00][pref!][][grow]"));
 		
-		JLabel labelDatabaseName = new JLabel("Database:");
+		ImageIcon iconDatabase = new ImageIcon(getClass().getResource("/icons/Database.png"));
+		
+		JLabel labelDatabaseName = new JLabel("Database:", iconDatabase, SwingConstants.TRAILING);
 		add(labelDatabaseName, "cell 0 0");
 		
 		JSeparator separator_1 = new JSeparator();

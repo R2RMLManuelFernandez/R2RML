@@ -41,7 +41,7 @@ public class R2RMLMapping extends Observable {
 
 	private int identifierCounter;
 	
-	private String rdfNameSpace;
+	private String baseIRI;
 
 	private ArrayList<TriplesMap> triplesMaps = null;
 	
@@ -238,15 +238,15 @@ public class R2RMLMapping extends Observable {
 	/**
 	 * @return the rdfNameSpace
 	 */
-	public String getRdfNameSpace() {
-		return rdfNameSpace;
+	public String getBaseIRI() {
+		return baseIRI;
 	}
 
 	/**
 	 * @param rdfNameSpace the rdfNameSpace to set
 	 */
-	public void setRdfNameSpace(String rdfNameSpace) {
-		this.rdfNameSpace = rdfNameSpace;
+	public void setBaseIRI(String baseIRI) {
+		this.baseIRI = baseIRI;
 	}
 
 }

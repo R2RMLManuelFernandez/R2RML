@@ -65,9 +65,7 @@ public class JenaModelToR2RMLModelTransformer {
 	private final static String xsd = "http://www.w3.org/2001/XMLSchema#";
 	
 	private R2RMLMapping r2rmlMapping;
-	@SuppressWarnings("unused")
-	//TODO No olvidar leer el namespace
-	private String nameSpace;
+	private String baseIRI;
 	private Model jenaModel;
 	private Database database;
 	
@@ -233,6 +231,18 @@ public class JenaModelToR2RMLModelTransformer {
 		   
 		}
 		
+		Statement logTableStatement = listLogicalTables.get(0);
+		
+	    Resource subjectLogTableStatement = logTableStatement.getSubject();     // get the subject
+	    //get the triplesmap identifier
+	    String URILogTableStatement = subjectLogTableStatement.toString();
+		
+	    String[] uriSplit = URILogTableStatement.split("#");
+	    
+	    baseIRI = uriSplit[0];
+	    
+	    r2rmlMapping.setBaseIRI(baseIRI);
+		
 		for (Statement statement: listLogicalTables) {
 
 		    Resource subject = statement.getSubject();     // get the subject
@@ -241,14 +251,25 @@ public class JenaModelToR2RMLModelTransformer {
 		    
 		    logger.trace("triplesMapURI " + triplesMapURI);
 		    
-		    //TODO separte the id in namespace + TriplesMapid
+		    //TODO separar el id en namespace + TriplesMapid
+		    
+//		    String[] uriSplit = triplesMapURI.split("#");
+//		    
+//		    nameSpace = uriSplit[0];
+//		    
+//		    r2rmlMapping.setRdfNameSpace(nameSpace);
+		    
+//		    String tiplesMapId = uriSplit[1];
 		    	
 		    //get the triplesmap logical table
 		    RDFNode object = statement.getObject();      // get the object
+		    
 		    if (object instanceof Resource) {
 		    	// search for the logical table
 		    	ListIterator<Statement> tableNamesIter = listTableNames.listIterator();
+		    	
 		    	while (tableNamesIter.hasNext()) {
+		    		
 		    		Statement stmtTableName = tableNamesIter.next();
 		    		
 		    		logger.trace("table name statement " + stmtTableName);
@@ -257,7 +278,9 @@ public class JenaModelToR2RMLModelTransformer {
 		    		if (stmtTableName.getSubject().equals((Resource)object)) {
 		    			
 		    			RDFNode tableNameObject = stmtTableName.getObject();
+		    			
 		    			if (tableNameObject instanceof Literal) {
+		    				
 		    				String nameTable = tableNameObject.toString();
 		    				
 		    				//get the table from the database
@@ -273,6 +296,7 @@ public class JenaModelToR2RMLModelTransformer {
 		    				
 		    		    	// search for the subject map
 		    		    	ListIterator<Statement> subjectMapIter = listSubjectMaps.listIterator();
+		    		    	
 		    		    	while (subjectMapIter.hasNext()) {
 		    		    		
 		    		    		Statement stmtSubjectMap = subjectMapIter.next();
@@ -295,8 +319,11 @@ public class JenaModelToR2RMLModelTransformer {
 			    		    			
 			    		    			//searchs for the templates
 			    		    			ListIterator<Statement> templatesIter = listTemplates.listIterator();
+			    		    			
 			    		    			while (templatesIter.hasNext()) {
+			    		    				
 											Statement stmtTemplate = templatesIter.next();
+											
 											if (stmtTemplate.getSubject().equals((Resource)subjectMapObject)) {
 												
 					    		    			logger.trace("template del subject map " + subjectMapObject.toString());
@@ -308,58 +335,89 @@ public class JenaModelToR2RMLModelTransformer {
 								    			if (subjectToSplit instanceof Literal) {
 								    				
 								    				String subjectToLoad = subjectToSplit.toString();
+								    				
+								    				int cutPoint = subjectToLoad.indexOf('{');
+								    				
+								    				String tempSubject = subjectToLoad.substring(cutPoint);
+								    				
 								    				String tempCols[] = subjectToLoad.split("\\{");
 								    				
-								    				subjMap.setSubject(subjectToLoad);
+								    				logger.trace("template columns " + subjectToLoad.toString());
+								    				
+								    				subjMap.setSubject(tempSubject);
 								    				
 								    				for (String x : tempCols) {
+								    					
 								    					x = x.trim();
+								    					
 								    					if (x.endsWith("}")) {
+								    						
 								    						x = x.substring(0, x.length() - 1);
 								    						logger.trace("col to add " + x);
 								    						Column col = triplesMap.getLogicalTable().getColumn(x);
 								    						subjMap.addColumn(col);
+								    						
 								    					}
+								    					
 								    				}
 				
 												}
-								    			
 								    			else {
+								    				
 								    				logger.error("The statement is not a template", stmtTemplate);
+								    				
 								    			}
 											}
 											
 										}
+			    		    			
 			    		    			//searchs for the rdfClasses
 			    		    			ListIterator<Statement> rdfClassesIter = listRdfClasses.listIterator();
+			    		    			
 			    		    			while (rdfClassesIter.hasNext()) {
+			    		    				
 											Statement stmtRdfClass = rdfClassesIter.next();
+											
 											if (stmtRdfClass.getSubject().equals((Resource)subjectMapObject)) {
+												
 												if (stmtRdfClass.getObject() instanceof Literal) {
+													
 													subjMap.setRdfClass(stmtRdfClass.getObject().toString());
 													//TODO buscar en la ontologia la clase a la que correspnde la IRI 
+													
 												}
 												else {
+													
 								    				logger.error("The statement is not a RdfClass", stmtRdfClass);
+								    				
 								    			}
+												
 											}
 											
 										}
+			    		    			
 										triplesMap.setSubjectMap(subjMap);
 										logger.trace("SubjectMap added " + subjMap.getSubjectColumns().toString() + " " + subjMap.getRdfClass());
+		    		    			
 		    		    			}
 		    		    			else {
+		    		    				
 		    		    				logger.error("The statement is not a subject map", subjectMapObject);
+		    		    			
 		    		    			}
-		    					}
+		    					
+		    		    		}
 		    		    		
 		    		    	}
 
 		    			}
 		    			else {
+		    				
 		    				logger.error("The statement is not a tables name", stmtTableName);
+		    			
 		    			}
-					}
+					
+		    		}
 		    		
 		    	}
 		    	
@@ -367,12 +425,14 @@ public class JenaModelToR2RMLModelTransformer {
 		    else {
 		    	// object is a literal
 		    	logger.error("The statement is not a triples map", statement);	
+		    
 		    }
 			
 		}
 
 		//creates the predicate-object maps amd assign them to the corresponding triples map
 		int id = 0;
+		
 		for (Statement predicateObjectStmt : listPredicateObjectMaps) {			
 			
 		    Resource subject = predicateObjectStmt.getSubject();     // get the subject
@@ -449,10 +509,14 @@ public class JenaModelToR2RMLModelTransformer {
 					    	}
 					    	
 					    	if (itsColumnValued) {
+					    		
 					    		predObjMap.addObjectMap(colValObjMap);
+					    		
 					    	}
 					    	else {
+					    		
 					    		for (Statement referencedObjStmt : listParentTriplesMap) {
+					    			
 									if (referencedObjStmt.getSubject().equals((Resource)objectStmtObject)) {
 										//TODO Como resolver que los triples map no se lean en orden
 										TriplesMap parentTripMap = triplesMapMap.get(referencedObjStmt.getObject().toString());
@@ -462,38 +526,56 @@ public class JenaModelToR2RMLModelTransformer {
 										ReferencingObjectMap refObjMap = new ReferencingObjectMap(predObjMap, parentTripMap);
 										
 										for (Statement joinConditionStmt : listJoinConditions) {
+											
 											if (joinConditionStmt.getSubject().equals((Resource)objectStmtObject)) {
+												
 												RDFNode joinCondObject = joinConditionStmt.getObject();
 												logger.trace("joinCondObject " + joinConditionStmt.getObject().toString());
 												JoinCondition joinCond = new JoinCondition();
 												
 												for (Statement childStmt : listChilds) {
+													
 													if (childStmt.getSubject().equals((Resource) joinCondObject)) {
+														
 														String colChildName = childStmt.getObject().toString();
 														logger.trace("colChildName  " + colChildName);
 														Column colChild = triplesMap.getLogicalTable().getColumn(colChildName);
 														joinCond.setChild(colChild);
+													
 													}
+												
 												}
 												
 												for (Statement parentStmt : listParents) {
+													
 													if (parentStmt.getSubject().equals((Resource) joinCondObject)) {
+														
 														String colParentName = parentStmt.getObject().toString();
 														logger.trace("colParentName  " + colParentName);
 														logger.trace("colParent log table " + parentTripMap.getLogicalTable().getTableName());
 														Column colParent = parentTripMap.getLogicalTable().getColumn(colParentName);
 														joinCond.setParent(colParent);
+													
 													}
+												
 												}
+												
 												refObjMap.addJoinCondition(joinCond);
+											
 											}
+										
 										}
+										
 										predObjMap.addObjectMap(refObjMap);
+									
 									}
 									else {
+										
 										logger.error("The statement is not a referenced object", referencedObjStmt);
+									
 									}
-						    	}
+						    	
+					    		}
 						    	
 					    	}
 					    	
@@ -511,7 +593,9 @@ public class JenaModelToR2RMLModelTransformer {
 		    else {
 		    	// object is a literal
 		    	logger.error("The statement is not a predicate-object map", predicateObjectStmt);	
+		    
 		    }
+		
 		}
 		
 	}

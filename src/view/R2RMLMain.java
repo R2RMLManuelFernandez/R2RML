@@ -55,7 +55,7 @@ import view.database.ViewDatabaseTree;
 import view.menu.database.OpenDatabaseDialog;
 import view.menu.ontology.OpenOntologyIRI;
 import view.ontology.ViewOntology;
-import view.r2rmlMapping.R2RMLMapRDFNamespaceSelector;
+import view.r2rmlMapping.R2RMLMapBaseIRISelector;
 import view.r2rmlMapping.TriplesMapSelector;
 import view.r2rmlMapping.ViewR2RMLMapping;
 import view.triplesMap.TriplesMapTableSelector;
@@ -81,7 +81,7 @@ public class R2RMLMain {
 	private OpenDatabaseDialog openDatabaseDialog;
 	private OpenOntologyIRI openOntologyIRI;
 	private TriplesMapTableSelector openTriplesMapTableSelector;
-	private R2RMLMapRDFNamespaceSelector openR2RMLMapRDFNamespaceSelector;
+	private R2RMLMapBaseIRISelector openR2RMLMapBaseIRISelector;
 	private TriplesMapSelector triplesMapSelector; 
 	private JFileChooser fileChooserOntology;
 	private List<OntologySource> recentOntologies;
@@ -98,7 +98,7 @@ public class R2RMLMain {
 	private Boolean ontologyLoaded = false;
 	private Boolean databaseLoaded = false;
 	private Boolean r2rmlMapingLoaded = false;
-	private Boolean databaseChanged = false;
+//	private Boolean databaseChanged = false;
 	
 	private static Logger logger = LoggerFactory.getLogger(R2RMLMain.class);
 	
@@ -441,11 +441,18 @@ public class R2RMLMain {
 				
 				viewOntology.setOntologyModel(iri);
 				ontologyLoaded = true;
-				if (databaseChanged) {
+				
+				if (databaseLoaded) {
 					
 					createR2RMLMap();	
-					
+				
 				}
+				
+//				if (databaseChanged) {
+//					
+//					createR2RMLMap();	
+//					
+//				}
 				
 			} catch (OWLOntologyCreationException e1) {
 				
@@ -481,11 +488,18 @@ public class R2RMLMain {
 				
 				viewOntology.setOntologyModel(file);
 				ontologyLoaded = true;
-				if (databaseChanged) {
-					
+				
+				if (databaseLoaded) {
+				
 					createR2RMLMap();	
-					
+				
 				}
+				
+//				if (databaseChanged) {
+//					
+//					createR2RMLMap();	
+//					
+//				}
 			
 			} catch (OWLOntologyCreationException e) {
 				
@@ -539,16 +553,18 @@ public class R2RMLMain {
 				
 				viewDatabase.setDatabaseModel(dbms, name, adress, port, userName, password);
 				databaseLoaded = true;
+				
 				if (ontologyLoaded) {
 					
 					createR2RMLMap();
 					
 				}
-				else {
-					
-					databaseChanged = true;
-					
-				}
+				
+//				else {
+//					
+//					databaseChanged = true;
+//					
+//				}
 				
 			} catch (Exception e1) {
 				
@@ -662,11 +678,18 @@ public class R2RMLMain {
 			
 			viewOntology.setOntologyModel(ontologySource);
 			ontologyLoaded = true;
-			if (databaseChanged) {
+			
+			if (databaseLoaded) {
 				
 				createR2RMLMap();	
-				
+			
 			}
+			
+//			if (databaseChanged) {
+//				
+//				createR2RMLMap();	
+//				
+//			}
 			
 		} catch (OWLOntologyCreationException oe) {
 			
@@ -746,6 +769,7 @@ public class R2RMLMain {
 		
         logger.trace("Archivo rdf con el r2rmlmap leido");
 
+//		if (databaseLoaded) {
 		if (ontologyLoaded && databaseLoaded) {
 			
 			JenaModelToR2RMLModelTransformer jenaTransformer = new JenaModelToR2RMLModelTransformer(jenaModel, viewDatabase.getDatabase());
@@ -946,15 +970,15 @@ public class R2RMLMain {
 	        //model for the R2RML mapping
 	        r2rmlMappingModel = new R2RMLMapping();
 			
-			openR2RMLMapRDFNamespaceSelector = new R2RMLMapRDFNamespaceSelector(frame);
-			openR2RMLMapRDFNamespaceSelector.pack();
-			openR2RMLMapRDFNamespaceSelector.setLocationRelativeTo(frame);
-			openR2RMLMapRDFNamespaceSelector.setVisible(true);
+			openR2RMLMapBaseIRISelector = new R2RMLMapBaseIRISelector(frame);
+			openR2RMLMapBaseIRISelector.pack();
+			openR2RMLMapBaseIRISelector.setLocationRelativeTo(frame);
+			openR2RMLMapBaseIRISelector.setVisible(true);
 			
-			if (!openR2RMLMapRDFNamespaceSelector.checkCancel()) {
+			if (!openR2RMLMapBaseIRISelector.checkCancel()) {
 				
-				r2rmlMappingModel.setRdfNameSpace(openR2RMLMapRDFNamespaceSelector.getNamespaceSelected());
-				logger.trace("El nameSapce es {}", r2rmlMappingModel.getRdfNameSpace());
+				r2rmlMappingModel.setBaseIRI(openR2RMLMapBaseIRISelector.getSelectedBaseIRI());
+				logger.trace("El nameSapce es {}", r2rmlMappingModel.getBaseIRI());
 				
 			}
 			
@@ -962,7 +986,7 @@ public class R2RMLMain {
 	        logger.trace("Creado el modelo del mapping R2RML");
 			viewR2RMLMapping.setModel(r2rmlMappingModel);
 			createTriplesMap();
-			databaseChanged = false;
+//			databaseChanged = false;
 			
 		}
 		else {

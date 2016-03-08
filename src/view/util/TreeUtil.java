@@ -88,7 +88,7 @@ public final class TreeUtil {
 		
 		if (node != null ) {
 			OntologyElement element = (OntologyElement) node.getUserObject();
-			String displayName = element.getDisplayName().toLowerCase();
+			String displayName = element.getFragment().toLowerCase();
 			if(displayName.startsWith(word)) {
 				tree.expandPath(path.getParentPath());
 			}

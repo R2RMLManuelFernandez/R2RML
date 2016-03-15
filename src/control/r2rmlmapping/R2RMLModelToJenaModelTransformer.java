@@ -133,10 +133,10 @@ public class R2RMLModelToJenaModelTransformer {
 
 		blankNodeSubjectMap.addProperty(template, baseIRI +  r2rmlTriplesMap.getLogicalTable().getTableName() + "/" + r2rmlTriplesMap.getSubjectMap().getSubject());
 		
-		if (!r2rmlTriplesMap.getSubjectMap().getRdfClass().isEmpty()) {
+		if (r2rmlTriplesMap.getSubjectMap().getRdfClass() != null) {
 			
 			final Property rdfClass = jenaModel.createProperty(rr + "class");
-			blankNodeSubjectMap.addProperty(rdfClass, r2rmlTriplesMap.getSubjectMap().getRdfClass());
+			blankNodeSubjectMap.addProperty(rdfClass, r2rmlTriplesMap.getSubjectMap().getRdfClass().getIRIClassIRI());
 			
 		}
 		
@@ -172,7 +172,7 @@ public class R2RMLModelToJenaModelTransformer {
 				
 				for (PredicateMap predicateMap : predicateMaps) {
 					
-					blankNodePredicateObjectMap.addProperty(predicate, predicateMap.getPredicateIRI());
+					blankNodePredicateObjectMap.addProperty(predicate, predicateMap.getPredicateIRI().getIRIClassIRI());
 					
 				}
 				
@@ -255,7 +255,7 @@ public class R2RMLModelToJenaModelTransformer {
 		
 		FileOutputStream outStream = new FileOutputStream(file);
 		
-		RDFDataMgr.write(outStream, jenaModel, Lang.TURTLE);
+		RDFDataMgr.write(outStream, jenaModel, Lang.TTL);
 		
 	}
 	

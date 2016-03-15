@@ -35,7 +35,6 @@ public abstract class DatabaseConnection {
 	public static final String DBMS_SQLSERVER = "sqlserver";
 	public static final String DBMS_FIREBIRD = "firebird";
 	public static final String DBMS_MARIADB = "mariadb";
-	public static final String DBMS_POSTGRESQL = "postgresql";
 
 	//the database driver
 	protected String driver;
@@ -86,11 +85,6 @@ public abstract class DatabaseConnection {
 			return new MariadbDatabaseConnection(database);
 			
 		}
-		else if(database.getDBMS().equalsIgnoreCase(DBMS_POSTGRESQL)) {
-			
-			return new PostgreSQLDatabaseConnection(database);
-			
-		}
 		else {
 			
 			throw new SQLException("Database not yet supported");
@@ -135,24 +129,24 @@ public abstract class DatabaseConnection {
 		
 	}
 
-	/**
+/*	*//**
 	 * @return
-	 */
+	 *//*
 	public static String getDbmsMysql() {
 		
 		return DBMS_MYSQL;
 		
 	}
 
-	/**
+	*//**
 	 * @return
-	 */
+	 *//*
 	public static String getDbmsOracle() {
 		
 		return DBMS_ORACLE;
 		
 	}
-
+*/
 	/**
 	 * @return
 	 */

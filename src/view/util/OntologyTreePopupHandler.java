@@ -50,7 +50,7 @@ public class OntologyTreePopupHandler implements PopupMenuListener {
 		popup = new JPopupMenu();
 		popup.setInvoker(tree);
 //		menu = new JMenu();
-		JMenuItem neItem = new JMenuItem("Set as SubjectMap RDFClass");
+		JMenuItem neItem = new JMenuItem("Set as SubjectMap IRIClass");
 		controllerSubject = new ControllerOntologyTreePopupSubject(tree, popup, triplesMap);
 		neItem.addActionListener(controllerSubject);
 //		menu.add(neItem);

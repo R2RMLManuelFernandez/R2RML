@@ -35,7 +35,7 @@ public class TriplesMap extends Observable {
 	private SubjectMap subjectMap;
 	private ArrayList<PredicateObjectMap> predicateObjectMaps;	
 	private R2RMLMapping r2rmlMapping;
-	private ArrayList<ReferencingObjectMap> referencingObjectMapsInTriplesMap;	
+	private ArrayList<ReferencingObjectMap> referencingObjectMapsInTriplesMap;
 
 	public TriplesMap(int identifier, R2RMLMapping paramR2RMLMapping, Table paramTable) {
 		
@@ -64,34 +64,43 @@ public class TriplesMap extends Observable {
 	 * @param identifier the identifier to set
 	 */
 	public void setIdentifier(int identifier) {
+		
 		this.identifier = identifier;
+		
 	}
 
 	/**
 	 * @return the logicalTable
 	 */
 	public Table getLogicalTable() {
+		
 		return logicalTable;
+		
 	}
 
 	/**
 	 * @param logicalTable the logicalTable to set
 	 */
 	public void setLogicalTable(Table logicalTable) {
+		
 		this.logicalTable = logicalTable;
+	
 	}
 
 	/**
 	 * @return the subjectMap
 	 */
 	public SubjectMap getSubjectMap() {
+	
 		return subjectMap;
+	
 	}
 
 	/**
 	 * @param subjectMap the subjectMap to set
 	 */
 	public void setSubjectMap(SubjectMap subjectMap) {
+		
 		this.subjectMap = subjectMap;
 		setChanged();
 		notifyObservers();
@@ -102,13 +111,16 @@ public class TriplesMap extends Observable {
 	 * @return the predicateObjectMaps
 	 */
 	public ArrayList<PredicateObjectMap> getPredicateObjectMaps() {
+		
 		return predicateObjectMaps;
+	
 	}
 
 	/**
 	 * @param predicateObjectMap
 	 */
 	public void addPredicateObjectMap(PredicateObjectMap predicateObjectMap) {
+		
 		this.predicateObjectMaps.add(predicateObjectMap);
 		setChanged();
 		notifyObservers();
@@ -119,6 +131,7 @@ public class TriplesMap extends Observable {
 	 * @param paramPredicateObjectMap
 	 */
 	public void deletePredicateObjectMap(PredicateObjectMap paramPredicateObjectMap) {
+		
 		this.predicateObjectMaps.remove(paramPredicateObjectMap);
 		setChanged();
 		notifyObservers();
@@ -129,27 +142,60 @@ public class TriplesMap extends Observable {
 	 * @return the r2rmlMapping
 	 */
 	public R2RMLMapping getR2RmlMapping() {
+		
 		return r2rmlMapping;
+	
 	}
 
 	/**
 	 * @return the referencingObjectMapsInTriplesMap
 	 */
 	public ArrayList<ReferencingObjectMap> getReferencingObjectMapsInTriplesMap() {
+		
 		return referencingObjectMapsInTriplesMap;
+	
 	}
 	
 	/**
 	 * @param refObjectMap
 	 */
 	protected void addReferencingObjectMapToObjectsMapsInTriplesMap (ReferencingObjectMap refObjectMap) {
+		
 		referencingObjectMapsInTriplesMap.add(refObjectMap);
+	
 	}
 	
 	/**
 	 * @param refObjectMap
 	 */
 	protected void deleteReferencingObjectMapInObjectsMapsInTriplesMap (ReferencingObjectMap refObjectMap) {
+		
 		referencingObjectMapsInTriplesMap.remove(refObjectMap);
+	
 	}
+
+	/**
+	 * 
+	 */
+	public void changeLabelsFragments(Boolean showLabels) {
+
+		this.getSubjectMap().getRdfClass().changeLabelsFragments(showLabels);
+		
+		for (PredicateObjectMap predObjMap : this.predicateObjectMaps){
+			
+			ArrayList<PredicateMap> predMaps = predObjMap.getPredicateMaps();
+			
+			for (PredicateMap predMap : predMaps) {
+				
+				predMap.getPredicateIRI().changeLabelsFragments(showLabels);
+				
+			}
+			
+		}
+		
+		setChanged();
+		notifyObservers();
+	
+	}
+	
 }

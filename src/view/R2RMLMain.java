@@ -21,7 +21,7 @@ import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -98,7 +98,8 @@ public class R2RMLMain {
 	private Boolean ontologyLoaded = false;
 	private Boolean databaseLoaded = false;
 	private Boolean r2rmlMapingLoaded = false;
-//	private Boolean databaseChanged = false;
+	
+	public static Boolean showLabels = false;   
 	
 	private static Logger logger = LoggerFactory.getLogger(R2RMLMain.class);
 	
@@ -251,6 +252,22 @@ public class R2RMLMain {
 		menuOntology.add(separatorMenuOntology);
 		
 		createRecent(menuOntology);
+		
+		JSeparator separatorFragmentsLabels = new JSeparator();
+		menuOntology.add(separatorFragmentsLabels);
+		
+		//creates the menu item to open an ontology from a file and actualize the list of ontologies recently opened 
+		JMenuItem menuItemFragmentsLabels = new JMenuItem("Show Fragments/Labels");
+		
+		menuItemFragmentsLabels.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				menuItemFragmentsLabelsActionPerformed(e);
+			}
+		});
+		
+		menuOntology.add(menuItemFragmentsLabels);
 		
 	}
 
@@ -507,6 +524,39 @@ public class R2RMLMain {
 				e.printStackTrace();
 			
 			}
+			
+		}
+		
+	}
+	
+	/**
+	 * changes the method to show the ontology elements in the views
+	 * @param ae
+	 */
+	private void menuItemFragmentsLabelsActionPerformed(ActionEvent ae) {
+		
+		showLabels = !showLabels;
+		logger.trace("show labels: " + showLabels);
+		
+		viewOntology.changeLabelsFragments();
+		
+		if (triplesMapModel != null) {
+			
+			triplesMapModel.changeLabelsFragments(showLabels);
+			
+	        triplesMapController = new ControllerTriplesMap(viewTriplesMap, triplesMapModel);
+
+	        viewTriplesMap.setTriplesMapModel(triplesMapModel);
+	        viewTriplesMap.setController(triplesMapController);
+	        viewTriplesMap.repaint();
+	        viewTriplesMap.revalidate();
+	        viewTriplesMap.updateUI();
+
+			//model mappingElement for the ontology tree action listener
+			viewOntology.setMappingItem(triplesMapModel);
+			
+			//model mappingElement for the database tree action listener
+			viewDatabase.setMappingItem(triplesMapModel);
 			
 		}
 		
@@ -772,7 +822,7 @@ public class R2RMLMain {
 //		if (databaseLoaded) {
 		if (ontologyLoaded && databaseLoaded) {
 			
-			JenaModelToR2RMLModelTransformer jenaTransformer = new JenaModelToR2RMLModelTransformer(jenaModel, viewDatabase.getDatabase());
+			JenaModelToR2RMLModelTransformer jenaTransformer = new JenaModelToR2RMLModelTransformer(jenaModel, viewDatabase.getDatabase(), viewOntology.getOntologyModel());
 			
 	        try {
 	        	
@@ -817,11 +867,22 @@ public class R2RMLMain {
 		
 		R2RMLModelToJenaModelTransformer r2rmlTransformer = new R2RMLModelToJenaModelTransformer(r2rmlMappingModel);
 		
-		try {
+/*		try {
 			
 			r2rmlTransformer.writeR2RMLMappingToFile(file);
 			
 		} catch (FileNotFoundException e1) {
+
+	    	JOptionPane.showMessageDialog(frame, "Unable to create the file", "Error saving mapping", JOptionPane.ERROR_MESSAGE);
+			e1.printStackTrace();
+			
+		}*/
+		
+		try {
+			
+			r2rmlTransformer.otherWrite(file);;
+			
+		} catch (IOException e1) {
 
 	    	JOptionPane.showMessageDialog(frame, "Unable to create the file", "Error saving mapping", JOptionPane.ERROR_MESSAGE);
 			e1.printStackTrace();

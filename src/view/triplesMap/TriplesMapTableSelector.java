@@ -34,7 +34,7 @@ import model.database.Table;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * Establish the datbase table for the Triples Map
+ * Establish the database table for the Triples Map
  * 
  * @author Manuel Fernandez Perez
  *

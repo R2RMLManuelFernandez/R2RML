@@ -44,6 +44,10 @@ import model.menu.databaseConnection.DatabasesTable;
 import model.menu.databaseConnection.StaXDatabaseParser;
 import model.menu.databaseConnection.StaXDatabaseWriter;
 import net.miginfocom.swing.MigLayout;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import control.database.connection.DatabaseConnection;
 
 /**
@@ -80,12 +84,15 @@ public class OpenDatabaseDialog extends JDialog {
 	
 	private DialogDatabaseData dialogNewDB = null;
 	
-	private boolean cancel = false; 
+	private boolean cancel = false;
+	
+	private static Logger logger = LoggerFactory.getLogger(OpenDatabaseDialog.class);
 
 	/**
 	 * Create the dialog.
 	 */
 	public OpenDatabaseDialog(JFrame frame) {
+		
 		super(frame,true);
 		initialize();
 		
@@ -182,7 +189,7 @@ public class OpenDatabaseDialog extends JDialog {
 		});
 		panelDatabasesList.add(buttonLoadDatabaseList, "cell 0 0,aligny baseline");
 		
-		fileChooserSaveDatabaseList = new JFileChooser("C:/Users/Manuel/Desktop/Ontologias");
+		fileChooserSaveDatabaseList = new JFileChooser();
 		
 		buttonSaveDatabaseList = new JButton("Save Datbase List");
 		buttonSaveDatabaseList.addActionListener(new ActionListener() {
@@ -347,28 +354,51 @@ public class OpenDatabaseDialog extends JDialog {
 			StaXDatabaseParser loadDatabasesParser = new StaXDatabaseParser(fileChooserLoadDatabaseList.getSelectedFile().getPath());
 			
 		    List<Database> loadedDatabases = new Vector<Database>(0);
+		    	    
 			try {
+				
 				loadedDatabases = loadDatabasesParser.read();
+			    logger.debug("loaded dbs " + loadedDatabases.size());
+				
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		    
 		    if (!loadedDatabases.isEmpty()) {
+		    	
 		    	int rowCount = databasesModelTable.getRowCount();
-	    		if ( rowCount > 0) {
-	    			for (int i = 0; i < rowCount; i++)
-	    			databasesModelTable.deleteRow(i);
+	    		
+		    	logger.debug("nº rows " + rowCount);
+		    	
+		    	if (rowCount > 0) {
+		    		
+	    			for (int i = 0; i < rowCount; i++) {
+	    				
+	    				logger.debug("row " + i);
+	    				databasesModelTable.deleteRow(0);
+	    				
+	    			}	
+	    			
 	    		}
+		    	
 		    	for (Database db: loadedDatabases) {
+		    		
 		    		databasesModelTable.addRow(db);
+		    		
 		    	}
+		    	
 		    	tableDatabases.setModel(databasesModelTable);
+		    	
 		    }
 		    else {
+		    	
 		    	JOptionPane.showMessageDialog(this, "The selected file doesnt content any database description", "Select a file", JOptionPane.WARNING_MESSAGE);
+		    
 		    }
+		
 		}
+	
 	}
 	
 	
@@ -386,16 +416,18 @@ public class OpenDatabaseDialog extends JDialog {
 			StaXDatabaseWriter savedDatabasesWriter = new StaXDatabaseWriter(fileChooserSaveDatabaseList.getSelectedFile().getPath());
 			
 			int databasesSize = databasesModelTable.getRowCount();
+			
+			 logger.debug("dbs to save " + databasesSize);
 		    	    
 //		    System.out.println("writeBookmarks-> numero de bookmarks " + bookmarksSize);
 		    
+		    ArrayList<String> databaseData = new ArrayList<String>();
+			 
 		    for (int i = 0; i < databasesSize; i++) {
 		    	
 //		    	System.out.println("writeBookmarks-> bookmarks para escribir " + listModel.get(i));
 
 		    	Database db = databasesModelTable.getDatabaseAtIndex(i);
-		    	
-		    	ArrayList<String> databaseData = new ArrayList<String>();
 		    	
 			    databaseData.add(db.getDBMS());
 			    databaseData.add(db.getDatabaseName());
@@ -403,15 +435,17 @@ public class OpenDatabaseDialog extends JDialog {
 			    databaseData.add(String.valueOf(db.getPort()));
 			    databaseData.add(db.getUsername());
 			    databaseData.add(db.getPassword());
-			    
-				try {
-					savedDatabasesWriter.save(databaseData);
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-		    	
+
 		    }
+		    
+			try {
+				logger.debug("databaseData " + databaseData.size());
+				savedDatabasesWriter.save(databaseData);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	    	
 		}				
 	}
 

@@ -207,6 +207,7 @@ public class ViewPredicateObject extends JPanel implements Observer {
 			// a lo mejor no necesito que sea una subvista dentro de una general sino una vista para cada tipo
 			//y cambiar la vista cuando se vambie el tipo de map
 			String objectType = objectMap.getType();
+			logger.trace("ViewPredicateObject setModel --> El Object es de tipo: " + objectType);
 			if (objectType.equals("Column-Valued")) {
 				logger.trace("ViewPredicateObject setModel --> Deberia haberse añadido una viewColumnValued object");
 				ViewObjectColumnValue viewObjectCV = new ViewObjectColumnValue();
@@ -215,7 +216,7 @@ public class ViewPredicateObject extends JPanel implements Observer {
 				viewObjectCV.setController(controllerObjectCV);
 				panelObjects.add(viewObjectCV);
 			}
-			else if(objectType.equals("Referenced")) {
+			else if(objectType.equals("Referencing")) {
 				logger.trace("ViewPredicateObject setModel --> Deberia haberse añadido una viewRefernced Object");
 				ViewObjectReferenced viewObjectRef = new ViewObjectReferenced();
 				viewObjectRef.setModel((ReferencingObjectMap) objectMap);

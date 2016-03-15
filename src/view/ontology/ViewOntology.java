@@ -16,10 +16,6 @@
 
 package view.ontology;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,6 +36,10 @@ import control.ontology.OntologyTreeModelConstructor;
  * @author Manuel Fernandez Perez
  *
  */
+/**
+ * @author Manuel Fernandez Perez
+ *
+ */
 public class ViewOntology extends JPanel {
 
 	private static final long serialVersionUID = 2335706050345687194L;
@@ -57,11 +57,11 @@ public class ViewOntology extends JPanel {
 	private ViewOntologyTree treePanelObjectProperties;
 	private ViewOntologyTree treePanelDataProperties;
 	
-	private JButton buttonLabelsFragments;
-	
 	private JFrame frame;
 	
 	private JTabbedPane tabbedPane;
+	
+	private TriplesMap mappingItem;
 	
 	/**
 	 * Create the panel.
@@ -77,21 +77,8 @@ public class ViewOntology extends JPanel {
 		JLabel labelOntologyIRI = new JLabel("Ontology:");
 		add(labelOntologyIRI, "cell 0 0,alignx left,aligny top");
 		
-		buttonLabelsFragments = new JButton();
-		buttonLabelsFragments.setText("Fragments/Labels");
-		buttonLabelsFragments.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				buttonLabelsFragmentsActionPerformes(e);
-				
-			}
-		});
-		add(buttonLabelsFragments, "cell 1 0,alignx right,aligny top");
-		
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		add(tabbedPane, "cell 0 1 2 1,grow");
+		add(tabbedPane, "cell 0 1,grow");
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		
 		//General Tree ---------------------------------------------------------------------------------------------
@@ -181,14 +168,14 @@ public class ViewOntology extends JPanel {
 	/**
 	 * @param e
 	 */
-	protected void buttonLabelsFragmentsActionPerformes(ActionEvent e) {
+	public void changeLabelsFragments() {
 
 		if (ontologyModel != null) {
 				
 			ontologyModel.changeModelToString();
 			
 			tabbedPane.removeAll();
-			add(tabbedPane, "cell 0 1 2 1,grow");
+			add(tabbedPane, "cell 0 1,grow");
 			tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 			
 			//General Tree ---------------------------------------------------------------------------------------------
@@ -230,6 +217,19 @@ public class ViewOntology extends JPanel {
 		treePanelObjectProperties.repaintTree();
 		treePanelDataProperties.repaintTree();
 		
+		setMappingItem(mappingItem);
+		
 	}
+
+	/**
+	 * @return the ontologyModel
+	 */
+	public OntologyModelConstructor getOntologyModel() {
+		
+		return ontologyModel;
+
+	}
+	
+	
 
 }

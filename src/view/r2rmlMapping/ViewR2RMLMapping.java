@@ -122,7 +122,7 @@ public class ViewR2RMLMapping extends JPanel implements Observer {
 				textArea.append("    subjectMap [\n");
 				textArea.append("        template    " + subjectMapAux.getSubject());
 				textArea.append("\n");
-				textArea.append("        class    " + subjectMapAux.getRdfClass());
+				textArea.append("        class    " + subjectMapAux.getRdfClass().getIRIClassIRI());
 				textArea.append("\n");
 				textArea.append("    ];\n");
 				logger.trace("ViewR2RMLMapping --> Imprimido sujeto en text area");
@@ -145,7 +145,7 @@ public class ViewR2RMLMapping extends JPanel implements Observer {
 		        			
 			        		for (PredicateMap predicate : predicates) {
 			        			
-								textArea.append("        predicate    " + predicate.getPredicateIRI() + "\n");
+								textArea.append("        predicate    " + predicate.getPredicateIRI().getIRIClassIRI() + "\n");
 								
 			        		}
 			        		

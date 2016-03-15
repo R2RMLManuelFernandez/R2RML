@@ -56,8 +56,10 @@ public class ControllerPredicateObjectMap implements ActionListener {
 	 * @param paramModel
 	 */
 	public ControllerPredicateObjectMap(JFrame frame, ViewPredicateObject paramView, PredicateObjectMap paramModel) {
+		
 		view = paramView;
 		model = paramModel;
+	
 	}
 	
 	@Override
@@ -74,39 +76,55 @@ public class ControllerPredicateObjectMap implements ActionListener {
 	private void changeModel(Component source) {
 
 		if (source.getName().equals("Add Predicate")) {
+			
 			logger.trace("ControllerPredicateObject --> action Add Predicate");
 			PredicateMap predicate = new PredicateMap(model);
 			model.addPredicateMap(predicate);
+			
 		}
 		else if (source.getName().equals("Add Col Obj")) {
+			
 			logger.trace("ControllerPredicateObject --> action Add Col Obj");
 			ObjectMap object = new ColumnValueObjectMap(model);
 			model.addObjectMap(object);
+			
 		}
 		else if (source.getName().equals("Add Ref Obj")) {
+			
 			logger.trace("ControllerPredicateObject --> action Add Ref Obj");
+			
 			if (model.getTriplesMap().getR2RmlMapping().getAllTriplesMap().size() > 0) {
+				
 				logger.trace("ControllerPredicateObject --> hay triples map " + model.getTriplesMap().getR2RmlMapping().getAllTriplesMap().size());
 				ArrayList<TriplesMap> posiblesParentTriplesMaps = model.getTriplesMap().getR2RmlMapping().getAllTriplesMap();
 				ParentTriplesMapSelector parentTriplesMapSelector = new ParentTriplesMapSelector(frame, posiblesParentTriplesMaps.size());
 				parentTriplesMapSelector.pack();
 				parentTriplesMapSelector.setLocationRelativeTo(frame);
 				parentTriplesMapSelector.setVisible(true);
+				
 				if (!parentTriplesMapSelector.checkCancel()) {
+					
 					int parentTriplesMapIndex = parentTriplesMapSelector.getParentTriplesMapSelected();
 					logger.trace("parent triples map index " + parentTriplesMapIndex);
 					ReferencingObjectMap object = new ReferencingObjectMap(model, model.getTriplesMap().getR2RmlMapping().getTriplesMap(parentTriplesMapIndex));
 					logger.trace("creado object map y establecido parent triples map");
 					model.addObjectMap(object);
+					
 				}
+				
 			}
 			else {
+				
 				JOptionPane.showMessageDialog(frame, "there is no triplesmap to be parent triples map", "Wrning no tripes map", JOptionPane.WARNING_MESSAGE);
+			
 			}
+		
 		}
 		else if (source.getName().equals("Delete")) {
+			
 			logger.trace("ControllerPredicateObject --> action Delete");
 			model.getTriplesMap().deletePredicateObjectMap(model);
+			
 		} 
 		
 	}

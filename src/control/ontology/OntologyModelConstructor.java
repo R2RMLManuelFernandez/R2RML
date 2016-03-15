@@ -81,6 +81,8 @@ public class OntologyModelConstructor {
     
     private OntologyDataProperty topDataProperty;
     
+    private HashMap<String, String> mapCorrespondenceIRILabel = new HashMap<>();
+    
     public OntologyModelConstructor(String paramOntologySource) throws OWLOntologyCreationException {
     	
     	loadOntology(paramOntologySource);
@@ -339,6 +341,7 @@ public class OntologyModelConstructor {
 			
 		}
 		
+		mapCorrespondenceIRILabel.put(newOntologyClazz.getIRI(), newOntologyClazz.getLabel());
 		
 /*		//Initialise
 		OWLOntologyManager m = create();
@@ -999,6 +1002,22 @@ public class OntologyModelConstructor {
 			
 		}
 		
+	}
+	
+	/**
+	 * @param iri
+	 * @return
+	 */
+	public String findLabelforIRI(String iri) {
+
+		if (mapCorrespondenceIRILabel.containsKey(iri)) {
+			
+			return mapCorrespondenceIRILabel.get(iri);
+			
+		}
+
+		return null;
+
 	}
 	
 //--------------------------------------------------------------------------------------------------------------------------------	

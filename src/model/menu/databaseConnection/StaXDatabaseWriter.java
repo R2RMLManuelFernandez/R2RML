@@ -70,17 +70,19 @@ public class StaXDatabaseWriter {
 		eventWriter.add(connectionStartElement);
 		eventWriter.add(end);
 		
-		createConnection(eventWriter, paramConnections);
-
+		int i = 0;
 		
-/*		createBookmark(eventWriter, "http://protege.stanford.edu/ontologies/pizza/pizza.owl");
-		System.out.println("Escrito bookmark");
-		createBookmark(eventWriter,  "http://eldelasautores.com");
-		System.out.println("Escrito bookmark2");
-		createBookmark(eventWriter,  "http://eldeloslournalist.com");
-		System.out.println("Escrito bookmark3");
-		createBookmark(eventWriter,  "http://eldelRDF.com");
-		System.out.println("Escrito bookmark4");*/
+		while (i < paramConnections.size()) {
+			
+			String type = paramConnections.get(i++);
+			String dbName = paramConnections.get(i++);
+			String host = paramConnections.get(i++);
+			String port = paramConnections.get(i++);
+			String userName = paramConnections.get(i++);
+			String password = paramConnections.get(i++);
+			
+			createConnection(eventWriter, type, dbName, host, port, userName, password);
+		}
 		
 		eventWriter.add(eventFactory.createEndElement("", "", "bookmarks"));
 		eventWriter.add(end);
@@ -95,7 +97,8 @@ public class StaXDatabaseWriter {
 	 * @param paramConnections
 	 * @throws XMLStreamException
 	 */
-	private void createConnection(XMLEventWriter eventWriter, ArrayList<String> paramConnections) throws XMLStreamException {
+	private void createConnection(XMLEventWriter eventWriter, String paramType, String paramDbName,
+			String paramHost, String paramPort,String paramUserName, String paramPassword) throws XMLStreamException {
 		
 		final String connectionName = "connection";
 		final String typeName = "databasetype";
@@ -122,7 +125,7 @@ public class StaXDatabaseWriter {
 		eventWriter.add(type);
 		
 		//value of the type
-		Characters typeValue = eventFactory.createCharacters(paramConnections.get(0));
+		Characters typeValue = eventFactory.createCharacters(paramType);
 		eventWriter.add(typeValue);
 		
 		//end of the type
@@ -137,7 +140,7 @@ public class StaXDatabaseWriter {
 		eventWriter.add(dbName);
 		
 		//value of the dbName
-		Characters dbNameValue = eventFactory.createCharacters(paramConnections.get(1));
+		Characters dbNameValue = eventFactory.createCharacters(paramDbName);
 		eventWriter.add(dbNameValue);
 		
 		//end of the dbName
@@ -152,7 +155,7 @@ public class StaXDatabaseWriter {
 		eventWriter.add(host);
 		
 		//value of the host
-		Characters hostValue = eventFactory.createCharacters(paramConnections.get(2));
+		Characters hostValue = eventFactory.createCharacters(paramHost);
 		eventWriter.add(hostValue);
 		
 		//end of the host
@@ -167,7 +170,7 @@ public class StaXDatabaseWriter {
 		eventWriter.add(port);
 		
 		//value of the port
-		Characters portValue = eventFactory.createCharacters(paramConnections.get(3));
+		Characters portValue = eventFactory.createCharacters(paramPort);
 		eventWriter.add(portValue);
 		
 		//end of the port
@@ -182,7 +185,7 @@ public class StaXDatabaseWriter {
 		eventWriter.add(userName);
 		
 		//value of the userName
-		Characters userNameValue = eventFactory.createCharacters(paramConnections.get(4));
+		Characters userNameValue = eventFactory.createCharacters(paramUserName);
 		eventWriter.add(userNameValue);
 		
 		//end of the userName
@@ -197,7 +200,7 @@ public class StaXDatabaseWriter {
 		eventWriter.add(password);
 		
 		//value of the password
-		Characters passwordValue = eventFactory.createCharacters(paramConnections.get(5));
+		Characters passwordValue = eventFactory.createCharacters(paramPassword);
 		eventWriter.add(passwordValue);
 		
 		//end of the password

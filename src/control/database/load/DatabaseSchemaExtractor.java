@@ -24,8 +24,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * Extracts the schma from the connected database
+ * Extracts the schema from the connected database
  * 
  * @author Manuel Fernandez Perez
  *
@@ -35,9 +38,12 @@ public class DatabaseSchemaExtractor {
 	private DatabaseMetaData metadata;
 	private ArrayList<TableSchemaExtractor> tablesSchemas;
 	
+	private static Logger logger = LoggerFactory.getLogger(DatabaseSchemaExtractor.class);
+	
 	public DatabaseSchemaExtractor(Connection conn) throws SQLException {
 		
 		this.metadata = conn.getMetaData();
+		logger.debug("metadata " + this.metadata.toString());
 		this.tablesSchemas = null;
 		this.buildDatabaseSchema();
 		
@@ -51,6 +57,7 @@ public class DatabaseSchemaExtractor {
 	private void buildDatabaseSchema() throws SQLException {
 		
 		Set<String> userTables = this.getUserTables();
+		logger.debug("userTables " + userTables.size());
 		this.tablesSchemas = new ArrayList<TableSchemaExtractor>();
 		for (String tableName : userTables) {
 			
@@ -68,11 +75,18 @@ public class DatabaseSchemaExtractor {
 	 */
 	private Set<String> getUserTables() throws SQLException {
 		
-		String[] types = {"TABLE", "VIEW"};
+//		String catalog = null;
+//		String schema = null;
+		String[] types = {
+				"TABLE",
+				"VIEW"};
 		ResultSet res = metadata.getTables(null, metadata.getUserName(), "%", types);
+//		ResultSet res = metadata.getTables(catalog, schema, "%", types);
+
 		HashSet<String> userTables = new HashSet<String>();
 		while(res.next()) {
 			
+			logger.debug("table " + res.getString(1));
 			userTables.add(res.getString(3));
 			
 		}

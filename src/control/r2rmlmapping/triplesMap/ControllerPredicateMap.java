@@ -40,8 +40,10 @@ public class ControllerPredicateMap implements ActionListener {
 	 * @param paramModel
 	 */
 	public ControllerPredicateMap(ViewPredicate paramView, PredicateMap paramModel) {
+		
 		this.view = paramView;
 		this.model = paramModel;
+
 	}
 	
 	/* (non-Javadoc)
@@ -53,7 +55,6 @@ public class ControllerPredicateMap implements ActionListener {
 		Component source = (Component) e.getSource();
 		changeModel(source);
 
-		
 	}
 
 	/**

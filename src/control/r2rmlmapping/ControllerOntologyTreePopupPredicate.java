@@ -28,6 +28,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import model.ontology.OntologyElement;
+import model.r2rmlmapping.triplesMap.IRIClass;
 import model.r2rmlmapping.triplesMap.PredicateMap;
 import model.r2rmlmapping.triplesMap.PredicateObjectMap;
 import model.r2rmlmapping.triplesMap.TriplesMap;
@@ -60,7 +61,6 @@ public class ControllerOntologyTreePopupPredicate implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-
 		TreePath path = tree.getSelectionPath();
 
 		if (path == null) {
@@ -69,44 +69,72 @@ public class ControllerOntologyTreePopupPredicate implements ActionListener {
 
 		}
 		else if (path.getLastPathComponent() == tree.getModel().getRoot()) {
+			
 //			System.out.println("Esta seleccionada la raiz");
 			JOptionPane.showMessageDialog(popup, "You can not add the root to the mapping", "Warning selection not allowed", JOptionPane.WARNING_MESSAGE);			
+		
 		}
 		else {
+			
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
 	        OntologyElement ontologyElement = (OntologyElement) node.getUserObject();
 			System.out.println("Se añade el elemento de la ontologia " + ontologyElement.getIRI());
 	        ArrayList<PredicateObjectMap> predicateObjectMaps =  triplesMap.getPredicateObjectMaps();
 
 	        if (predicateObjectMaps.size() == 0) {
+	        	
 	        	JOptionPane.showMessageDialog(popup, "There are no Predicate-Object maps in the triples map", "Warning no Predicate-Objects in the triples map", JOptionPane.WARNING_MESSAGE);
 	        }
 	        else {
+	        	
 	        	predicateObjectSelector = new TriplesMapPredicateObjectSelector(frame, predicateObjectMaps.size());
 	        	predicateObjectSelector.pack();
 	        	predicateObjectSelector.setLocationRelativeTo(frame);
 	    		predicateObjectSelector.setVisible(true);
+	    		
 	    		if (!predicateObjectSelector.checkCancel()) {
-		    		int predObjIndex = predicateObjectSelector.getPredObjSelected();
+		    		
+	    			int predObjIndex = predicateObjectSelector.getPredObjSelected();
 			        System.out.println("ControllerOntologyTreePopupPredicate --> Elegido el predicate-object " + predObjIndex);
 			        ArrayList<PredicateMap> predicateMaps = predicateObjectMaps.get(predObjIndex).getPredicateMaps();
+			        
 			        if (predicateMaps.size() == 0) {
+			        	
 			        	JOptionPane.showMessageDialog(popup, "There are no Predicate maps in the predicate-object map", "Warning no Predicate-Objects in the triples map", JOptionPane.WARNING_MESSAGE);
+			        
 			        }
 			        else {
+			        	
 			        	predicateSelector = new PredicateObjectMapPredicateSelector(frame, predicateMaps.size());
 			        	predicateSelector.pack();
 			        	predicateSelector.setLocationRelativeTo(frame);
 			        	predicateSelector.setVisible(true);
+			        	
 			    		if (!predicateSelector.checkCancel()) {
+			    			
 				    		int predIndex = predicateSelector.getPredSelected();
 					        System.out.println("ControllerOntologyTreePopupPredicate --> Elegido el predicate " + predIndex);
-					        predicateMaps.get(predIndex).setPredicateIRI(ontologyElement.getIRI());
+					        IRIClass predicateIRI = predicateMaps.get(predIndex).getPredicateIRI();
+					        predicateIRI.setIRIClassIRI(ontologyElement.getIRI());
+					        
+					        if (ontologyElement.getLabel() != null) {
+					        	
+					        	predicateIRI.setIRIClassLabel(ontologyElement.getLabel());	
+					        	
+					        }
+					        
+					        predicateMaps.get(predIndex).setPredicateIRI(predicateIRI);
+					        
 			    		}
+			    		
 			        }
+			        
 	    	    }
+	    		
 	        }
-		}			        
+	        
+		}
+		
     }
 		
 }

@@ -21,11 +21,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Observable;
 
+import model.database.Column;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import view.R2RMLMain;
-import model.database.Column;
 
 /**
  * Represents a subject map of a R2RML mapping
@@ -36,16 +35,16 @@ import model.database.Column;
 public class SubjectMap extends Observable {
 
 	private String subject;
-	private String rdfClass;
+	private IRIClass rdfClass;
 	private HashSet<Column> subjectColumns;
 	
 	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(R2RMLMain.class);
+	private static Logger logger = LoggerFactory.getLogger(SubjectMap.class);
 
 	public SubjectMap() {
 
 		this.subject = "";
-		this.rdfClass = "";
+		this.rdfClass = new IRIClass();
 		this.subjectColumns = new HashSet<Column>();
 		setChanged();
 		notifyObservers();
@@ -56,7 +55,9 @@ public class SubjectMap extends Observable {
 	 * @return the subject
 	 */
 	public String getSubject() {
+		
 		return subject;
+		
 	}
 	
 	/**
@@ -64,44 +65,54 @@ public class SubjectMap extends Observable {
 	 */
 	
 	public void setSubject(String subject) {
+		
 		this.subject = subject;
 		setChanged();
 		notifyObservers();
         System.out.println("SubjectMap --> Notificada la vista de que ha cambiado el subject");
+        
 	}
 	
 	/**
 	 * @return the rdfClass
 	 */
-	public String getRdfClass() {
+	public IRIClass getRdfClass() {
+		
 		return rdfClass;
+		
 	}
+	
 	
 	/**
 	 * @param rdfClass the rdfClass to set
 	 */
-	public void setRdfClass(String rdfClass) {
-		this.rdfClass = rdfClass;
+	public void setRdfClass(IRIClass paramRDFClass) {
+		
+		this.rdfClass = paramRDFClass;
 		setChanged();
 		notifyObservers();
         System.out.println("SubjectMap --> Notificada la vista de que ha cambiado la rdfClass");
+        
 	}
 
 	/**
 	 * @param column the column to add
 	 */
 	public void addColumn(Column column) {
+		
 		this.subjectColumns.add(column);
 		generateSubject();
 		setChanged();
 		notifyObservers();
 		System.out.println("SubjectMap --> Notificada la vista de que se ha añadido una columna");
+		
 	}
 	
 	/**
 	 * @param column the column to remove
 	 */
 	public void removeColumn(Column column) {
+		
 		this.subjectColumns.remove(column);
 		generateSubject();
 		setChanged();
@@ -113,12 +124,15 @@ public class SubjectMap extends Observable {
 	 * @param cols
 	 */
 	public void removeColumns(ArrayList<Column> cols) {
+		
 		for (Column col: cols) {
 			this.subjectColumns.remove(col);
 		}
+		
 		generateSubject();
 		setChanged();
 		notifyObservers();
+		
 	}
 	
 	/**
@@ -140,22 +154,30 @@ public class SubjectMap extends Observable {
 				}
 			}
 		}
+		
 		generateSubject();
 		setChanged();
 		notifyObservers();
+		
 	}
 	
 	/**
 	 * @param columns the new columns of the subject
 	 */
 	public void setColumns(ArrayList<Column> columns) {
+		
 		this.subjectColumns.clear();
+		
 		for (Column col: columns) {
+			
 			this.subjectColumns.add(col);
 			this.subject = this.subject + " {" + col.getColumnName() + "}";
+			
 		}
+		
 		setChanged();
 		notifyObservers();
+		
 	}
 	
 	/**
@@ -164,10 +186,15 @@ public class SubjectMap extends Observable {
 	public ArrayList<Column> getSubjectColumns() {
 		
 		ArrayList<Column> columns = new ArrayList<Column>();
+		
 		for (Column col:this.subjectColumns) {
+			
 			columns.add(col);
+			
 		}
+		
 		return columns;
+		
 	}
 	
 
@@ -175,29 +202,39 @@ public class SubjectMap extends Observable {
 	 * 
 	 */
 	private void generateSubject() {
+		
 		System.out.println("SubjectMap --> Regenerando subject");
 		String subjectBefore = this.subject;
 		String tempCols[] = subjectBefore.split("\\{");
 		String subjectAfter = "";
 		
 		for (String x : tempCols) {
+			
 			x = x.trim();
+			
 			if (x.endsWith("}")) {
+				
 				x = x.substring(0, x.length() - 1);
+				
 			}
 			else {
+				
 				System.out.println("SubjectMap --> Subject part sin tratar " + x);
 				subjectAfter = subjectAfter.concat(x);
+				
 			}
+			
 		}
 		
 		for (Column colInSubject : this.subjectColumns) {
-			subjectAfter = subjectAfter.concat(" {" + colInSubject.getColumnName() + "}");	
+			
+			subjectAfter = subjectAfter.concat(" {" + colInSubject.getColumnName() + "}");
+			
 		}
 		
 		this.subject = subjectAfter;
 		System.out.println("SubjectMap --> Subject after " + subjectAfter);
+		
 	}
-
 
 }

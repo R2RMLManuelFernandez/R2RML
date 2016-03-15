@@ -21,10 +21,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Set;
 
-import control.database.connection.DatabaseConnection;
 import model.database.Column;
 import model.database.Database;
 import model.database.Table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import control.database.connection.DatabaseConnection;
 
 /**
  * Querys the database to obtain the necesary metadata to constructs the model
@@ -33,6 +37,8 @@ import model.database.Table;
  *
  */
 public class DatabaseLoader {
+	
+	private static Logger logger = LoggerFactory.getLogger(DatabaseLoader.class);
 
 	private static DatabaseLoader instance;
 	
@@ -70,11 +76,14 @@ public class DatabaseLoader {
 		try {
 			//Connects to the database
 			DatabaseConnection databaseConnection = DatabaseConnection.getConnection(database);
+			logger.debug("get connection");
 			connection = databaseConnection.connect();
 			
 			//Obtains the database schema (lists of tables schema)
 			DatabaseSchemaExtractor databaseSchemaExtractor = new DatabaseSchemaExtractor(connection);
+			logger.debug("get schema");
 			ArrayList<TableSchemaExtractor> databaseSchema = databaseSchemaExtractor.getDatabaseSchema();
+			logger.debug("schema " + databaseSchema.size());
 			
 			if (databaseSchema != null) {
 				

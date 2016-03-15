@@ -73,7 +73,7 @@ public class ViewOntologyTree extends JPanel {
 		setLayout(new MigLayout("", "[316px,grow]", "[62px][2.00][38.00px][grow]"));
 		
 		JPanel panelFind = new JPanel();
-		add(panelFind, "cell 0 0,alignx left,aligny top");
+		add(panelFind, "cell 0 0,growx,aligny top");
 		panelFind.setLayout(new MigLayout("", "[40.00px][150.00,grow][100.00px]", "[18.00px][4px][18.00px]"));
 		
 		JLabel labelFind = new JLabel("Find:");

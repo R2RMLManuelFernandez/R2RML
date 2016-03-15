@@ -39,11 +39,13 @@ public class DatabaseTreeModelConstructor {
 	private Database database;
 	
 	public DatabaseTreeModelConstructor(Database database) throws Exception {
+		
 		this.database = database;
 		
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(database.getDatabaseName());		
 		this.databaseTreeModel = new DefaultTreeModel(rootNode);
 		this.createDataBaseTreeModel(rootNode);
+		
 	}
 	
 	/**
@@ -56,8 +58,10 @@ public class DatabaseTreeModelConstructor {
 		if (database.hasTables()) {			
 			addTablesToTree(rootNode);
 		}
-		else
+		else {
 			throw new Exception("Database is empty");
+		}
+			
 	}
 	
 	/**

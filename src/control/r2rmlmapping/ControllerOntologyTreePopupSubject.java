@@ -26,6 +26,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import model.ontology.OntologyElement;
+import model.r2rmlmapping.triplesMap.IRIClass;
 import model.r2rmlmapping.triplesMap.TriplesMap;
 
 /**
@@ -63,7 +64,16 @@ public class ControllerOntologyTreePopupSubject implements ActionListener {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
 	        OntologyElement ontologyElement = (OntologyElement) node.getUserObject();
 			System.out.println("Se añade el elemento de la ontologia " + ontologyElement.getIRI());
-	        triplesMap.getSubjectMap().setRdfClass(ontologyElement.getIRI());
+	        IRIClass rdfClass = triplesMap.getSubjectMap().getRdfClass();
+	        rdfClass.setIRIClassIRI(ontologyElement.getIRI());
+	        
+	        if (ontologyElement.getLabel() != null) {
+	        	
+	        	rdfClass.setIRIClassLabel(ontologyElement.getLabel());
+	        	
+	        }
+	        
+	        triplesMap.getSubjectMap().setRdfClass(rdfClass);
 	        
 	        //TODO Aqui habria que comprobar que es una clase?
 		}

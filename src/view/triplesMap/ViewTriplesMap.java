@@ -101,21 +101,29 @@ public class ViewTriplesMap extends JPanel implements Observer {
 		
 		panelPredicateObject.removeAll();
 		ArrayList<PredicateObjectMap> predicateObjectMaps = triplesMapModel.getPredicateObjectMaps();
+		
 		if (predicateObjectMaps.size() > 0) {
+			
 			for (int i = 0; i < predicateObjectMaps.size(); i++) {
+				
 				System.out.println("ViewTriplesMap update --> " + predicateObjectMaps.get(i).getIdentifier());
 			}
+			
 			for (PredicateObjectMap predicateObjectMap: predicateObjectMaps) {
+				
 				ViewPredicateObject viewPredicateObject = new ViewPredicateObject();
 				viewPredicateObject.setModel(predicateObjectMap);
 				ControllerPredicateObjectMap controllerPredicateObject = new ControllerPredicateObjectMap(frame, viewPredicateObject, predicateObjectMap);
 				viewPredicateObject.setController(controllerPredicateObject);
 				panelPredicateObject.add(viewPredicateObject);
+			
 			}
 		}
+		
 		panelPredicateObject.repaint();
 		panelPredicateObject.revalidate();
 		panelPredicateObject.updateUI();
+	
 	}
 
 	/**
@@ -133,18 +141,27 @@ public class ViewTriplesMap extends JPanel implements Observer {
 		panelPredicateObject.removeAll();
 		System.out.println("ViewTriplesMap --> Se deberian haber eliminado todas las vistas de predicate-object");
 		ArrayList<PredicateObjectMap> predicateObjectMaps = paramTriplesMapModel.getPredicateObjectMaps();
+		
 		if (predicateObjectMaps.size() > 0) {
+			
 			for (int i = 0; i < predicateObjectMaps.size(); i++) {
+			
 				System.out.println("ViewTriplesMap setTriplesMapModel --> " + predicateObjectMaps.get(i).getIdentifier());
+			
 			}
+			
 			for (PredicateObjectMap predicateObjectMap: predicateObjectMaps) {
+				
 				ViewPredicateObject viewPredicateObject = new ViewPredicateObject();
 				viewPredicateObject.setModel(predicateObjectMap);
 				ControllerPredicateObjectMap controllerPredicateObject = new ControllerPredicateObjectMap(frame, viewPredicateObject, predicateObjectMap);
 				viewPredicateObject.setController(controllerPredicateObject);
 				panelPredicateObject.add(viewPredicateObject);
+		
 			}
+		
 		}
+		
 		panelPredicateObject.repaint();
 		panelPredicateObject.revalidate();
 		panelPredicateObject.updateUI();
@@ -157,14 +174,21 @@ public class ViewTriplesMap extends JPanel implements Observer {
 	public void setController(ControllerTriplesMap controller) {
 
 		for(ActionListener al : buttonAddPredicateobject.getActionListeners() ) {
+			
 			buttonAddPredicateobject.removeActionListener( al );
+			
 		}
+		
 		buttonAddPredicateobject.addActionListener(controller);
 		
 		for(ActionListener al : buttonUpdateTriplesMapInR2RMLmaping.getActionListeners() ) {
+			
 			buttonUpdateTriplesMapInR2RMLmaping.removeActionListener( al );
+			
 		}
+		
 		buttonUpdateTriplesMapInR2RMLmaping.addActionListener(controller);
+		
 	}
 
 }

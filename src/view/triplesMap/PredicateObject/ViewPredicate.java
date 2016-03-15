@@ -69,17 +69,21 @@ public class ViewPredicate extends JPanel implements Observer {
 	 * @return
 	 */
 	public PredicateMap getModel() {
+		
 		return model;
+		
 	}
 	
 	/**
 	 * @param predicateMap
 	 */
 	public void setModel (PredicateMap predicateMap) {
+		
 		this.model = predicateMap;
-		textFieldPredicate.setText(model.getPredicateIRI());
+		textFieldPredicate.setText(model.getPredicateIRI().getIRIShow());
 		model.addObserver(this);
 		model.notifyObservers();
+		
 	}
 	
 	public void setController(ControllerPredicateMap controller) {
@@ -88,7 +92,7 @@ public class ViewPredicate extends JPanel implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		textFieldPredicate.setText(model.getPredicateIRI());
+		textFieldPredicate.setText(model.getPredicateIRI().getIRIShow());
 		
 	}
 

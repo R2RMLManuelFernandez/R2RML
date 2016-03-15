@@ -18,6 +18,9 @@ package model.r2rmlmapping.triplesMap;
 
 import java.util.Observable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Represents a predicate map of a R2RML mapping
  * 
@@ -27,36 +30,47 @@ import java.util.Observable;
 public class PredicateMap extends Observable {
 
 	private PredicateObjectMap predicateObjectMap;
-	private String predicateIRI;
+	private IRIClass predicateIRI;
+	
+	@SuppressWarnings("unused")
+	private static Logger logger = LoggerFactory.getLogger(PredicateMap.class);
 
 	public PredicateMap(PredicateObjectMap paramPredicateObjectMap) {
-		System.out.println("PredicateMap --> creado predicate");
+		
 		this.predicateObjectMap = paramPredicateObjectMap;
+		this.predicateIRI = new IRIClass();
 		setChanged();
 		notifyObservers();
+		
 	}
 	
 	/**
 	 * @return the predicateIRI
 	 */
-	public String getPredicateIRI() {
+	public IRIClass getPredicateIRI() {
+		
 		return predicateIRI;
+
 	}
 
 	/**
 	 * @param predicateIRI the predicateIRI to set
 	 */
-	public void setPredicateIRI(String predicateIRI) {
+	public void setPredicateIRI(IRIClass predicateIRI) {
+		
 		this.predicateIRI = predicateIRI;
 		setChanged();
 		notifyObservers();
+		
 	}
 	
 	/**
 	 * @return the predicateObjectMap
 	 */
 	public PredicateObjectMap getPredicateObjectMap() {
+		
 		return predicateObjectMap;
+	
 	}
 
 }

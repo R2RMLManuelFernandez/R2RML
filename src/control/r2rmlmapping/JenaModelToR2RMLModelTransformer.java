@@ -29,6 +29,7 @@ import model.r2rmlmapping.triplesMap.ColumnValueObjectMap;
 import model.r2rmlmapping.triplesMap.JoinCondition;
 import model.r2rmlmapping.triplesMap.PredicateMap;
 import model.r2rmlmapping.triplesMap.PredicateObjectMap;
+import model.r2rmlmapping.triplesMap.IRIClass;
 import model.r2rmlmapping.triplesMap.ReferencingObjectMap;
 import model.r2rmlmapping.triplesMap.SubjectMap;
 import model.r2rmlmapping.triplesMap.TriplesMap;
@@ -43,6 +44,8 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+
+import control.ontology.OntologyModelConstructor;
 
 
 /**
@@ -68,15 +71,17 @@ public class JenaModelToR2RMLModelTransformer {
 	private String baseIRI;
 	private Model jenaModel;
 	private Database database;
+	private OntologyModelConstructor ontologyModel;
 	
 	/**
 	 * @param Jena model
 	 * @return 
 	 */
-	public JenaModelToR2RMLModelTransformer(Model model, Database database) {
+	public JenaModelToR2RMLModelTransformer(Model model, Database database, OntologyModelConstructor ontologyModel) {
 		
 		this.jenaModel = model;
 		this.database = database;
+		this.ontologyModel = ontologyModel;
 		transformIntoR2RMLModel();
 		
 	}
@@ -382,8 +387,17 @@ public class JenaModelToR2RMLModelTransformer {
 												
 												if (stmtRdfClass.getObject() instanceof Literal) {
 													
-													subjMap.setRdfClass(stmtRdfClass.getObject().toString());
-													//TODO buscar en la ontologia la clase a la que correspnde la IRI 
+													IRIClass subjectRDFClass = new IRIClass();
+													subjectRDFClass.setIRIClassIRI(stmtRdfClass.getObject().toString());
+													String label = ontologyModel.findLabelforIRI(subjectRDFClass.getIRIClassIRI());
+													
+													if (label != null) {
+														
+														subjectRDFClass.setIRIClassLabel(label);
+														
+													}
+													
+													subjMap.setRdfClass(subjectRDFClass);
 													
 												}
 												else {
@@ -397,7 +411,7 @@ public class JenaModelToR2RMLModelTransformer {
 										}
 			    		    			
 										triplesMap.setSubjectMap(subjMap);
-										logger.trace("SubjectMap added " + subjMap.getSubjectColumns().toString() + " " + subjMap.getRdfClass());
+										logger.trace("SubjectMap added " + subjMap.getSubjectColumns().toString() + " " + subjMap.getRdfClass().getIRIClassIRI());
 		    		    			
 		    		    			}
 		    		    			else {
@@ -457,7 +471,17 @@ public class JenaModelToR2RMLModelTransformer {
 					if (predStmt.getSubject().equals((Resource)object)) {
 						
 						PredicateMap predMap = new PredicateMap(predObjMap);
-						predMap.setPredicateIRI(predStmt.getObject().toString());
+						IRIClass predicateIRIClass = new IRIClass();
+						predicateIRIClass.setIRIClassIRI(predStmt.getObject().toString());
+						String label = ontologyModel.findLabelforIRI(predicateIRIClass.getIRIClassIRI());
+						
+						if (label != null) {
+							
+							predicateIRIClass.setIRIClassLabel(label);
+							
+						}
+
+						predMap.setPredicateIRI(predicateIRIClass);
 						predObjMap.addPredicateMap(predMap);
 						logger.trace("prodicateObject added " + predStmt.getObject().toString());
 

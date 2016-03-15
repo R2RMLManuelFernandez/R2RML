@@ -161,7 +161,7 @@ public class ViewSubject extends JPanel implements Observer {
 		this.subjectModel = subjectModel;
 		subjectModel.addObserver(this);
 		textFieldSubject.setText(subjectModel.getSubject());
-		textFieldRDFClass.setText(subjectModel.getRdfClass());
+		textFieldRDFClass.setText(subjectModel.getRdfClass().getIRIShow());
 		ArrayList<Column> columns = subjectModel.getSubjectColumns();
 		listModel.clear();
 		for (Column col: columns) {
@@ -184,7 +184,7 @@ public class ViewSubject extends JPanel implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		textFieldSubject.setText(subjectModel.getSubject());
-		textFieldRDFClass.setText(subjectModel.getRdfClass());
+		textFieldRDFClass.setText(subjectModel.getRdfClass().getIRIShow());
 		ArrayList<Column> columns = subjectModel.getSubjectColumns();
 		listModel.clear();
 		for (Column col: columns) {

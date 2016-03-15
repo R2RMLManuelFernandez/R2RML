@@ -41,7 +41,7 @@ public class DialogDatabaseData extends JDialog {
 
 	private static final long serialVersionUID = -1598984771548767604L;
 	
-	private static final String[] dbms = {"MySQL", "Oracle", "SQLServer", "MariaDB", "Firebird", "PostgreSQL"};
+	private static final String[] dbms = {"MySQL", "Oracle", "SQLServer", "MariaDB", "Firebird"};
 	private static final String localhost = "localhost";
 	
 	private JLabel labelDBMS;

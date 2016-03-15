@@ -55,7 +55,7 @@ public class OracleDatabaseConnection extends DatabaseConnection {
 	@Override
 	public void setDatabaseURL() throws SQLException {
 		
-		super.databaseURL = "jdbc:oracle:thin:@" + database.getHost().getHostAddress() + ":" + database.getPort() + "/" + database.getDatabaseName();
+		super.databaseURL = "jdbc:oracle:thin:@" + database.getHost().getHostAddress() + ":" + database.getPort() + ":"+ database.getDatabaseName();
 
 	}
 

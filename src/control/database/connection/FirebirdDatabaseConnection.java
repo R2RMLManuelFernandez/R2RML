@@ -55,7 +55,7 @@ public class FirebirdDatabaseConnection extends DatabaseConnection {
 	@Override
 	public void setDatabaseURL() throws SQLException {
 		
-		super.databaseURL = "jdbc:firebirdsql:" + database.getHost().getHostAddress() + ":" + database.getPort() + "/" + database.getDatabaseName();
+		super.databaseURL = "jdbc:firebirdsql://" + database.getHost().getHostAddress() + ":" + database.getPort() + "/" + database.getDatabaseName();
 
 	}
 

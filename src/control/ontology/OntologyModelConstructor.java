@@ -167,9 +167,21 @@ public class OntologyModelConstructor {
 			
 			logger.trace("numero de clases por clasisficar antes de asignar a Thing: " + this.owlClasses.size());
 			
-			for (OWLClass remainClass: this.owlClasses) {
+			Set<OWLClass> remainingClasses = this.owlClasses;
+			
+			for (OWLClass remainClass: remainingClasses) {
 				
-				createClass(this.thing, remainClass);
+				if (this.owlClasses.isEmpty()) {
+					
+					break;
+					
+				}
+				
+				if (this.owlClasses.contains(remainClass)) {
+					
+					createClass(this.thing, remainClass);
+					
+				}
 				
 			}
 			

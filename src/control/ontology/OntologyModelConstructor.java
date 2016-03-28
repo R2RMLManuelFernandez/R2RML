@@ -1033,7 +1033,7 @@ public class OntologyModelConstructor {
 	}
 	
 //--------------------------------------------------------------------------------------------------------------------------------	
-
+/*
 
 	public void printProp() {
 		
@@ -1137,5 +1137,5 @@ public class OntologyModelConstructor {
 			e.printStackTrace();
 		}
 	}
-
+*/
 }

@@ -31,7 +31,7 @@ public class PredicateObjectMapPredicateSelector extends JDialog {
 	private String[] predNames;
 	private JComboBox<String> comboBox;
 	private boolean cancel = false;
-	private int predSelected;
+	private int predicateSelected;
 
 	/**
 	 * Create the dialog.
@@ -130,7 +130,7 @@ public class PredicateObjectMapPredicateSelector extends JDialog {
 	 */
 	protected void comboBoxActionPerformed(ActionEvent e) {	
 		
-		predSelected = comboBox.getSelectedIndex();
+		predicateSelected = comboBox.getSelectedIndex();
 
 	}
 
@@ -149,7 +149,7 @@ public class PredicateObjectMapPredicateSelector extends JDialog {
 	 * @return the predObjSelected
 	 */
 	public int getPredSelected() {
-		return predSelected;
+		return predicateSelected;
 	}
 
 }

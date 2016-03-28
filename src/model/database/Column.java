@@ -47,9 +47,9 @@ public class Column {
 		return table;
 	}
 
-	public void setTable(Table table) {
-		this.table = table;
-	}
+//	public void setTable(Table table) {
+//		this.table = table;
+//	}
 
 	public String getDataType() {
 		return dataType;

@@ -29,7 +29,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.TransferHandler;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Position;
@@ -179,17 +178,17 @@ public class ViewOntologyTree extends JPanel {
         treeOntology.add(popupHandler.getPopup());		
 	}
 	
-	/**
+/*	*//**
 	 * Sets the transferhandler for the tree
 	 * 
 	 * @param paramTransferHandler
-	 */
+	 *//*
 	public void setTreeTransferHandler(TransferHandler paramTransferHandler) {
 		
 		treeOntology.setTransferHandler(paramTransferHandler);
 		
-	}
-	
+	}*/
+
 	/**
 	 * Find the nodes in the ontology tree which label begins whith the pattern
 	 */

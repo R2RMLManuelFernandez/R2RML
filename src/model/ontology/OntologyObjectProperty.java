@@ -30,8 +30,10 @@ public class OntologyObjectProperty extends OntologyElement {
 	private ArrayList<OntologyObjectProperty> subObjectProperties = null;
 
 	public OntologyObjectProperty(String IRI, String displayName, String nameSpace){
+		
 		super(IRI, displayName, nameSpace);
 		this.subObjectProperties = new ArrayList<OntologyObjectProperty>();
+		
 	}
 	
 	/**

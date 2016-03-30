@@ -22,6 +22,9 @@ import java.util.Observable;
 import model.database.Table;
 import model.r2rmlmapping.R2RMLMapping;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Represents a triples map of a R2RML mapping
  * 
@@ -36,6 +39,8 @@ public class TriplesMap extends Observable {
 	private ArrayList<PredicateObjectMap> predicateObjectMaps;	
 	private R2RMLMapping r2rmlMapping;
 	private ArrayList<ReferencingObjectMap> referencingObjectMapsInTriplesMap;
+	
+	private static Logger logger = LoggerFactory.getLogger(TriplesMap.class);
 
 	public TriplesMap(int identifier, R2RMLMapping paramR2RMLMapping, Table paramTable) {
 		
@@ -178,6 +183,8 @@ public class TriplesMap extends Observable {
 	 * 
 	 */
 	public void changeLabelsFragments(Boolean showLabels) {
+		
+		logger.trace("triplesmapmodel show labels value " + showLabels);
 
 		this.getSubjectMap().getRdfClass().changeLabelsFragments(showLabels);
 		

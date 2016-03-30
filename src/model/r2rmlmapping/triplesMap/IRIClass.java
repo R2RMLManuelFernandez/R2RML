@@ -36,7 +36,7 @@ public class IRIClass {
 	private Boolean showLabel; 
 	
 	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(R2RMLMain.class);
+	private static Logger logger = LoggerFactory.getLogger(IRIClass.class);
 	
 	public IRIClass() {
 		

@@ -460,7 +460,7 @@ public class R2RMLMain {
 				ontologyLoaded = true;
 				
 				if (databaseLoaded) {
-					
+
 					createR2RMLMap();	
 				
 				}
@@ -507,7 +507,7 @@ public class R2RMLMain {
 				ontologyLoaded = true;
 				
 				if (databaseLoaded) {
-				
+
 					createR2RMLMap();	
 				
 				}
@@ -534,11 +534,11 @@ public class R2RMLMain {
 	 * @param ae
 	 */
 	private void menuItemFragmentsLabelsActionPerformed(ActionEvent ae) {
-		
+
 		showLabels = !showLabels;
 		logger.trace("show labels: " + showLabels);
 		
-		viewOntology.changeLabelsFragments();
+		viewOntology.changeLabelsFragments(showLabels);
 		
 		if (triplesMapModel != null) {
 			
@@ -559,9 +559,10 @@ public class R2RMLMain {
 			viewDatabase.setMappingItem(triplesMapModel);
 			
 		}
+
 		
 	}
-
+	
 	/**
 	 * connects to the database, creates the model and loadas the tree view
 	 * @param e
@@ -605,7 +606,7 @@ public class R2RMLMain {
 				databaseLoaded = true;
 				
 				if (ontologyLoaded) {
-					
+
 					createR2RMLMap();
 					
 				}
@@ -730,7 +731,7 @@ public class R2RMLMain {
 			ontologyLoaded = true;
 			
 			if (databaseLoaded) {
-				
+
 				createR2RMLMap();	
 			
 			}
@@ -784,7 +785,7 @@ public class R2RMLMain {
 	 * @param e
 	 */
 	protected void menuItemNewR2RMLMappingActionPerformed(ActionEvent e) {
-		
+
 		createR2RMLMap();
         
 	}

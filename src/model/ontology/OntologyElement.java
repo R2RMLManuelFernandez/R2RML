@@ -16,6 +16,8 @@
 
 package model.ontology;
 
+import view.R2RMLMain;
+
 /**
  * Abstract class representing a component of an ontology *class, object property ordata property(
  *
@@ -30,21 +32,14 @@ public abstract class OntologyElement {
 	private Boolean inMapping = false;
 //	private HashMap<String, String> labels = new HashMap<String, String>();
 	private String label = null;
-	private Boolean showLabel = false;
+	private Boolean showLabel = R2RMLMain.showLabels;
 
-	public OntologyElement() {
-		this.IRI = "";
-		this.fragment = "";
-	}
-	
-	public OntologyElement(String IRI) {
-		this.IRI = IRI;
-	}
-	
 	public OntologyElement(String IRI, String fragment, String nameSpace) {
+		
 		this.IRI = IRI;
 		this.fragment = fragment;
 		this.nameSpace = nameSpace;
+	
 	}
 	
 	/**
@@ -128,9 +123,9 @@ public abstract class OntologyElement {
 	/**
 	 * 
 	 */
-	public void changeShowLabel() {
+	public void changeShowLabel(Boolean newShowLabesls) {
 		
-		this.showLabel = !this.showLabel;
+		this.showLabel = newShowLabesls;
 		
 	}
 

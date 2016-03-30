@@ -83,6 +83,7 @@ public class OntologyModelConstructor {
     
     private HashMap<String, String> mapCorrespondenceIRILabel = new HashMap<>();
     
+
     public OntologyModelConstructor(String paramOntologySource) throws OWLOntologyCreationException {
     	
     	loadOntology(paramOntologySource);
@@ -937,13 +938,13 @@ public class OntologyModelConstructor {
 	/**
 	 * 
 	 */
-	public void changeModelToString() {
+	public void changeModelToString(Boolean newShowLabesls) {
 		
 		ArrayList<OntologyClass> subClases = this.thing.getSubclasses();
 		
 		for (OntologyClass ontClass: subClases) {
 			
-			changeClassToString(ontClass);
+			changeClassToString(ontClass, newShowLabesls);
 			
 		}
 		
@@ -951,7 +952,7 @@ public class OntologyModelConstructor {
 		
 		for (OntologyObjectProperty subObjectProperty: subObjectProperties) {
 			
-			changeObjectPropertyToString(subObjectProperty);
+			changeObjectPropertyToString(subObjectProperty, newShowLabesls);
 			
 		}
 		
@@ -959,7 +960,7 @@ public class OntologyModelConstructor {
 		
 		for (OntologyDataProperty subDataProperty: subDataProperties) {
 			
-			changeDataPropertyToString(subDataProperty);
+			changeDataPropertyToString(subDataProperty, newShowLabesls);
 			
 		}
 
@@ -968,15 +969,15 @@ public class OntologyModelConstructor {
 	/**
 	 * @param ontClass
 	 */
-	public void changeClassToString(OntologyClass ontClass) {
+	public void changeClassToString(OntologyClass ontClass, Boolean newShowLabesls) {
 		
-		ontClass.changeShowLabel();
+		ontClass.changeShowLabel(newShowLabesls);
 		
 		ArrayList<OntologyClass> subClases = ontClass.getSubclasses();
 		
 		for (OntologyClass subClass: subClases) {
 			
-			changeClassToString(subClass);
+			changeClassToString(subClass, newShowLabesls);
 			
 		}
 		
@@ -985,15 +986,15 @@ public class OntologyModelConstructor {
 	/**
 	 * @param ontClass
 	 */
-	public void changeObjectPropertyToString(OntologyObjectProperty ontObjectProperty) {
+	public void changeObjectPropertyToString(OntologyObjectProperty ontObjectProperty, Boolean newShowLabesls) {
 		
-		ontObjectProperty.changeShowLabel();
+		ontObjectProperty.changeShowLabel(newShowLabesls);
 		
 		ArrayList<OntologyObjectProperty> subObjectProperties = ontObjectProperty.getSubObjectProperties();
 		
 		for (OntologyObjectProperty subObjectProperty: subObjectProperties) {
 			
-			changeObjectPropertyToString(subObjectProperty);;
+			changeObjectPropertyToString(subObjectProperty, newShowLabesls);
 			
 		}
 		
@@ -1002,15 +1003,15 @@ public class OntologyModelConstructor {
 	/**
 	 * @param ontClass
 	 */
-	public void changeDataPropertyToString(OntologyDataProperty ontDataProperty) {
+	public void changeDataPropertyToString(OntologyDataProperty ontDataProperty, Boolean newShowLabesls) {
 		
-		ontDataProperty.changeShowLabel();
+		ontDataProperty.changeShowLabel(newShowLabesls);
 		
 		ArrayList<OntologyDataProperty> subDataProperties = ontDataProperty.getSubDataProperties();
 		
 		for (OntologyDataProperty subDataProperty: subDataProperties) {
 			
-			changeDataPropertyToString(subDataProperty);
+			changeDataPropertyToString(subDataProperty, newShowLabesls);
 			
 		}
 		

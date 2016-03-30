@@ -168,11 +168,11 @@ public class ViewOntology extends JPanel {
 	/**
 	 * @param e
 	 */
-	public void changeLabelsFragments() {
+	public void changeLabelsFragments(Boolean newShowLabesls) {
 
 		if (ontologyModel != null) {
 				
-			ontologyModel.changeModelToString();
+			ontologyModel.changeModelToString(newShowLabesls);
 			
 			tabbedPane.removeAll();
 			add(tabbedPane, "cell 0 1,grow");

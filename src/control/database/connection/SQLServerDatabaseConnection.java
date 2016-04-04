@@ -29,9 +29,10 @@ import model.database.Database;
 public class SQLServerDatabaseConnection extends DatabaseConnection {
 
 	/**
-	 * oracle driver
+	 * sql server driver
 	 */
 	public static final String sqlserver_driver = "net.sourceforge.jtds.jdbc.Driver";
+//	public static final String sqlserver_driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 	
 	public SQLServerDatabaseConnection(Database database) throws SQLException {
 		

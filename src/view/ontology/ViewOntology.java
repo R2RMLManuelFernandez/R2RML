@@ -117,6 +117,7 @@ public class ViewOntology extends JPanel {
 			// TODO Auto-generated catch block
 			throw(e);
 		}
+		
 		ontologyTreeModel = new OntologyTreeModelConstructor(ontologyModel.getThing(), ontologyModel.getTopObjectProperty(),
 								ontologyModel.getTopDataProperty());
 		

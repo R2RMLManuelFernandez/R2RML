@@ -207,7 +207,7 @@ public class R2RMLMain {
 		
 		menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
-		createMenuOntology();	
+		createMenuOntology();
 		createMenuDatabase();
 		createMenuMapping();
 		createMenuHelp();
@@ -282,7 +282,7 @@ public class R2RMLMain {
 		paramMenu.add(menuRecent);
 		
 		//reads the list of recent ontologies from the auxiliar XML file
-		StaXListOntologySourcesParser importRecentParser = new StaXListOntologySourcesParser("ontology", "source","xmls/RecentOntologies.xml");
+		StaXListOntologySourcesParser importRecentParser = new StaXListOntologySourcesParser("ontology", "source","resources/xmls/RecentOntologies.xml");
 		
 		JSeparator separatorRecent = new JSeparator();
 		menuRecent.add(separatorRecent);
@@ -756,7 +756,7 @@ public class R2RMLMain {
 	 */
 	private void writeRecents() {
 		
-		recentsWriter = new StaXListOntologySourcesWriter("recents", "source","xmls/RecentOntologies.xml");
+		recentsWriter = new StaXListOntologySourcesWriter("recents", "source","resources/xmls/RecentOntologies.xml");
 		
 		int recentSize = recentOntologies.size();
 

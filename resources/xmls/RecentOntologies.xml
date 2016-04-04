@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <recents>
 	<ontology>
 		<source>C:\Users\Manuel\Desktop\Ontologias\onto.rdf</source>
@@ -7,9 +7,9 @@
 		<source>C:\Users\Manuel\Desktop\Ontologias\root-ontology.owl</source>
 	</ontology>
 	<ontology>
-		<source>C:\Users\Manuel\Desktop\Ontologias\pizza.owl</source>
+		<source>C:\Users\Manuel\Desktop\Ontologias\beer-ontology-ontologies-owl-REVISION-49\root-ontology.owl</source>
 	</ontology>
 	<ontology>
-		<source>C:\Users\Manuel\Desktop\Ontologias\beer-ontology-ontologies-owl-REVISION-49\root-ontology.owl</source>
+		<source>C:\Users\Manuel\Desktop\Ontologias\pizza.owl</source>
 	</ontology>
 </recents>

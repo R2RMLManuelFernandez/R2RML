@@ -364,7 +364,7 @@ public class OpenOntologyIRI extends JDialog {
 	 */
 	private void readBookmarks() { 
 		
-	    bookmarkParser= new StaXListOntologySourcesParser("ontology", "iri", "xmls/Bookmarks.xml");
+	    bookmarkParser= new StaXListOntologySourcesParser("ontology", "iri", "resources/xmls/Bookmarks.xml");
 	    List<OntologySource> readBookmarks = bookmarkParser.read();
 	    
 	    if (!readBookmarks.isEmpty()) {
@@ -387,7 +387,7 @@ public class OpenOntologyIRI extends JDialog {
 	 */
 	private void writeBookmarks() throws Exception { 
 		
-	    bookmarkWriter= new StaXListOntologySourcesWriter("bookmarks", "iri", "xmls/Bookmarks.xml");
+	    bookmarkWriter= new StaXListOntologySourcesWriter("bookmarks", "iri", "resources/xmls/Bookmarks.xml");
 	    ArrayList<String> bookmarksToWrite = new ArrayList<String>(0);
 	   
 	    DefaultListModel<String> listModel = (DefaultListModel<String>) listBookMark.getModel();

@@ -176,23 +176,14 @@ public class R2RMLMain {
  
 		//the view to add a triples map to the r2rml mapping
         viewTriplesMap = new ViewTriplesMap(frame);
-//        viewTriplesMap.setOntologyTransferHandler(ontologyTransferHandler);
-//        viewTriplesMap.setDatabaseTransferHandler(databaseTransferHandler);
+
         viewTriplesMap.setBorder(new LineBorder(Color.DARK_GRAY));
         viewTriplesMap.setBackground(UIManager.getColor("EditorPane.background"));
 		frame.getContentPane().add(viewTriplesMap, "cell 1 0 1 3,grow");
-
-        //model for the R2RML mapping
- //       r2rmlMappingModel = new R2RMLMapping();
-//      r2rmlMapingLoaded = true;
-        
-//        logger.trace("Creado el modelo del mapping R2RML");
         
 		//the view for the r2rml mapping
 		viewR2RMLMapping = new ViewR2RMLMapping();
 		frame.getContentPane().add(viewR2RMLMapping, "cell 1 3 ,grow");
-		
-//		viewR2RMLMapping.setModel(r2rmlMappingModel);
 		
 		frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		frame.pack();
@@ -465,12 +456,6 @@ public class R2RMLMain {
 				
 				}
 				
-//				if (databaseChanged) {
-//					
-//					createR2RMLMap();	
-//					
-//				}
-				
 			} catch (OWLOntologyCreationException e1) {
 				
 		    	JOptionPane.showMessageDialog(frame, "Unable to open the ontology", "Error loading ontology", JOptionPane.ERROR_MESSAGE);
@@ -511,13 +496,7 @@ public class R2RMLMain {
 					createR2RMLMap();	
 				
 				}
-				
-//				if (databaseChanged) {
-//					
-//					createR2RMLMap();	
-//					
-//				}
-			
+
 			} catch (OWLOntologyCreationException e) {
 				
 		    	JOptionPane.showMessageDialog(frame, "Unable to open the ontology", "Error loading ontology", JOptionPane.ERROR_MESSAGE);
@@ -611,12 +590,6 @@ public class R2RMLMain {
 					
 				}
 				
-//				else {
-//					
-//					databaseChanged = true;
-//					
-//				}
-				
 			} catch (Exception e1) {
 				
 		    	JOptionPane.showMessageDialog(frame, "Unable to connect to the database", "Error connecting to database", JOptionPane.ERROR_MESSAGE);
@@ -646,6 +619,7 @@ public class R2RMLMain {
 		writeRecents();
 
 	}
+
 
 	/**
 	 * reloads the list of recent ontologies 
@@ -678,6 +652,7 @@ public class R2RMLMain {
 		menuRecent.repaint();
 
 	}
+
 
 	/**
 	 * ad the ontology source to the list of sources of ontologies recently openened
@@ -712,7 +687,8 @@ public class R2RMLMain {
 		
 	}
 
-	/**
+
+ 	/**
 	 * opens an ontology from the menu of ontologies recently opened
 	 * @param e
 	 */
@@ -734,14 +710,7 @@ public class R2RMLMain {
 
 				createR2RMLMap();	
 			
-			}
-			
-//			if (databaseChanged) {
-//				
-//				createR2RMLMap();	
-//				
-//			}
-			
+			}		
 		} catch (OWLOntologyCreationException oe) {
 			
 	    	JOptionPane.showMessageDialog(frame, "Unable to open the ontology", "Error loading ontology", JOptionPane.ERROR_MESSAGE);	
@@ -779,7 +748,6 @@ public class R2RMLMain {
 		}
 	
 	}
-	
 
 	/**
 	 * @param e
@@ -820,7 +788,6 @@ public class R2RMLMain {
 		
         logger.trace("Archivo rdf con el r2rmlmap leido");
 
-//		if (databaseLoaded) {
 		if (ontologyLoaded && databaseLoaded) {
 			
 			JenaModelToR2RMLModelTransformer jenaTransformer = new JenaModelToR2RMLModelTransformer(jenaModel, viewDatabase.getDatabase(), viewOntology.getOntologyModel());
@@ -881,7 +848,7 @@ public class R2RMLMain {
 		
 		try {
 			
-			r2rmlTransformer.otherWrite(file);;
+			r2rmlTransformer.otherWrite(file);
 			
 		} catch (IOException e1) {
 
@@ -1048,7 +1015,6 @@ public class R2RMLMain {
 	        logger.trace("Creado el modelo del mapping R2RML");
 			viewR2RMLMapping.setModel(r2rmlMappingModel);
 			createTriplesMap();
-//			databaseChanged = false;
 			
 		}
 		else {

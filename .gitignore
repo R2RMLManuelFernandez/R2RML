@@ -1,5 +1,4 @@
 /bin/
+/resources/xmls/
+/resources/log
 
-/xmls/
-/log/
-/jdbc drivers/

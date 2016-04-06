@@ -1,4 +1,8 @@
+*.class
+
+# Package Files #
+*.jar
+
 /bin/
 /resources/xmls/
 /resources/log
-

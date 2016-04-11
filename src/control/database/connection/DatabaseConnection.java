@@ -32,7 +32,6 @@ public abstract class DatabaseConnection {
 	//the type of databases supported
 	public static final String DBMS_MYSQL = "mysql";
 	public static final String DBMS_ORACLE = "oracle";
-	public static final String DBMS_SQLSERVER = "sqlserver";
 	public static final String DBMS_FIREBIRD = "firebird";
 	public static final String DBMS_MARIADB = "mariadb";
 
@@ -68,11 +67,6 @@ public abstract class DatabaseConnection {
 		else if(database.getDBMS().equalsIgnoreCase(DBMS_ORACLE)) {
 			
 			return new OracleDatabaseConnection(database);
-			
-		}
-		else if(database.getDBMS().equalsIgnoreCase(DBMS_SQLSERVER)) {
-			
-			return new SQLServerDatabaseConnection(database);
 			
 		}
 		else if(database.getDBMS().equalsIgnoreCase(DBMS_FIREBIRD)) {

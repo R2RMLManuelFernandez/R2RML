@@ -695,8 +695,7 @@ public class R2RMLMain {
 	protected void openRecentOntologySource(ActionEvent e) {
 		
 		JMenuItem jMenuItemSource = (JMenuItem) e.getSource();
-		String ontologySource = jMenuItemSource.getText();
-		
+		String ontologySource = jMenuItemSource.getText();		
 		OntologySource source = new OntologySource();
 		source.setSource(ontologySource);
 		addToRecents(source);

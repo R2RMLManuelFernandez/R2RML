@@ -209,7 +209,7 @@ public class OpenOntologyIRI extends JDialog {
 	}
 
 	/**
-	 * loads the bookmark from the bookmark list onto the ontology tect field 
+	 * loads the bookmark from the bookmark list onto the ontology text field 
 	 * 
 	 * @param le
 	 */

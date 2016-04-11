@@ -7,11 +7,18 @@
             <param name="ConversionPattern" value="%d{DATE} [%t] %-5p %c - %m%n" />
         </layout>
     </appender>
+    
+    <appender name="Logfile" class="org.apache.log4j.FileAppender">
+    	<param name="file" value="log/logfile.log" />
+        <layout class="org.apache.log4j.EnhancedPatternLayout">
+            <param name="ConversionPattern" value="%d{DATE} [%t] %-5p %c - %m%n" />
+        </layout>
+    </appender>
 
     <root>
         <priority value="trace" />
         <appender-ref ref="Console"/>
-        <appender-ref ref="File" />
+        <appender-ref ref="Logfile"/>
     </root>
     
 </log4j:configuration>

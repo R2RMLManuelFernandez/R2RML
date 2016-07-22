@@ -34,7 +34,7 @@ public class DatabasesTable extends AbstractTableModel {
 	
 	private static final String[] columnNames = {"DBMS", "DB Name", "Host", "Port", "User"};
 	
-	private Vector<Database> data = new Vector<>(0);
+	private Vector<Database> data = new Vector<Database>(0);
 
 	@Override
 	public int getColumnCount() {

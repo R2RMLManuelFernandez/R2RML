@@ -43,6 +43,11 @@ import model.menu.bookmarks.StaXListOntologySourcesParser;
 import model.menu.bookmarks.StaXListOntologySourcesWriter;
 import net.miginfocom.swing.MigLayout;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import view.util.PreferencesMediator;
+
 /**
  * Opens an ontology from its IRI
  * 
@@ -73,11 +78,18 @@ public class OpenOntologyIRI extends JDialog {
 	private StaXListOntologySourcesParser bookmarkParser;
 	private StaXListOntologySourcesWriter bookmarkWriter;
 
+	private PreferencesMediator prefs;
+	
+	@SuppressWarnings("unused")
+	private static Logger logger = LoggerFactory.getLogger(OpenOntologyIRI.class);
+	
 	/**
 	 * Create the dialog.
+	 * @param prefs 
 	 */
-	public OpenOntologyIRI(JFrame frame) {
+	public OpenOntologyIRI(JFrame frame, PreferencesMediator prefs) {
 		super(frame, true);
+		this.prefs = prefs;
 		initialize();
 
 	}
@@ -155,7 +167,7 @@ public class OpenOntologyIRI extends JDialog {
 		});
 		contentPane.add(buttonDeleteBookmark, "flowx,cell 2 6,alignx right");
 		
-		fileChooserImportBookmarks = new JFileChooser();
+		fileChooserImportBookmarks = new JFileChooser(prefs.getMostRecentInputBookmarksFilePathVal());
 		
 		buttonImportBookmarks = new JButton("Import Bookmarks");
 		buttonImportBookmarks.addActionListener(new ActionListener() {
@@ -172,7 +184,7 @@ public class OpenOntologyIRI extends JDialog {
 		});
 		contentPane.add(buttonImportBookmarks, "cell 2 6");
 		
-		fileChooserExportBookmarks = new JFileChooser();
+		fileChooserExportBookmarks = new JFileChooser(prefs.getMostRecentOutputBookmarksFilePathVal());
 		
 		buttonExportBookmarks = new JButton("Export Bookmarks");
 		buttonExportBookmarks.addActionListener(new ActionListener() {
@@ -279,6 +291,8 @@ public class OpenOntologyIRI extends JDialog {
 		
 		if (result == JFileChooser.APPROVE_OPTION) {
 			
+			prefs.setMostRecentInputBookmarksFilePathVal(fileChooserImportBookmarks.getSelectedFile().getPath());
+			
 			StaXListOntologySourcesParser importBookmarkParser = new StaXListOntologySourcesParser("ontology", "iri", fileChooserImportBookmarks.getSelectedFile().getPath());
 			
 		    List<OntologySource> readBookmarks = importBookmarkParser.read();
@@ -312,6 +326,8 @@ public class OpenOntologyIRI extends JDialog {
 		int result = fileChooserExportBookmarks.showSaveDialog(null);
 		
 		if (result == JFileChooser.APPROVE_OPTION) {
+
+			prefs.setMostRecentOutputBookmarksFilePathVal(fileChooserExportBookmarks.getSelectedFile().getPath());
 			
 			StaXListOntologySourcesWriter exportBookmarkWriter = new StaXListOntologySourcesWriter("bookmarks", "iri", fileChooserExportBookmarks.getSelectedFile().getPath());
 			

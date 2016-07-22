@@ -140,7 +140,7 @@ public class ViewObjectReferenced extends JPanel implements Observer {
 			for (int i = 0; i < joinConditions.size(); i++) {
 				joinCondNames[i] = "Join Condition " + (i + 1);
 			}
-			comboBoxJoinCondModel = new DefaultComboBoxModel<>(joinCondNames);
+			comboBoxJoinCondModel = new DefaultComboBoxModel<String>(joinCondNames);
 			comboBoxJoinConditions.setModel(comboBoxJoinCondModel);
 			comboBoxJoinConditions.setSelectedIndex(0);
 			comboBoxJoinConditions.setVisible(true);
@@ -178,7 +178,7 @@ public class ViewObjectReferenced extends JPanel implements Observer {
 			for (int i = 0; i < joinConditions.size(); i++) {
 				joinCondNames[i] = "Join Condition " + (i + 1);
 			}
-			comboBoxJoinCondModel = new DefaultComboBoxModel<>(joinCondNames);
+			comboBoxJoinCondModel = new DefaultComboBoxModel<String>(joinCondNames);
 			comboBoxJoinConditions.setModel(comboBoxJoinCondModel);
 			comboBoxJoinConditions.setSelectedIndex(joinConditions.size() - 1);
 			comboBoxJoinConditions.setVisible(true);

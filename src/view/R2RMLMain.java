@@ -41,8 +41,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import model.menu.bookmarks.OntologySource;
-import model.menu.bookmarks.StaXListOntologySourcesParser;
-import model.menu.bookmarks.StaXListOntologySourcesWriter;
 import model.r2rmlmapping.R2RMLMapping;
 import model.r2rmlmapping.triplesMap.TriplesMap;
 import net.miginfocom.swing.MigLayout;
@@ -60,6 +58,7 @@ import view.r2rmlMapping.TriplesMapSelector;
 import view.r2rmlMapping.ViewR2RMLMapping;
 import view.triplesMap.TriplesMapTableSelector;
 import view.triplesMap.ViewTriplesMap;
+import view.util.PreferencesMediator;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -78,6 +77,7 @@ public class R2RMLMain {
 
 	private JFrame frame;
 	private JMenuBar menuBar;
+	private PreferencesMediator prefMediator;
 	private OpenDatabaseDialog openDatabaseDialog;
 	private OpenOntologyIRI openOntologyIRI;
 	private TriplesMapTableSelector openTriplesMapTableSelector;
@@ -86,7 +86,6 @@ public class R2RMLMain {
 	private JFileChooser fileChooserOntology;
 	private List<OntologySource> recentOntologies;
 	private JMenu menuRecent;
-	private StaXListOntologySourcesWriter recentsWriter;
 	private ViewTriplesMap viewTriplesMap;
 	private ViewOntology viewOntology;
 	private ViewDatabaseTree viewDatabase;
@@ -162,6 +161,8 @@ public class R2RMLMain {
 		frame = new JFrame();
 		frame.getContentPane().setBackground(Color.GRAY);
 		frame.getContentPane().setLayout(new MigLayout("", "[300.00,grow][656.00,grow][300.00,grow]", "[83.00,grow,center][grow][345.00][550.00,grow][]"));
+
+		prefMediator = new PreferencesMediator();
 		
 		//creates the menu
 		createMenuBar();
@@ -272,9 +273,6 @@ public class R2RMLMain {
 		menuRecent = new JMenu("Open Recent ...");
 		paramMenu.add(menuRecent);
 		
-		//reads the list of recent ontologies from the auxiliar XML file
-		StaXListOntologySourcesParser importRecentParser = new StaXListOntologySourcesParser("ontology", "source","resources/xmls/RecentOntologies.xml");
-		
 		JSeparator separatorRecent = new JSeparator();
 		menuRecent.add(separatorRecent);
 
@@ -292,7 +290,7 @@ public class R2RMLMain {
 		menuRecent.repaint();
 		
 		recentOntologies = new ArrayList<OntologySource>(0);
-	    recentOntologies = importRecentParser.read();
+	    recentOntologies = prefMediator.getRecents();
 	    
 	    if (!recentOntologies.isEmpty()) {
 	    	
@@ -415,13 +413,29 @@ public class R2RMLMain {
 		JMenu menuHelp = new JMenu("Help");
 		menuBar.add(menuHelp);
 		
-		JMenuItem menuItemHowTo = new JMenuItem("How to use ...");
-		menuHelp.add(menuItemHowTo);
+		JMenuItem menuItemManual = new JMenuItem("How to use ...");
+		menuItemManual.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				menuItemManualActionPerformed(e);
+				
+			}
+		});
+		menuHelp.add(menuItemManual);
 		
 		JSeparator separatorMenuHelp = new JSeparator();
 		menuHelp.add(separatorMenuHelp);
 		
 		JMenuItem menuItemAbout = new JMenuItem("About ...");
+		menuItemAbout.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				menuItemAboutActionPerformed(e);
+				
+			}
+		});
 		menuHelp.add(menuItemAbout);
 		
 	}
@@ -432,7 +446,7 @@ public class R2RMLMain {
 	 */
 	protected void menuItemOpenOntologyIRIActionPerformed(ActionEvent e) {
 		
-		openOntologyIRI = new OpenOntologyIRI(frame);
+		openOntologyIRI = new OpenOntologyIRI(frame, prefMediator);;
 		openOntologyIRI.pack();
 		openOntologyIRI.setLocationRelativeTo(frame);
 		openOntologyIRI.setVisible(true);
@@ -473,7 +487,7 @@ public class R2RMLMain {
 	 */
 	private void menuItemOpenOntologyFileActionPerformed(ActionEvent ae) {
 	
-		fileChooserOntology = new JFileChooser();
+		fileChooserOntology = new JFileChooser(prefMediator.getMostRecentInputOntologyFilePathVal());
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("Owl and RDF", "owl", "rdf", "owx");
 		fileChooserOntology.setFileFilter(filter);
 		int result = fileChooserOntology.showOpenDialog(frame);
@@ -482,6 +496,8 @@ public class R2RMLMain {
 			
 			String file = fileChooserOntology.getSelectedFile().getPath();
 
+			prefMediator.setMostRecentInputOntologyFilePathVal(file);
+			
 			OntologySource source = new OntologySource();
 			source.setSource(file);
 			addToRecents(source);
@@ -550,7 +566,7 @@ public class R2RMLMain {
 		
 		if (openDatabaseDialog == null) {
 			
-			openDatabaseDialog = new OpenDatabaseDialog(frame);
+			openDatabaseDialog = new OpenDatabaseDialog(frame, prefMediator);
 			openDatabaseDialog.pack();
 			openDatabaseDialog.setLocationRelativeTo(frame);
 			
@@ -575,7 +591,7 @@ public class R2RMLMain {
 			String dbms = (String) dbDesc[0];
 			String name = (String) dbDesc[1];
 			InetAddress adress = (InetAddress) dbDesc[2];
-			int port = (int) dbDesc[3];
+			Integer port = (Integer) dbDesc[3];
 			String userName = (String) dbDesc[4];
 			String password = (String) dbDesc[5];
 			
@@ -724,22 +740,11 @@ public class R2RMLMain {
 	 */
 	private void writeRecents() {
 		
-		recentsWriter = new StaXListOntologySourcesWriter("recents", "source","resources/xmls/RecentOntologies.xml");
-		
-		int recentSize = recentOntologies.size();
-
-		ArrayList<String> recents = new ArrayList<>(recentSize);
-		
-	    for (int i = 0; i < recentSize; i++) {
-
-	    	recents.add(recentOntologies.get(i).getSource());
-	    	
-	    }
-		
 	    try {
 	    	
-			recentsWriter.save(recents);
-			
+			prefMediator.setRecents(recentOntologies);
+			logger.debug(recentOntologies.toString());
+	
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -762,7 +767,7 @@ public class R2RMLMain {
 	 */
 	protected void menuItemLoadR2RMLMappingActionPerformed(ActionEvent e) {
 
-		JFileChooser fileChooserLoadMapping = new JFileChooser();
+		JFileChooser fileChooserLoadMapping = new JFileChooser(prefMediator.getMostRecentInputR2RMLMappingFilePathVal());
 		
 		int result = fileChooserLoadMapping.showOpenDialog(frame);
 		
@@ -771,6 +776,8 @@ public class R2RMLMain {
 		if (result == JFileChooser.APPROVE_OPTION) {
 			
 			sourceFile = fileChooserLoadMapping.getSelectedFile().getPath();
+			
+			prefMediator.setMostRecentInputR2RMLMappingFilePathVal(sourceFile);
 			
 	        logger.trace("Archivo rdf con el r2rmlmap es: " + sourceFile);
 			
@@ -822,14 +829,15 @@ public class R2RMLMain {
 	 */
 	protected void menuItemSaveR2RMLMappingActionPerformed(ActionEvent e) {
 
-		JFileChooser fileChooserSaveMapping = new JFileChooser();
+		JFileChooser fileChooserSaveMapping = new JFileChooser(prefMediator.getMostRecentOutputR2RMLMappingFilePathVal());
 		int result = fileChooserSaveMapping.showOpenDialog(frame);
 		String file = "";
 		
 		if (result == JFileChooser.APPROVE_OPTION) {
 			
 			file = fileChooserSaveMapping.getSelectedFile().getPath();
-			
+			prefMediator.setMostRecentInputR2RMLMappingFilePathVal(file);
+
 		}
 		
 		R2RMLModelToJenaModelTransformer r2rmlTransformer = new R2RMLModelToJenaModelTransformer(r2rmlMappingModel);
@@ -1024,5 +1032,27 @@ public class R2RMLMain {
 		}
 		
 	}
-	
+
+	/**
+	 * @param e
+	 */
+	protected void menuItemAboutActionPerformed(ActionEvent e) {
+
+		JOptionPane.showMessageDialog(frame, "R2RML Visor v1.00 /n"
+				+ "R2RML Visor is an aplication developed as Proyecto Fin de Carrera"
+				+ "Autor Manuel Fernandez Perez"
+				+ "Tutor Oscar Corcho"
+				+ "At Escuela Superior de Ingenieros Informaticos"
+				+ "UPM Universidad Politecnica de Madrid", "About", JOptionPane.INFORMATION_MESSAGE);
+		
+	}
+
+	/**
+	 * @param e
+	 */
+	protected void menuItemManualActionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

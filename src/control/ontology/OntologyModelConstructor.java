@@ -71,9 +71,9 @@ public class OntologyModelConstructor {
 	//the set of OwlObjectProperty in the ontology
     private Set<OWLObjectProperty> owlObjectProperties;
     
-    private HashMap<String, OntologyObjectProperty> mapEquivalentObjectProperties = new HashMap<>();
+    private HashMap<String, OntologyObjectProperty> mapEquivalentObjectProperties = new HashMap<String, OntologyObjectProperty>();
     
-    private HashMap<String, OntologyDataProperty> mapEquivalentDataProperties = new HashMap<>();
+    private HashMap<String, OntologyDataProperty> mapEquivalentDataProperties = new HashMap<String, OntologyDataProperty>();
     
     private OntologyClass thing;
     
@@ -81,7 +81,7 @@ public class OntologyModelConstructor {
     
     private OntologyDataProperty topDataProperty;
     
-    private HashMap<String, String> mapCorrespondenceIRILabel = new HashMap<>();
+    private HashMap<String, String> mapCorrespondenceIRILabel = new HashMap<String, String>();
     
 
     public OntologyModelConstructor(String paramOntologySource) throws OWLOntologyCreationException {
@@ -486,7 +486,7 @@ public class OntologyModelConstructor {
 		//conjunto de las iris de las clases que hay que buscar por que tienen clases equivalemtes que hay que colocar
 		Set<String> classesToSearch = new HashSet<String>();
 		//map que relaciona las iris de las clases que tienen relacion con las clases por colocar con las que tienen relacion
-		HashMap<String, Set<OWLClass>> mapEquivalentClasses = new HashMap<>();
+		HashMap<String, Set<OWLClass>> mapEquivalentClasses = new HashMap<String, Set<OWLClass>>();
 		
 //		System.out.println("reallocaRemainClasses: Clases equivalentes");
 		//para cada clase que queda por colocar

@@ -67,7 +67,7 @@ public class JoinConditionSelector extends JDialog {
 		});
 		getContentPane().add(comboBox, "cell 0 2,growx");
 		
-		comboBoxModel = new DefaultComboBoxModel<>(joinConditionsNames);
+		comboBoxModel = new DefaultComboBoxModel<String>(joinConditionsNames);
 		comboBox.setModel(comboBoxModel);
 		
 		buttonOk = new JButton("OK");

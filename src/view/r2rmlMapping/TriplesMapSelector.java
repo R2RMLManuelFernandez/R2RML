@@ -87,7 +87,7 @@ public class TriplesMapSelector extends JDialog {
 		});
 		getContentPane().add(comboBoxTriplesMap, "cell 0 2,growx");
 		
-		comboBoxTriplesMapModel = new DefaultComboBoxModel<>(triplesMapNames);
+		comboBoxTriplesMapModel = new DefaultComboBoxModel<String>(triplesMapNames);
 		comboBoxTriplesMap.setModel(comboBoxTriplesMapModel);
 		
 		buttonOk = new JButton("OK");

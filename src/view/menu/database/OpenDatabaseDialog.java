@@ -48,6 +48,7 @@ import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import view.util.PreferencesMediator;
 import control.database.connection.DatabaseConnection;
 
 /**
@@ -85,15 +86,19 @@ public class OpenDatabaseDialog extends JDialog {
 	private DialogDatabaseData dialogNewDB = null;
 	
 	private boolean cancel = false;
+
+	private PreferencesMediator prefs;
 	
 	private static Logger logger = LoggerFactory.getLogger(OpenDatabaseDialog.class);
 
 	/**
 	 * Create the dialog.
+	 * @param prefs 
 	 */
-	public OpenDatabaseDialog(JFrame frame) {
+	public OpenDatabaseDialog(JFrame frame, PreferencesMediator prefs) {
 		
 		super(frame,true);
+		this.prefs = prefs;
 		initialize();
 		
 	}
@@ -179,7 +184,7 @@ public class OpenDatabaseDialog extends JDialog {
 		contentPane.add(panelDatabasesList, "cell 4 5,grow");
 		panelDatabasesList.setLayout(new MigLayout("", "[89px,grow,fill]", "[23px][][]"));
 		
-		fileChooserLoadDatabaseList = new JFileChooser();
+		fileChooserLoadDatabaseList = new JFileChooser(prefs.getMostRecentInputDatabaseListFilePathVal());
 		
 		buttonLoadDatabaseList = new JButton("Load Database List");
 		buttonLoadDatabaseList.addActionListener(new ActionListener() {
@@ -189,7 +194,7 @@ public class OpenDatabaseDialog extends JDialog {
 		});
 		panelDatabasesList.add(buttonLoadDatabaseList, "cell 0 0,aligny baseline");
 		
-		fileChooserSaveDatabaseList = new JFileChooser();
+		fileChooserSaveDatabaseList = new JFileChooser(prefs.getMostRecentOutputDatabaseListFilePathVal());
 		
 		buttonSaveDatabaseList = new JButton("Save Datbase List");
 		buttonSaveDatabaseList.addActionListener(new ActionListener() {
@@ -350,7 +355,9 @@ public class OpenDatabaseDialog extends JDialog {
 		int result = fileChooserLoadDatabaseList.showOpenDialog(null);
 		
 		if (result == JFileChooser.APPROVE_OPTION) {
-			
+
+			prefs.setMostRecentInputDatabaseListFilePathVal((fileChooserLoadDatabaseList.getSelectedFile().getPath()));
+
 			StaXDatabaseParser loadDatabasesParser = new StaXDatabaseParser(fileChooserLoadDatabaseList.getSelectedFile().getPath());
 			
 		    List<Database> loadedDatabases = new Vector<Database>(0);
@@ -412,7 +419,9 @@ public class OpenDatabaseDialog extends JDialog {
 		int result = fileChooserSaveDatabaseList.showSaveDialog(null);
 		
 		if (result == JFileChooser.APPROVE_OPTION) {
-			
+
+			prefs.setMostRecentOutputDatabaseListFilePathVal(fileChooserSaveDatabaseList.getSelectedFile().getPath());
+
 			StaXDatabaseWriter savedDatabasesWriter = new StaXDatabaseWriter(fileChooserSaveDatabaseList.getSelectedFile().getPath());
 			
 			int databasesSize = databasesModelTable.getRowCount();

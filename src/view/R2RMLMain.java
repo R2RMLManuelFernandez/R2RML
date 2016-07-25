@@ -786,7 +786,7 @@ public class R2RMLMain {
 		//creates an empty jena model and reads the rdf file
 		Path input = Paths.get(sourceFile);
 		Model jenaModel = ModelFactory.createDefaultModel() ; 
-		jenaModel.read(input.toUri().toString(), "TURTLE") ;
+		jenaModel.read(input.toUri().toString(), null, "TURTLE") ;
 
 		logger.trace("Aqui se escribe el modelo leido del archivo");
 		jenaModel.write(System.out, "Turtle");

@@ -78,9 +78,16 @@ public class R2RMLModelToJenaModelTransformer {
 	 * Creates a Jena model from the R2RML Mapping
 	 */
 	private void transformIntoJenaModel() {
-		
-//		baseIRI = "http://example.com/test#";
+
 		baseIRI = this.r2rmlModel.getBaseIRI();
+		
+		if (!(baseIRI.endsWith("/"))) {
+			
+			baseIRI = baseIRI + "/";
+			
+		}
+		
+		
 		//TODO: Obtener el namespace del mapping, para ello antes tiene que tenerlo el mapping (Obtener del ususario)
 		//TODO No olvidar escribir el namespace en el modelo jena
 		
@@ -107,7 +114,7 @@ public class R2RMLModelToJenaModelTransformer {
 	 */
 	private void transformIntoJenaTriplesMap(TriplesMap r2rmlTriplesMap, Model jenaModel) {
 
-		Resource jenaTriplesMap = jenaModel.createResource(baseIRI + "TriplesMap" + r2rmlTriplesMap.getIdentifier());
+		Resource jenaTriplesMap = jenaModel.createResource("#TriplesMap" + r2rmlTriplesMap.getIdentifier());
 		
 		//Creacion de la logical table
 		
@@ -131,7 +138,7 @@ public class R2RMLModelToJenaModelTransformer {
 		
 		final Property template = jenaModel.createProperty(rr + "template");
 
-		blankNodeSubjectMap.addProperty(template, baseIRI +  r2rmlTriplesMap.getLogicalTable().getTableName() + "/" + r2rmlTriplesMap.getSubjectMap().getSubject());
+		blankNodeSubjectMap.addProperty(template, baseIRI + r2rmlTriplesMap.getLogicalTable().getTableName() + "/" + r2rmlTriplesMap.getSubjectMap().getSubject());
 		
 		if (r2rmlTriplesMap.getSubjectMap().getRdfClass() != null) {
 			
@@ -206,7 +213,7 @@ public class R2RMLModelToJenaModelTransformer {
 						
 						Resource blankNodeReferencing = jenaModel.createResource();
 						
-						blankNodeReferencing.addProperty(parentTriplesMap, "http://example.com/testTriplesMap" + (((ReferencingObjectMap) object).getParentTriplesMap()).getIdentifier());
+						blankNodeReferencing.addProperty(parentTriplesMap, "#TriplesMap" + (((ReferencingObjectMap) object).getParentTriplesMap()).getIdentifier());
 						
 						ArrayList<JoinCondition> joinConditions = ((ReferencingObjectMap) object).getJoinConditions();
 						

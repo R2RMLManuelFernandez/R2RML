@@ -105,24 +105,27 @@ public class ViewR2RMLMapping extends JPanel implements Observer {
         textArea.append("Numero de TriplesMap: ");
 		int triplesMapCounter = r2rmlMapping.getIdentifierCounter();
 		logger.trace("El r2rml map tiene triples maps " + r2rmlMapping.hasTriplesMap().toString());
+		logger.trace("Numero de triples maps el r2rml map " + r2rmlMapping.getIdentifierCounter());
 		textArea.append(String.valueOf(triplesMapCounter) + "\n");
 		textArea.append("\n");
 		
 		if (r2rmlMapping.hasTriplesMap()) {
 			
-			logger.trace(r2rmlMapping.hasTriplesMap().toString());
-			
 			for (int i = 0; i < triplesMapCounter; i++) {
 				
 				triplesMapAux = r2rmlMapping.getTriplesMap(i);
-				textArea.append("Triples Map" + i + "\n");
+				textArea.append("Triples Map " + i + "\n");
 				textArea.append("    logicalTable    " + triplesMapAux.getLogicalTable().getTableName());
 				textArea.append("\n");
 				subjectMapAux = triplesMapAux.getSubjectMap();
 				textArea.append("    subjectMap [\n");
 				textArea.append("        template    " + subjectMapAux.getSubject());
-				textArea.append("\n");
-				textArea.append("        class    " + subjectMapAux.getRdfClass().getIRIClassIRI());
+				if (subjectMapAux.getRdfClass().getIRIClassIRI() != "") {
+					
+					textArea.append("\n");
+					textArea.append("        class    " + subjectMapAux.getRdfClass().getIRIClassIRI());
+					
+				}
 				textArea.append("\n");
 				textArea.append("    ];\n");
 				logger.trace("ViewR2RMLMapping --> Imprimido sujeto en text area");

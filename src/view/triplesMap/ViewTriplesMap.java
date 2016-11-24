@@ -34,6 +34,10 @@ import javax.swing.border.TitledBorder;
 import model.r2rmlmapping.triplesMap.PredicateObjectMap;
 import model.r2rmlmapping.triplesMap.TriplesMap;
 import net.miginfocom.swing.MigLayout;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import view.triplesMap.PredicateObject.ViewPredicateObject;
 import view.triplesMap.subject.ViewSubject;
 import control.r2rmlmapping.triplesMap.ControllerPredicateObjectMap;
@@ -58,6 +62,8 @@ public class ViewTriplesMap extends JPanel implements Observer {
 	private JFrame frame;
 	
 	private TriplesMap triplesMapModel;
+	
+	private static Logger logger = LoggerFactory.getLogger(ViewTriplesMap.class);
 
 	/**
 	 * Create the panel.
@@ -136,10 +142,10 @@ public class ViewTriplesMap extends JPanel implements Observer {
 		viewSubject.setModel(triplesMapModel.getSubjectMap());
 		ControllerSubjectMap controllerViewSubject = new ControllerSubjectMap(viewSubject, triplesMapModel.getSubjectMap());
 		viewSubject.setController(controllerViewSubject);
-		System.out.println("ViewTriplesMap --> Establecido modelo y controlador de la vista del subject");
+		logger.trace("ViewTriplesMap --> Establecido modelo y controlador de la vista del subject");
 		
 		panelPredicateObject.removeAll();
-		System.out.println("ViewTriplesMap --> Se deberian haber eliminado todas las vistas de predicate-object");
+		logger.trace("ViewTriplesMap --> Se deberian haber eliminado todas las vistas de predicate-object");
 		ArrayList<PredicateObjectMap> predicateObjectMaps = paramTriplesMapModel.getPredicateObjectMaps();
 		
 		if (predicateObjectMaps.size() > 0) {

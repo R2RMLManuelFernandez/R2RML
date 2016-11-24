@@ -38,7 +38,6 @@ public class SubjectMap extends Observable {
 	private IRIClass rdfClass;
 	private HashSet<Column> subjectColumns;
 	
-	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(SubjectMap.class);
 
 	public SubjectMap() {
@@ -69,7 +68,7 @@ public class SubjectMap extends Observable {
 		this.subject = subject;
 		setChanged();
 		notifyObservers();
-        System.out.println("SubjectMap --> Notificada la vista de que ha cambiado el subject");
+        logger.trace("SubjectMap --> Notificada la vista de que ha cambiado el subject");
         
 	}
 	
@@ -91,7 +90,7 @@ public class SubjectMap extends Observable {
 		this.rdfClass = paramRDFClass;
 		setChanged();
 		notifyObservers();
-        System.out.println("SubjectMap --> Notificada la vista de que ha cambiado la rdfClass");
+        logger.trace("SubjectMap --> Notificada la vista de que ha cambiado la rdfClass");
         
 	}
 
@@ -104,7 +103,7 @@ public class SubjectMap extends Observable {
 		generateSubject();
 		setChanged();
 		notifyObservers();
-		System.out.println("SubjectMap --> Notificada la vista de que se ha añadido una columna");
+		logger.trace("SubjectMap --> Notificada la vista de que se ha añadido una columna");
 		
 	}
 	
@@ -140,7 +139,7 @@ public class SubjectMap extends Observable {
 	 */
 	public void removeColumnsByName(ArrayList<String> colNames) {
 		
-		System.out.println("SubjectMap --> Borrando las columnas " + colNames.toString());
+		logger.trace("SubjectMap --> Borrando las columnas " + colNames.toString());
 		
 		for (String colName: colNames) {
 			
@@ -150,7 +149,7 @@ public class SubjectMap extends Observable {
 				Column col = itColumn.next();
 				if (colName.equals(col.getColumnName())) {
 					itColumn.remove();
-					System.out.println("SubjectMap --> Borrando la columna " + col.getColumnName());
+					logger.trace("SubjectMap --> Borrando la columna " + col.getColumnName());
 				}
 			}
 		}
@@ -203,7 +202,7 @@ public class SubjectMap extends Observable {
 	 */
 	private void generateSubject() {
 		
-		System.out.println("SubjectMap --> Regenerando subject");
+		logger.trace("SubjectMap --> Regenerando subject");
 		String subjectBefore = this.subject;
 		String tempCols[] = subjectBefore.split("\\{");
 		String subjectAfter = "";
@@ -219,7 +218,7 @@ public class SubjectMap extends Observable {
 			}
 			else {
 				
-				System.out.println("SubjectMap --> Subject part sin tratar " + x);
+				logger.trace("SubjectMap --> Subject part sin tratar " + x);
 				subjectAfter = subjectAfter.concat(x);
 				
 			}
@@ -233,7 +232,7 @@ public class SubjectMap extends Observable {
 		}
 		
 		this.subject = subjectAfter;
-		System.out.println("SubjectMap --> Subject after " + subjectAfter);
+		logger.trace("SubjectMap --> Subject after " + subjectAfter);
 		
 	}
 

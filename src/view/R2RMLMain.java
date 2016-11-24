@@ -1014,7 +1014,7 @@ public class R2RMLMain {
 			if (!openR2RMLMapBaseIRISelector.checkCancel()) {
 				
 				r2rmlMappingModel.setBaseIRI(openR2RMLMapBaseIRISelector.getSelectedBaseIRI());
-				logger.trace("El nameSapce es {}", r2rmlMappingModel.getBaseIRI());
+				logger.trace("El nameSpace es " + r2rmlMappingModel.getBaseIRI());
 				
 			}
 			

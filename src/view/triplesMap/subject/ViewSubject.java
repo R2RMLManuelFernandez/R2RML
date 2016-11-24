@@ -33,6 +33,10 @@ import javax.swing.border.TitledBorder;
 import model.database.Column;
 import model.r2rmlmapping.triplesMap.SubjectMap;
 import net.miginfocom.swing.MigLayout;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import control.r2rmlmapping.triplesMap.ControllerSubjectMap;
 
 /**
@@ -54,6 +58,8 @@ public class ViewSubject extends JPanel implements Observer {
 	private DefaultListModel<String> listModel;
 	private JScrollPane scrollPane;
 	private JButton buttonDeleteColumns;
+	
+	private static Logger logger = LoggerFactory.getLogger(ViewSubject.class);
 
 	/*	private JButton buttonModify;
 	private JFrame frame;
@@ -167,7 +173,7 @@ public class ViewSubject extends JPanel implements Observer {
 		for (Column col: columns) {
 			listModel.addElement(col.getColumnName());			
 		}
-        System.out.println("ViewSubject --> establecido modelo para el sujeto");
+        logger.trace("ViewSubject --> establecido modelo para el sujeto");
 	}
 
 	/**
@@ -175,7 +181,7 @@ public class ViewSubject extends JPanel implements Observer {
 	 */
 	public void setController(ControllerSubjectMap controller) {
 		buttonDeleteColumns.addActionListener(controller);
-        System.out.println("ViewSubject --> establecido controlador para el sujeto");
+		logger.trace("ViewSubject --> establecido controlador para el sujeto");
 	}
 	
 	/* (non-Javadoc)
@@ -191,7 +197,7 @@ public class ViewSubject extends JPanel implements Observer {
 			listModel.addElement(col.getColumnName());			
 		}
 
-        System.out.println("ViewSubject -->datos actualizados");
+		logger.trace("ViewSubject -->datos actualizados");
 	}
 	
 	/**

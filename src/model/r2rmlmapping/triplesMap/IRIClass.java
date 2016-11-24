@@ -52,7 +52,17 @@ public class IRIClass {
 	 */
 	public String getIRIClassIRI() {
 		
-		return iri.toString();
+		if (this.iri != null) {
+			
+			return iri.toString();
+			
+		}
+		else {
+			
+			return "";
+			
+		}
+		
 		
 	}
 

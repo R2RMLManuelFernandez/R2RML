@@ -188,6 +188,13 @@ public class ViewObjectReferenced extends JPanel implements Observer {
 			
 			buttonDeleteJoinCondition.setVisible(true);
 		}
+		else {
+			
+			comboBoxJoinConditions.setVisible(false);
+			viewJoinCondition.setVisible(false);
+			buttonDeleteJoinCondition.setVisible(false);
+			
+		}
 		
 	}
 

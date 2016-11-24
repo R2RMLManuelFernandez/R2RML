@@ -33,6 +33,9 @@ import javax.swing.border.EmptyBorder;
 import model.database.Table;
 import net.miginfocom.swing.MigLayout;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Establish the database table for the Triples Map
  * 
@@ -52,6 +55,8 @@ public class TriplesMapTableSelector extends JDialog {
 	private ArrayList<Table> databaseTables;
 	private Table selectedTable;
 	private boolean cancel = false;
+	
+	private static Logger logger = LoggerFactory.getLogger(TriplesMapTableSelector.class);
 	
 	/**
 	 * Create the dialog.
@@ -164,7 +169,7 @@ public class TriplesMapTableSelector extends JDialog {
 
 		int tableSelected = comboBox.getSelectedIndex();	
 		selectedTable = databaseTables.get(tableSelected);
-		System.out.println("La tabla que se ha elegido es: " + selectedTable.getTableName());
+		logger.debug("La tabla que se ha elegido es: " + selectedTable.getTableName());
 	}
 
 	/**

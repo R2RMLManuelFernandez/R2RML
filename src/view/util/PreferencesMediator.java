@@ -22,6 +22,9 @@ import java.util.prefs.Preferences;
 
 import model.menu.bookmarks.OntologySource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Manuel Fernandez Perez
  *
@@ -55,14 +58,16 @@ public class PreferencesMediator {
 	private List<OntologySource> bookmarks;
 	private List<OntologySource> recents;
 	
+	private static Logger logger = LoggerFactory.getLogger(PreferencesMediator.class);
+	
 	public PreferencesMediator()
 	{
 		prefs = Preferences.userRoot().node(this.getClass().getName());
 		bookmarks = new ArrayList<OntologySource>(0);
 		recents = new ArrayList<OntologySource>(0);
-		System.out.println("loading prefs");
+		logger.debug("loading prefs");
 		loadPreferences();
-		System.out.println("prefs loaded");
+		logger.debug("prefs loaded");
 	}
 	
 	/**
@@ -80,13 +85,13 @@ public class PreferencesMediator {
 		mostRecentInputR2RMLMappingFilePathVal = prefs.get(mostRecentInputR2RMLMappingFilePathKey, "");
 		mostRecentOutputR2RMLMappingFilePathVal = prefs.get(mostRecentOutputR2RMLMappingFilePathKey, "");
 		
-		System.out.println(storedNumberBookmarks);
-		System.out.println(storedNumberRecents);
-		System.out.println(mostRecentInputBookmarksFilePathVal);
-		System.out.println(mostRecentOutputBookmarksFilePathVal);
-		System.out.println(mostRecentInputOntologyFilePathVal);
-		System.out.println(mostRecentInputDatabaseListFilePathVal);
-		System.out.println(mostRecentOutputDatabaseListFilePathVal);
+		logger.debug(String.valueOf(storedNumberBookmarks));
+		logger.debug(String.valueOf(storedNumberRecents));
+		logger.debug(mostRecentInputBookmarksFilePathVal);
+		logger.debug(mostRecentOutputBookmarksFilePathVal);
+		logger.debug(mostRecentInputOntologyFilePathVal);
+		logger.debug(mostRecentInputDatabaseListFilePathVal);
+		logger.debug(mostRecentOutputDatabaseListFilePathVal);
 		
 		for (int i = 0; i < storedNumberBookmarks; i++) {
 			

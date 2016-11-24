@@ -23,6 +23,10 @@ import java.awt.event.ActionListener;
 import model.r2rmlmapping.triplesMap.JoinCondition;
 import model.r2rmlmapping.triplesMap.ObjectMap;
 import model.r2rmlmapping.triplesMap.ReferencingObjectMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import view.triplesMap.PredicateObject.ViewObjectReferenced;
 
 /**
@@ -34,6 +38,8 @@ public class ControllerReferencedObjectMap implements ActionListener {
 
 	private ViewObjectReferenced view;
 	private ReferencingObjectMap model;
+	
+	private static Logger logger = LoggerFactory.getLogger(ControllerReferencedObjectMap.class);
 	
 	public ControllerReferencedObjectMap(ViewObjectReferenced viewObjectRef,
 			ObjectMap objectMap) {
@@ -51,15 +57,16 @@ public class ControllerReferencedObjectMap implements ActionListener {
 
 	private void changeModel(Component source) {
 		if (source.getName().equals("Delete")) {
-			System.out.println("ControllerReferencedObjectMap --> action Delete");
+			logger.debug("ControllerReferencedObjectMap --> action Delete");
 			model.getPredicateObjectMap().deleteObjectMap(model);
 		}
 		else if (source.getName().equals("Delete Join Condition")) {
 			model.removeJoinCondition(view.getJoinConditionSelected());
+			logger.debug("ControllerReferencedObjectMap --> Deberia haberse eliminado una JoinCondition");
 		}
 		else if (source.getName().equals("Add Join Condition")) {
 			model.addJoinCondition(new JoinCondition());
-	        System.out.println("ControllerReferencedObjectMap --> Deberia habere añadido una JoinCondition");
+			logger.debug("ControllerReferencedObjectMap --> Deberia haberse añadido una JoinCondition");
 		}
 	}
 

@@ -24,10 +24,14 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import net.miginfocom.swing.MigLayout;
+
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -74,14 +78,30 @@ public class R2RMLMapBaseIRISelector extends JDialog {
 		contentPanel.add(labelR2RMLMapBaseIRI, "cell 0 1,alignx center,aligny center");
 		
 		textFieldBaseIRI = new JTextField();
-		textFieldBaseIRI.addActionListener(new ActionListener() {
+		textFieldBaseIRI.getDocument().addDocumentListener(new DocumentListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				textFieldBaseIRIActionPerformed(e);
+			public void removeUpdate(DocumentEvent e) {
+
+				textFieldBaseIRIchanged();
+				
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+
+				textFieldBaseIRIchanged();
+				
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+
+				textFieldBaseIRIchanged();
 				
 			}
 		});
+		
 		contentPanel.add(textFieldBaseIRI, "cell 0 2,grow");
 		textFieldBaseIRI.setColumns(10);
 		
@@ -119,8 +139,18 @@ public class R2RMLMapBaseIRISelector extends JDialog {
 	 */
 	protected void okButtonActionPerformed(ActionEvent e) {
 		
-		this.setVisible(false);
+		if (this.baseIRI == null) {
+			
+			JOptionPane.showMessageDialog(this, "You havent entered a IRI base namesapce", "Enter a R2RML mapping base IRI", JOptionPane.WARNING_MESSAGE);
+			
+		}
 		
+	   else {
+		   
+		   this.setVisible(false);
+		   
+	   }
+
 	}
 	
 	/**
@@ -145,9 +175,9 @@ public class R2RMLMapBaseIRISelector extends JDialog {
 	}
 
 	/**
-	 * @param e
+	 * Gets the value of the text from the JtestField
 	 */
-	protected void textFieldBaseIRIActionPerformed(ActionEvent e) {
+	protected void textFieldBaseIRIchanged() {
 		this.baseIRI = textFieldBaseIRI.getText();
 	}
 

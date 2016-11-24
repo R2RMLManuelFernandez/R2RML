@@ -75,7 +75,7 @@ public class R2RMLMapping extends Observable {
 		notifyObservers();
 		logger.trace("R2RMLMapping --> Disparado add triples map a modelo r2rml");
 	}
-	
+
 	/**
 	 * @param element
 	 */
@@ -85,7 +85,7 @@ public class R2RMLMapping extends Observable {
 		this.triplesMaps.add(ident, element);
 		setChanged();
 		notifyObservers();
-        System.out.println("R2RMLMapping --> Disparado replace triples map en modelo r2rml");
+		logger.trace("R2RMLMapping --> Disparado replace triples map en modelo r2rml");
 	}
 	
 	/**

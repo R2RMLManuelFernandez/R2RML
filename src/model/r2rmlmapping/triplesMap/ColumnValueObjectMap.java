@@ -22,6 +22,9 @@ import java.util.Observable;
 
 import model.database.Column;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Represents a Column-Valued object map of a R2RML mapping triplesMap
  * 
@@ -39,6 +42,8 @@ public class ColumnValueObjectMap extends Observable implements ObjectMap {
 	private PredicateObjectMap predicateObjectMap;
 	
 	private String type;
+		
+	private static Logger logger = LoggerFactory.getLogger(ColumnValueObjectMap.class);
 	
 	public ColumnValueObjectMap(PredicateObjectMap paramPredicateObjectMap) {
 		this.predicateObjectMap = paramPredicateObjectMap;
@@ -93,7 +98,7 @@ public class ColumnValueObjectMap extends Observable implements ObjectMap {
 		setChanged();
 		notifyObservers();
 		
-        System.out.println("ColumnValueObjectMap --> se ha añadido uuna columna a un object map");
+		logger.trace("ColumnValueObjectMap --> se ha añadido uuna columna a un object map");
 		
 	}
 
@@ -102,7 +107,7 @@ public class ColumnValueObjectMap extends Observable implements ObjectMap {
 	 */
 	public void removeColumnsByName(ArrayList<String> colNames) {
 		
-		System.out.println("ColumnValueObjectMap --> Borrando las columnas " + colNames.toString());
+		logger.trace("ColumnValueObjectMap --> Borrando las columnas " + colNames.toString());
 		
 		for (String colName: colNames) {
 			
@@ -112,7 +117,7 @@ public class ColumnValueObjectMap extends Observable implements ObjectMap {
 				Column col = itColumn.next();
 				if (colName.equals(col.getColumnName())) {
 					itColumn.remove();
-					System.out.println("ColumnValueObjectMap --> Borrando la columna " + col.getColumnName());
+					logger.trace("ColumnValueObjectMap --> Borrando la columna " + col.getColumnName());
 				}
 			}
 		}

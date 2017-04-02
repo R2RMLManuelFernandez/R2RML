@@ -20,6 +20,9 @@ import java.util.Observable;
 
 import model.database.Column;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Represents a join condition of a refernced object map
  * 
@@ -30,6 +33,8 @@ public class JoinCondition extends Observable {
 	
 	private Column child = null;
 	private Column parent = null;
+	
+	private static Logger logger = LoggerFactory.getLogger(JoinCondition.class);
 	
 	/**
 	 * @return the child
@@ -42,6 +47,7 @@ public class JoinCondition extends Observable {
 	 */
 	public void setChild(Column child) {
 		this.child = child;
+		logger.trace("creado child " + child.getColumnName());
 		setChanged();
 		notifyObservers();
 	}
@@ -56,6 +62,7 @@ public class JoinCondition extends Observable {
 	 */
 	public void setParent(Column parent) {
 		this.parent = parent;
+		logger.trace("creado parent " + parent.getColumnName());
 		setChanged();
 		notifyObservers();
 	}

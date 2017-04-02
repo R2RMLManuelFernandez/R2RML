@@ -114,7 +114,7 @@ public class R2RMLModelToJenaModelTransformer {
 	 */
 	private void transformIntoJenaTriplesMap(TriplesMap r2rmlTriplesMap, Model jenaModel) {
 
-		Resource jenaTriplesMap = jenaModel.createResource("#TriplesMap" + r2rmlTriplesMap.getIdentifier());
+		Resource jenaTriplesMap = jenaModel.createResource("#TriplesMap" + r2rmlTriplesMap.getTriplesMapsPosition());
 		
 		//Creacion de la logical table
 		
@@ -213,7 +213,7 @@ public class R2RMLModelToJenaModelTransformer {
 						
 						Resource blankNodeReferencing = jenaModel.createResource();
 						
-						blankNodeReferencing.addProperty(parentTriplesMap, "#TriplesMap" + (((ReferencingObjectMap) object).getParentTriplesMap()).getIdentifier());
+						blankNodeReferencing.addProperty(parentTriplesMap, "#TriplesMap" + (((ReferencingObjectMap) object).getParentTriplesMap()).getTriplesMapsPosition());
 						
 						ArrayList<JoinCondition> joinConditions = ((ReferencingObjectMap) object).getJoinConditions();
 						

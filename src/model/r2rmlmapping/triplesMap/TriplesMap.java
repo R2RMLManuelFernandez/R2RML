@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
  */
 public class TriplesMap extends Observable {
 	
-	private int identifier;
 	private Table logicalTable;
 	private SubjectMap subjectMap;
 	private ArrayList<PredicateObjectMap> predicateObjectMaps;	
@@ -42,10 +41,9 @@ public class TriplesMap extends Observable {
 	
 	private static Logger logger = LoggerFactory.getLogger(TriplesMap.class);
 
-	public TriplesMap(int identifier, R2RMLMapping paramR2RMLMapping, Table paramTable) {
+	public TriplesMap(R2RMLMapping paramR2RMLMapping, Table paramTable) {
 		
 		super();
-		this.identifier = identifier;
 		this.subjectMap = new SubjectMap();
 		this.predicateObjectMaps = new ArrayList<PredicateObjectMap>();
 		this.referencingObjectMapsInTriplesMap =new ArrayList<ReferencingObjectMap>(0);
@@ -54,24 +52,6 @@ public class TriplesMap extends Observable {
 		setChanged();
 		notifyObservers();
 
-	}
-	
-	/**
-	 * @return the identifier
-	 */
-	public int getIdentifier() {
-		
-		return identifier;
-		
-	}
-
-	/**
-	 * @param identifier the identifier to set
-	 */
-	public void setIdentifier(int identifier) {
-		
-		this.identifier = identifier;
-		
 	}
 
 	/**
@@ -152,6 +132,16 @@ public class TriplesMap extends Observable {
 	
 	}
 
+	/**
+	 * @return the tripes map's position in teh array of the r2rmlMapping
+	 */
+	public int getTriplesMapsPosition() {
+		
+		return r2rmlMapping.getTriplesMapPos(this);
+	
+	}
+
+	
 	/**
 	 * @return the referencingObjectMapsInTriplesMap
 	 */

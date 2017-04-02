@@ -75,11 +75,14 @@ public class ControllerTriplesMap implements ActionListener {
 		}
 		else if (source.getName().equals("Update TriplesMap")) {
 			if ((model.getR2RmlMapping().getAllTriplesMap().size() == 0) ||
-				(model.getIdentifier() >= model.getR2RmlMapping().getAllTriplesMap().size())) {
-		        model.getR2RmlMapping().addTriplesMap(model);
+				(model.getTriplesMapsPosition() == -1)) {
+				logger.trace("Añadiendo triplesmap en posicion a r2rml mapping de tamaño " + model.getR2RmlMapping().getTriplesMapCount());
+				model.getR2RmlMapping().addTriplesMap(model);
 			}
 			else {
-				model.getR2RmlMapping().replaceTriplesMap(model.getIdentifier(), model);
+				
+				logger.trace("Reemplazando triplesmap " + model.getTriplesMapsPosition() + " en r2rml mapping");
+				model.getR2RmlMapping().replaceTriplesMap(model.getTriplesMapsPosition(), model);
 
 			}
 

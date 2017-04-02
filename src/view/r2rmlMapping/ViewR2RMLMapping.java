@@ -103,9 +103,9 @@ public class ViewR2RMLMapping extends JPanel implements Observer {
 		
 		textArea.setText(null);
         textArea.append("Numero de TriplesMap: ");
-		int triplesMapCounter = r2rmlMapping.getIdentifierCounter();
+		int triplesMapCounter = r2rmlMapping.getTriplesMapCount();
 		logger.trace("El r2rml map tiene triples maps " + r2rmlMapping.hasTriplesMap().toString());
-		logger.trace("Numero de triples maps el r2rml map " + r2rmlMapping.getIdentifierCounter());
+		logger.trace("Numero de triples maps el r2rml map " + r2rmlMapping.getTriplesMapCount());
 		textArea.append(String.valueOf(triplesMapCounter) + "\n");
 		textArea.append("\n");
 		
@@ -186,7 +186,7 @@ public class ViewR2RMLMapping extends JPanel implements Observer {
 									textArea.append("        objectMap [\n");
 			        				logger.trace("ViewR2RMLMapping --> tipo de obj map " + object.getType());
 			        				ReferencingObjectMap ref = (ReferencingObjectMap) object;
-									textArea.append("            parentTriplesMap  TriplesMap" + ref.getParentTriplesMap().getIdentifier() + "\n");
+									textArea.append("            parentTriplesMap  TriplesMap" + ref.getParentTriplesMap().getTriplesMapsPosition() + "\n");
 									//textArea.append("Logical table Triples Map " + ref.toString());//getParentTriplesMap().getLogicalTable().getTableName() + "\n");
 									ArrayList<JoinCondition> jConds = ref.getJoinConditions();
 									
@@ -220,7 +220,7 @@ public class ViewR2RMLMapping extends JPanel implements Observer {
 		else {
 			
 	        logger.trace(r2rmlMapping.hasTriplesMap().toString());
-	        logger.trace(String.valueOf(r2rmlMapping.getIdentifierCounter()));
+	        logger.trace(String.valueOf(r2rmlMapping.getTriplesMapCount()));
 	        
 		}
 		

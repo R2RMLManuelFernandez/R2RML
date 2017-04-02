@@ -38,8 +38,6 @@ import view.R2RMLMain;
  *
  */
 public class R2RMLMapping extends Observable {
-
-	private int identifierCounter;
 	
 	private String baseIRI;
 
@@ -49,16 +47,24 @@ public class R2RMLMapping extends Observable {
 
 	public R2RMLMapping() {
 
-		this.triplesMaps = new ArrayList<TriplesMap>();
-		this.identifierCounter = 0;
+		this.triplesMaps = new ArrayList<TriplesMap>(0);
+
         
 	}
 
+	public R2RMLMapping(int initialCapacity) {
+		
+		super();
+		this.triplesMaps = new ArrayList<TriplesMap>(initialCapacity);
+		setChanged();
+		notifyObservers();
+
+	}
+	
 	public R2RMLMapping(ArrayList<TriplesMap> mapping) {
 		
 		super();
 		this.triplesMaps = mapping;
-		this.identifierCounter = mapping.size() - 1;
 		setChanged();
 		notifyObservers();
 
@@ -70,7 +76,6 @@ public class R2RMLMapping extends Observable {
 	public void addTriplesMap(TriplesMap element) {
 		
 		this.triplesMaps.add(element);
-		this.identifierCounter++;
 		setChanged();
 		notifyObservers();
 		logger.trace("R2RMLMapping --> Disparado add triples map a modelo r2rml");
@@ -79,10 +84,22 @@ public class R2RMLMapping extends Observable {
 	/**
 	 * @param element
 	 */
-	public void replaceTriplesMap(int ident, TriplesMap element) {
+	public void addTriplesMapInPosistion(int pos, TriplesMap element) {
 		
-		this.triplesMaps.remove(ident);
-		this.triplesMaps.add(ident, element);
+		this.triplesMaps.add(pos, element);
+		setChanged();
+		notifyObservers();
+		logger.trace("R2RMLMapping --> Disparado add triples map en posicion a modelo r2rml");
+	}
+
+	
+	/**
+	 * @param element
+	 */
+	public void replaceTriplesMap(int pos, TriplesMap element) {
+		
+		this.triplesMaps.remove(pos);
+		this.triplesMaps.add(pos, element);
 		setChanged();
 		notifyObservers();
 		logger.trace("R2RMLMapping --> Disparado replace triples map en modelo r2rml");
@@ -97,7 +114,6 @@ public class R2RMLMapping extends Observable {
 		if (this.triplesMaps.contains(element)) {
 			
 			this.triplesMaps.remove(element);
-			this.identifierCounter--;
 			setChanged();
 			notifyObservers();
 /*			for (TriplesMap triplesMap : triplesMaps) {
@@ -129,18 +145,16 @@ public class R2RMLMapping extends Observable {
 	 * @param element
 	 * @return
 	 */
-	public Boolean removeTriplesMapAt(int ident, JFrame frame) {
+	public Boolean removeTriplesMapAt(int pos, JFrame frame) {
 
-		TriplesMap triplesMapToRemove = this.triplesMaps.get(ident);
-		this.triplesMaps.remove(ident);
-		this.identifierCounter--;
+		TriplesMap triplesMapToRemove = this.triplesMaps.get(pos);
+		this.triplesMaps.remove(pos);
 		setChanged();
 		notifyObservers();
 		
 		for (TriplesMap triplesMap : triplesMaps) {
 			
 			ArrayList<ReferencingObjectMap>refObjectMapsInTriplesMap = triplesMap.getReferencingObjectMapsInTriplesMap();
-//			ArrayList<ReferencingObjectMap>refObjectMapsInTriplesMap = refObjectMapsInTriplesMap.;
 			
 			Iterator<ReferencingObjectMap> iterRefObjectMaps = refObjectMapsInTriplesMap.iterator();
 			
@@ -186,7 +200,6 @@ public class R2RMLMapping extends Observable {
 	public void removeAllTriplesMap() {
 		
 		triplesMaps.removeAll(triplesMaps);
-		this.identifierCounter = 0;
 		setChanged();
 		notifyObservers();
 
@@ -202,22 +215,23 @@ public class R2RMLMapping extends Observable {
 	}
 
 	/**
-	 * @return the triples Map
+	 * @return the triples Map at the possition in the ArrayList of triples map
 	 */
-	public TriplesMap getTriplesMap(int identifierCounter) {
+	public TriplesMap getTriplesMap(int pos) {
 		
-		return triplesMaps.get(identifierCounter);
+		return triplesMaps.get(pos);
 		
 	}
 	
 	/**
 	 * @return the triples Map ident
 	 */
-	public int getTriplesMapIdent(TriplesMap element) {
+	public int getTriplesMapPos(TriplesMap triplesMap) {
 		
-		return triplesMaps.lastIndexOf(element);
+		return triplesMaps.lastIndexOf(triplesMap);
 		
 	}
+	
 	/**
 	 * @return the mapping
 	 */
@@ -226,15 +240,16 @@ public class R2RMLMapping extends Observable {
 		return triplesMaps;
 		
 	}
-	
+
 	/**
-	 * @return the identifierCounter
+	 * @return the number of triples maps in the r2rml mapping
 	 */
-	public int getIdentifierCounter() {
-		return identifierCounter;
+	public int getTriplesMapCount() {
+		
+		return triplesMaps.size();
+		
 	}
 	
-
 	/**
 	 * @return the rdfNameSpace
 	 */

@@ -147,14 +147,6 @@ public class JenaModelToR2RMLModelTransformer {
 		
 		ArrayList<Statement> listParents = new ArrayList<Statement>();
 		
-		//creates an empty R2RML Mapping model
-		r2rmlMapping = new R2RMLMapping();
-		
-		//auxiliar map taht matches triples maps whith the Resource of the subject statement which define it
-		Map<String, TriplesMap> triplesMapMap = new HashMap<String, TriplesMap>();
-		
-		Map<Integer, TriplesMap> triplesMapOrder = new HashMap<Integer, TriplesMap>();
-		
 		logger.trace("buscando el turtle de los triples maps");
 		
 		// classifies the statements attending to his prercicate
@@ -253,6 +245,16 @@ public class JenaModelToR2RMLModelTransformer {
 		   baseIRI = baseIRI + uriSplit[i];
 		   
 	   }
+		
+		//creates an empty R2RML Mapping model
+		r2rmlMapping = new R2RMLMapping(listLogicalTables.size());
+		
+	    logger.trace("creado mapping de tamaño " + r2rmlMapping.getTriplesMapCount() + " y deberia ser " + listLogicalTables.size());
+		
+		//auxiliar map taht matches triples maps whith the Resource of the subject statement which define it
+		Map<String, TriplesMap> triplesMapMap = new HashMap<String, TriplesMap>();
+		
+		Map<Integer, TriplesMap> triplesMapOrder = new HashMap<Integer, TriplesMap>();
 	    
 	    r2rmlMapping.setBaseIRI(baseIRI);
 		
@@ -302,11 +304,11 @@ public class JenaModelToR2RMLModelTransformer {
 		    				Table table = database.getTable(nameTable);
 		    				logger.trace("table for triples map " + table.getTableName());
 		    				//TODO cambiar el constructor del triplesmap para que no coja int sino Strings
-		    				TriplesMap triplesMap = new TriplesMap(Integer.parseInt(triplesMapId), r2rmlMapping, table);
+		    				TriplesMap triplesMap = new TriplesMap(r2rmlMapping, table);
 		    				
 		    			//Crear un array list para oredenar todsos los tripe mpa creados y luego añadirlos la r2rml mapping
 		    				
-		    			// -->	r2rmlMapping.addTriplesMap(Integer.parseInt(triplesMapId), triplesMap);
+		    			  //  r2rmlMapping.addTriplesMapInPosistion(Integer.parseInt(triplesMapId), triplesMap);
 		    				logger.trace("key triples map added " + triplesMapNameId);
 		    				triplesMapMap.put(triplesMapNameId, triplesMap);
 		    				triplesMapOrder.put(Integer.parseInt(triplesMapId), triplesMap);
@@ -457,6 +459,12 @@ public class JenaModelToR2RMLModelTransformer {
 		    }
 			
 		}
+		
+		for (int i=0; i < triplesMapOrder.keySet().size(); i++){
+			
+			r2rmlMapping.addTriplesMapInPosistion(i, triplesMapOrder.get(i));
+			
+		}
 
 		//creates the predicate-object maps amd assign them to the corresponding triples map
 		int id = 0;
@@ -475,7 +483,7 @@ public class JenaModelToR2RMLModelTransformer {
 		    
 		    TriplesMap triplesMap = triplesMapMap.get(predicateObjectTriplesMapId);
 		    
-		    logger.trace("predicateObjectStmt subject triplewa map database" + triplesMap.getLogicalTable().getTableName());
+		    logger.trace("predicateObjectStmt subject triplewa map database " + triplesMap.getLogicalTable().getTableName());
 		    
     		logger.trace("predicateObjectStmt subject " + subject);
 		    
@@ -568,11 +576,18 @@ public class JenaModelToR2RMLModelTransformer {
 										//TODO Como resolver que los triples map no se lean en orden
 										logger.trace("Hashmap content available " + triplesMapMap.entrySet().toString());
 										logger.trace("Hashmap keys available " + triplesMapMap.keySet().toString());
+										for (String entry: triplesMapMap.keySet()){
+											
+											logger.trace("avalaible triple map " + entry + " " + triplesMapMap.get(entry).getLogicalTable().getTableName());
+											
+										}
 										TriplesMap parentTripMap = null;
 										
-									    String[] referencedObjStmtIRISplit = subject.toString().split("#");
+									    String[] referencedObjStmtIRISplit = referencedObjStmt.getObject().toString().split("#");
 									    
 									    String referencedObjStmtParentTriplesMapId = referencedObjStmtIRISplit[1];
+									    
+									    logger.debug("search for the parent triples map in the hash table with key " + referencedObjStmtParentTriplesMapId);
 										
 										if (triplesMapMap.containsKey(referencedObjStmtParentTriplesMapId)){
 											
@@ -583,6 +598,10 @@ public class JenaModelToR2RMLModelTransformer {
 												logger.debug("coluldnt obtain the parent triples map from the hash table with key " + referencedObjStmtParentTriplesMapId + " looked for as " + referencedObjStmt.getObject().toString());
 												
 											}
+											else {
+												
+												logger.trace("parentTripMap encontrado " + parentTripMap.getLogicalTable().getTableName() + " in hash table with key " + referencedObjStmtParentTriplesMapId + " looked for as " + referencedObjStmt.getObject().toString());
+											}
 											
 										}
 										else {
@@ -591,7 +610,7 @@ public class JenaModelToR2RMLModelTransformer {
 											
 										}
 										logger.trace("parentTripMap " + referencedObjStmt.getObject().toString());
-										logger.trace("parentTripMap Created " + parentTripMap.getIdentifier());
+										logger.trace("parentTripMap Created " + parentTripMap.getLogicalTable().getTableName());
 										logger.trace("triples map keys " + triplesMapMap.keySet());
 
 										ReferencingObjectMap refObjMap = new ReferencingObjectMap(predObjMap, parentTripMap);
@@ -624,6 +643,7 @@ public class JenaModelToR2RMLModelTransformer {
 														String colParentName = parentStmt.getObject().toString();
 														logger.trace("colParentName  " + colParentName);
 														logger.trace("colParent table " + parentTripMap.getLogicalTable().getTableName());
+														logger.trace("colParent column " + parentTripMap.getLogicalTable().getColumn(colParentName));
 														Column colParent = parentTripMap.getLogicalTable().getColumn(colParentName);
 														joinCond.setParent(colParent);
 													

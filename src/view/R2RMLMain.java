@@ -966,7 +966,7 @@ public class R2RMLMain {
 
 			if (!openTriplesMapTableSelector.checkCancel()) {
 
-		        triplesMapModel = new TriplesMap(r2rmlMappingModel.getIdentifierCounter(), r2rmlMappingModel, openTriplesMapTableSelector.getTable());
+		        triplesMapModel = new TriplesMap(r2rmlMappingModel, openTriplesMapTableSelector.getTable());
 		        
 		        logger.trace("Creado el modelo del triples map");
 

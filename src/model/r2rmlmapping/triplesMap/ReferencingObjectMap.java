@@ -19,6 +19,9 @@ package model.r2rmlmapping.triplesMap;
 import java.util.ArrayList;
 import java.util.Observable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Represents a Referenced object map of a R2RML mapping triplesMap
  * 
@@ -33,6 +36,8 @@ public class ReferencingObjectMap extends Observable implements ObjectMap {
 	private ArrayList<JoinCondition> joinConditions;
 	private PredicateObjectMap predicateObjectMap;
 	private String type;
+	
+	private static Logger logger = LoggerFactory.getLogger(ReferencingObjectMap.class);
 
 	public ReferencingObjectMap(PredicateObjectMap paramPredicateObjectMap, TriplesMap paramParentTriplesMap) {
 		this.predicateObjectMap = paramPredicateObjectMap;
@@ -83,6 +88,7 @@ public class ReferencingObjectMap extends Observable implements ObjectMap {
 	 */
 	public void addJoinCondition (JoinCondition join) {
 		this.joinConditions.add(join);
+		logger.trace("Añadida Join Condition con parent " + join.getParent() + " y child " + join.getChild());
 		setChanged();
 		notifyObservers();
 	}

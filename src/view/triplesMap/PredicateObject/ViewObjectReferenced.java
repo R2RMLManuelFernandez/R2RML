@@ -130,7 +130,7 @@ public class ViewObjectReferenced extends JPanel implements Observer {
 		this.model = objectMap;
 		this.model.addObserver(this);
 		TriplesMap triplesMap = this.model.getParentTriplesMap();
-		int triplesMapIndex = this.model.getPredicateObjectMap().getTriplesMap().getR2RmlMapping().getTriplesMapIdent(triplesMap);
+		int triplesMapIndex = this.model.getPredicateObjectMap().getTriplesMap().getR2RmlMapping().getTriplesMapPos(triplesMap);
 		labelTriplesMap.setText("Triples Map " + (triplesMapIndex + 1));
 		ArrayList<JoinCondition> joinConditions = this.model.getJoinConditions();
 		
@@ -168,7 +168,7 @@ public class ViewObjectReferenced extends JPanel implements Observer {
 	public void update(Observable o, Object arg) {
 		
 		TriplesMap triplesMap = this.model.getParentTriplesMap();
-		int triplesMapIndex = this.model.getPredicateObjectMap().getTriplesMap().getR2RmlMapping().getTriplesMapIdent(triplesMap);
+		int triplesMapIndex = this.model.getPredicateObjectMap().getTriplesMap().getR2RmlMapping().getTriplesMapPos(triplesMap);
 		labelTriplesMap.setText("Triples Map " + (triplesMapIndex + 1));
 		ArrayList<JoinCondition> joinConditions = this.model.getJoinConditions();
 		
